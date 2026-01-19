@@ -199,6 +199,10 @@
     background: hsl(0 0% 20%);
   }
 
+  .light .progress-gym {
+    background: hsl(0 0% 88%);
+  }
+
   .progress-gym-fill {
     @apply h-full rounded-full transition-all duration-500;
     background: linear-gradient(90deg, hsl(25 85% 53%) 0%, hsl(45 91% 61%) 100%);
@@ -252,6 +256,10 @@
     text-shadow: 0 2px 4px hsla(0, 0%, 0%, 0.3);
   }
 
+  .light .stat-number {
+    text-shadow: 0 2px 4px hsla(0, 0%, 0%, 0.1);
+  }
+
   /* Glow effects */
   .glow-accent {
     box-shadow: 0 0 20px -4px hsla(25, 85%, 53%, 0.5);
@@ -266,9 +274,19 @@
     @apply bg-primary text-background rounded-lg;
   }
 
-  /* Gradient backgrounds */
+  /* Gradient backgrounds - dark mode */
   .gradient-dawn {
     background: linear-gradient(180deg, hsl(0 0% 14%) 0%, hsl(0 0% 12%) 50%, hsl(0 0% 10%) 100%);
+  }
+
+  /* Light mode gradient backgrounds */
+  .light .gradient-dawn {
+    background: linear-gradient(180deg, hsl(0 0% 98%) 0%, hsl(0 0% 96%) 50%, hsl(0 0% 94%) 100%);
+  }
+
+  /* Ensure proper background inheritance in light mode */
+  .light .min-h-screen {
+    background-color: hsl(0 0% 98%);
   }
 }
 
