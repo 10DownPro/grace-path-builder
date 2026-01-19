@@ -1,14 +1,16 @@
+import { useState } from 'react';
 import { PageLayout } from '@/components/layout/PageLayout';
 import { StreakBadge } from '@/components/home/StreakBadge';
 import { WorkoutCard } from '@/components/home/WorkoutCard';
 import { WeeklyGrind } from '@/components/home/WeeklyGrind';
 import { MissionCard } from '@/components/home/MissionCard';
 import { BattleVerse } from '@/components/home/BattleVerse';
+import { BattleMode } from '@/components/session/BattleMode';
 import { useProgress } from '@/hooks/useProgress';
-import { Settings } from 'lucide-react';
+import { Settings, Shield } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-
+import { toast } from 'sonner';
 const todaySteps = [
   { name: 'Worship', icon: '🎵', completed: true, duration: '15 min' },
   { name: 'Scripture', icon: '📖', completed: true, duration: '10 min' },
@@ -28,12 +30,16 @@ const dailyMissions = [
 
 export default function Index() {
   const { progress } = useProgress();
+  const [battleModeOpen, setBattleModeOpen] = useState(false);
   const formattedDate = getFormattedDate();
   
   // Get consistent daily mission
   const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000);
   const todayMission = dailyMissions[dayOfYear % dailyMissions.length];
 
+  const handleBattleModeComplete = () => {
+    toast.success('Battle Mode Victory! 🏆 Streak maintained!');
+  };
   return (
     <PageLayout>
       <div className="min-h-screen texture-noise">
@@ -71,6 +77,16 @@ export default function Index() {
             allCompleted={todaySteps.every(s => s.completed)} 
           />
 
+          {/* Battle Mode Button */}
+          <Button
+            variant="outline"
+            onClick={() => setBattleModeOpen(true)}
+            className="w-full border-2 border-destructive/50 hover:border-destructive hover:bg-destructive/10 text-destructive font-display uppercase tracking-wide"
+          >
+            <Shield className="h-4 w-4 mr-2" />
+            Struggling today? Battle Mode →
+          </Button>
+
           {/* Weekly Stats */}
           <WeeklyGrind 
             sessions={progress.totalSessions} 
@@ -99,6 +115,13 @@ export default function Index() {
           </div>
         </div>
       </div>
+
+      {/* Battle Mode Overlay */}
+      <BattleMode 
+        isOpen={battleModeOpen} 
+        onClose={() => setBattleModeOpen(false)}
+        onComplete={handleBattleModeComplete}
+      />
     </PageLayout>
   );
 }
