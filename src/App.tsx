@@ -10,6 +10,7 @@ import Scripture from "./pages/Scripture";
 import Prayer from "./pages/Prayer";
 import Progress from "./pages/Progress";
 import Settings from "./pages/Settings";
+import Battles from "./pages/Battles";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -27,6 +28,7 @@ const App = () => (
           <Route path="/prayer" element={<ProtectedRoute><Prayer /></ProtectedRoute>} />
           <Route path="/progress" element={<ProtectedRoute><Progress /></ProtectedRoute>} />
           <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+          <Route path="/battles" element={<ProtectedRoute><Battles /></ProtectedRoute>} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
