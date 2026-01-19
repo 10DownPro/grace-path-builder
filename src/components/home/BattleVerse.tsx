@@ -115,7 +115,7 @@ export function BattleVerse() {
             <SelectTrigger className="w-20 h-8 text-xs bg-muted border-border">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-popover border-border">
               {(Object.keys(translationNames) as BibleTranslation[]).map((t) => (
                 <SelectItem key={t} value={t}>
                   {t.toUpperCase()}
@@ -134,8 +134,8 @@ export function BattleVerse() {
         )}
         style={backgroundStyle}
       >
-        {/* Overlay for readability */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/30" />
+        {/* Overlay for readability - adapts to theme */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/30 dark:from-black/80 dark:via-black/50 dark:to-black/30" />
         
         {/* Content */}
         <div className="relative z-10 p-6">
@@ -149,12 +149,12 @@ export function BattleVerse() {
           ) : error ? (
             <div className="text-center py-8 space-y-3">
               <p className="text-sm text-foreground/70">Failed to load verse</p>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={loadVerse}
-                className="border-2 border-primary/50 hover:border-primary bg-black/30"
-              >
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={loadVerse}
+                  className="border-2 border-primary/50 hover:border-primary bg-background/80"
+                >
                 <RefreshCw className="h-4 w-4 mr-2" />
                 Retry
               </Button>
@@ -186,7 +186,7 @@ export function BattleVerse() {
                   size="sm"
                   onClick={handleGenerateBackground}
                   disabled={imageLoading}
-                  className="border-2 border-primary/60 hover:border-primary bg-black/40 hover:bg-primary/20 text-foreground"
+                  className="border-2 border-primary/60 hover:border-primary bg-background/60 hover:bg-primary/20 text-white drop-shadow-md"
                 >
                   {imageLoading ? (
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -200,7 +200,7 @@ export function BattleVerse() {
                   variant="ghost"
                   size="sm"
                   onClick={handleShare}
-                  className="hover:bg-primary/20 text-foreground"
+                  className="hover:bg-white/20 text-white"
                 >
                   <Share2 className="h-4 w-4" />
                 </Button>
@@ -210,7 +210,7 @@ export function BattleVerse() {
                     variant="ghost"
                     size="sm"
                     onClick={handleDownload}
-                    className="hover:bg-primary/20 text-foreground"
+                    className="hover:bg-white/20 text-white"
                   >
                     <Download className="h-4 w-4" />
                   </Button>
@@ -225,7 +225,7 @@ export function BattleVerse() {
         {/* Theme Badge */}
         {scripture && (
           <div className="absolute top-4 right-4 z-10">
-            <span className="px-2 py-1 rounded-md bg-black/50 text-xs font-display text-primary uppercase tracking-wider">
+            <span className="px-2 py-1 rounded-md bg-background/60 backdrop-blur-sm text-xs font-display text-primary uppercase tracking-wider">
               {getThemeDisplayName(currentTheme)}
             </span>
           </div>
