@@ -4,17 +4,18 @@ import { milestones } from '@/lib/sampleData';
 
 const STORAGE_KEY = 'faith-training-progress';
 
-const defaultProgress: UserProgress = {
-  currentStreak: 7,
-  longestStreak: 14,
-  totalSessions: 23,
-  totalMinutes: 345,
-  lastSessionDate: new Date().toISOString().split('T')[0],
-  milestones: milestones
+// Fresh start for new users - no sample data
+const freshProgress: UserProgress = {
+  currentStreak: 0,
+  longestStreak: 0,
+  totalSessions: 0,
+  totalMinutes: 0,
+  lastSessionDate: '',
+  milestones: milestones.map(m => ({ ...m, achieved: false, achievedDate: undefined }))
 };
 
 export function useProgress() {
-  const [progress, setProgress] = useState<UserProgress>(defaultProgress);
+  const [progress, setProgress] = useState<UserProgress>(freshProgress);
 
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
