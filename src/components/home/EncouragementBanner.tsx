@@ -1,35 +1,33 @@
 import { Sparkles } from 'lucide-react';
 
 const encouragements = [
-  { text: "You're growing stronger in faith each day!", verse: "2 Corinthians 5:7" },
-  { text: "God's mercies are new every morning.", verse: "Lamentations 3:23" },
-  { text: "Keep pressing on toward the goal!", verse: "Philippians 3:14" },
-  { text: "The Lord is your strength and shield.", verse: "Psalm 28:7" },
+  { text: "Be still, and know that I am God.", reference: "Psalm 46:10" },
+  { text: "Cast all your anxiety on him because he cares for you.", reference: "1 Peter 5:7" },
+  { text: "The Lord is my shepherd; I shall not want.", reference: "Psalm 23:1" },
+  { text: "I can do all things through Christ who strengthens me.", reference: "Philippians 4:13" },
+  { text: "Trust in the Lord with all your heart.", reference: "Proverbs 3:5" },
 ];
 
 export function EncouragementBanner() {
-  const today = new Date().getDay();
-  const encouragement = encouragements[today % encouragements.length];
+  // Get a consistent daily encouragement
+  const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000);
+  const encouragement = encouragements[dayOfYear % encouragements.length];
 
   return (
-    <div className="relative overflow-hidden rounded-xl gradient-golden p-5">
-      <div className="absolute top-0 right-0 w-32 h-32 opacity-20">
-        <svg viewBox="0 0 100 100" className="w-full h-full">
-          <circle cx="80" cy="20" r="40" fill="white" />
-        </svg>
-      </div>
-      
-      <div className="relative space-y-2">
-        <div className="flex items-center gap-2 text-primary-foreground/90">
-          <Sparkles className="h-4 w-4" />
-          <span className="text-sm font-medium">Daily Encouragement</span>
+    <div className="encouragement-card p-6">
+      <div className="flex items-start gap-4">
+        <div className="flex-shrink-0 w-10 h-10 rounded-full bg-accent/15 flex items-center justify-center">
+          <Sparkles className="h-5 w-5 text-accent" />
         </div>
-        <p className="text-lg font-medium text-primary-foreground">
-          {encouragement.text}
-        </p>
-        <p className="text-sm text-primary-foreground/80">
-          — {encouragement.verse}
-        </p>
+        <div className="space-y-2 flex-1">
+          <p className="text-sm font-medium text-muted-foreground">Daily Encouragement</p>
+          <p className="font-scripture text-lg text-foreground leading-relaxed italic">
+            "{encouragement.text}"
+          </p>
+          <p className="text-xs text-muted-foreground font-medium">
+            — {encouragement.reference}
+          </p>
+        </div>
       </div>
     </div>
   );
