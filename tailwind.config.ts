@@ -7,15 +7,16 @@ export default {
   theme: {
     container: {
       center: true,
-      padding: "1.5rem",
+      padding: "1rem",
       screens: {
         "2xl": "1400px",
       },
     },
     extend: {
       fontFamily: {
-        sans: ['Inter', 'sans-serif'],
-        scripture: ['Cormorant Garamond', 'serif'],
+        sans: ['Oswald', 'Roboto Condensed', 'sans-serif'],
+        display: ['Bebas Neue', 'Oswald', 'sans-serif'],
+        body: ['Oswald', 'Roboto Condensed', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -51,11 +52,8 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        // Custom spiritual colors
-        navy: "hsl(var(--navy))",
-        gold: "hsl(var(--gold))",
-        sage: "hsl(var(--sage))",
-        cream: "hsl(var(--cream))",
+        success: "hsl(var(--success))",
+        warning: "hsl(var(--warning))",
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",

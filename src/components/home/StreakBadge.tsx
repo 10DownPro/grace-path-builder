@@ -1,21 +1,20 @@
 import { Flame } from 'lucide-react';
-import { cn } from '@/lib/utils';
 
 interface StreakBadgeProps {
   streak: number;
-  className?: string;
 }
 
-export function StreakBadge({ streak, className }: StreakBadgeProps) {
+export function StreakBadge({ streak }: StreakBadgeProps) {
   return (
-    <div className={cn(
-      "inline-flex items-center gap-3 px-5 py-2.5 rounded-full",
-      "bg-accent/10 border border-accent/30",
-      "shadow-gold",
-      className
-    )}>
-      <Flame className="h-5 w-5 text-accent animate-gentle-glow" />
-      <span className="font-medium text-accent">{streak} day streak</span>
+    <div className="flex items-center gap-4 px-5 py-3 rounded-lg border-l-4 border-l-primary bg-gradient-to-r from-primary/20 to-primary/5 border-2 border-border">
+      <div className="relative">
+        <Flame className="h-8 w-8 text-primary animate-pulse-glow" />
+        <div className="absolute inset-0 blur-md bg-primary/30 -z-10" />
+      </div>
+      <div className="flex items-baseline gap-2">
+        <span className="font-display text-3xl text-foreground">{streak}</span>
+        <span className="font-display text-lg text-primary uppercase tracking-wider">Day Grind</span>
+      </div>
     </div>
   );
 }
