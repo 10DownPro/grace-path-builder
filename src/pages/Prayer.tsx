@@ -1,198 +1,190 @@
 import { useState } from 'react';
 import { PageLayout } from '@/components/layout/PageLayout';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { Plus, Check, Heart, X, Sparkles, Filter } from 'lucide-react';
+import { PrayerCard } from '@/components/prayer/PrayerCard';
+import { PrayerStats } from '@/components/prayer/PrayerStats';
+import { AddPrayerDialog } from '@/components/prayer/AddPrayerDialog';
 import { samplePrayers } from '@/lib/sampleData';
 import { PrayerEntry } from '@/types/faith';
 import { cn } from '@/lib/utils';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
+import { Filter, Sparkles, Target, BookOpen } from 'lucide-react';
 
-const prayerTypes = [
-  { id: 'adoration', label: 'Adoration', emoji: '🙌', color: 'text-primary' },
-  { id: 'confession', label: 'Confession', emoji: '💭', color: 'text-accent' },
-  { id: 'thanksgiving', label: 'Thanksgiving', emoji: '🙏', color: 'text-sage' },
-  { id: 'supplication', label: 'Supplication', emoji: '🙋', color: 'text-navy' },
+const filterOptions = [
+  { id: 'all', label: 'All' },
+  { id: 'active', label: 'Active' },
+  { id: 'answered', label: 'Answered' },
+] as const;
+
+const typeFilters = [
+  { id: 'all', label: 'All Types' },
+  { id: 'adoration', label: 'A', full: 'Adoration' },
+  { id: 'confession', label: 'C', full: 'Confession' },
+  { id: 'thanksgiving', label: 'T', full: 'Thanksgiving' },
+  { id: 'supplication', label: 'S', full: 'Supplication' },
 ] as const;
 
 export default function Prayer() {
   const [prayers, setPrayers] = useState<PrayerEntry[]>(samplePrayers);
-  const [filter, setFilter] = useState<'all' | 'active' | 'answered'>('all');
-  const [isAddOpen, setIsAddOpen] = useState(false);
-  const [newPrayerType, setNewPrayerType] = useState<PrayerEntry['type']>('thanksgiving');
-  const [newPrayerContent, setNewPrayerContent] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'answered'>('all');
+  const [typeFilter, setTypeFilter] = useState<'all' | PrayerEntry['type']>('all');
 
   const filteredPrayers = prayers.filter(p => {
-    if (filter === 'answered') return p.answered;
-    if (filter === 'active') return !p.answered;
-    return true;
+    const matchesStatus = statusFilter === 'all' 
+      || (statusFilter === 'answered' && p.answered)
+      || (statusFilter === 'active' && !p.answered);
+    const matchesType = typeFilter === 'all' || p.type === typeFilter;
+    return matchesStatus && matchesType;
   });
 
-  const answeredCount = prayers.filter(p => p.answered).length;
-
-  const addPrayer = () => {
-    if (!newPrayerContent.trim()) return;
-    
-    const newPrayer: PrayerEntry = {
+  const addPrayer = (newPrayer: Omit<PrayerEntry, 'id'>) => {
+    const prayer: PrayerEntry = {
+      ...newPrayer,
       id: Date.now().toString(),
-      date: new Date().toISOString().split('T')[0],
-      type: newPrayerType,
-      content: newPrayerContent,
-      answered: false
     };
-    
-    setPrayers([newPrayer, ...prayers]);
-    setNewPrayerContent('');
-    setIsAddOpen(false);
+    setPrayers([prayer, ...prayers]);
   };
 
-  const markAnswered = (id: string) => {
+  const markAnswered = (id: string, note: string) => {
     setPrayers(prayers.map(p => 
       p.id === id 
-        ? { ...p, answered: true, answeredDate: new Date().toISOString().split('T')[0] }
+        ? { 
+            ...p, 
+            answered: true, 
+            answeredDate: new Date().toISOString().split('T')[0],
+            answeredNote: note || undefined,
+          }
         : p
     ));
   };
 
   return (
     <PageLayout>
-      <div className="px-4 pt-12 pb-6 space-y-6">
-        {/* Header */}
-        <div className="flex items-start justify-between">
-          <div className="space-y-1">
-            <h1 className="text-2xl font-bold text-foreground">Prayer Journal</h1>
-            <p className="text-muted-foreground">Your conversations with God</p>
+      <div className="px-4 pt-8 pb-6 space-y-6">
+        {/* Hero Header */}
+        <div className="relative overflow-hidden rounded-xl gym-card p-6">
+          {/* Background pattern */}
+          <div className="absolute inset-0 opacity-5">
+            <div className="absolute inset-0" style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+            }} />
           </div>
-          <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
-            <DialogTrigger asChild>
-              <Button variant="golden" size="icon" className="rounded-full">
-                <Plus className="h-5 w-5" />
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-md">
-              <DialogHeader>
-                <DialogTitle>New Prayer</DialogTitle>
-              </DialogHeader>
-              <div className="space-y-4 pt-4">
-                <div className="flex flex-wrap gap-2">
-                  {prayerTypes.map(type => (
-                    <button
-                      key={type.id}
-                      onClick={() => setNewPrayerType(type.id)}
-                      className={cn(
-                        "px-3 py-1.5 rounded-full text-sm font-medium transition-all",
-                        newPrayerType === type.id
-                          ? "bg-primary text-primary-foreground"
-                          : "bg-muted text-muted-foreground hover:bg-muted/80"
-                      )}
-                    >
-                      {type.emoji} {type.label}
-                    </button>
-                  ))}
-                </div>
-                <Textarea
-                  value={newPrayerContent}
-                  onChange={(e) => setNewPrayerContent(e.target.value)}
-                  placeholder="Write your prayer here..."
-                  className="min-h-[150px]"
-                />
-                <Button onClick={addPrayer} className="w-full" variant="golden">
-                  Save Prayer
-                </Button>
+          
+          {/* Content */}
+          <div className="relative space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center">
+                <Target className="h-6 w-6 text-primary" />
               </div>
-            </DialogContent>
-          </Dialog>
+              <div>
+                <h1 className="font-display text-2xl uppercase tracking-wider text-foreground">
+                  Prayer Armory
+                </h1>
+                <p className="text-sm text-muted-foreground">
+                  Your spiritual warfare headquarters
+                </p>
+              </div>
+            </div>
+            
+            {/* ACTS Explainer */}
+            <div className="flex items-start gap-2 p-3 rounded-lg bg-muted/30 border border-border">
+              <BookOpen className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+              <div className="text-xs text-muted-foreground">
+                <span className="font-bold text-foreground">ACTS Method:</span>{' '}
+                <span className="text-orange-400">A</span>doration • {' '}
+                <span className="text-purple-400">C</span>onfession • {' '}
+                <span className="text-emerald-400">T</span>hanksgiving • {' '}
+                <span className="text-blue-400">S</span>upplication
+              </div>
+            </div>
+            
+            <AddPrayerDialog onAddPrayer={addPrayer} />
+          </div>
+          
+          {/* Corner decoration */}
+          <div className="absolute -top-6 -right-6 w-24 h-24 bg-primary/10 rounded-full blur-xl" />
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-2 gap-3">
-          <div className="spiritual-card p-4 text-center">
-            <p className="text-2xl font-bold text-foreground">{prayers.length}</p>
-            <p className="text-sm text-muted-foreground">Total Prayers</p>
-          </div>
-          <div className="spiritual-card p-4 text-center">
-            <p className="text-2xl font-bold text-sage">{answeredCount}</p>
-            <p className="text-sm text-muted-foreground">Answered</p>
-          </div>
-        </div>
+        <PrayerStats prayers={prayers} />
 
-        {/* Filter */}
-        <div className="flex items-center gap-2">
-          <Filter className="h-4 w-4 text-muted-foreground" />
-          {(['all', 'active', 'answered'] as const).map(f => (
-            <button
-              key={f}
-              onClick={() => setFilter(f)}
-              className={cn(
-                "px-3 py-1.5 rounded-full text-sm font-medium transition-all",
-                filter === f
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-muted text-muted-foreground"
-              )}
-            >
-              {f.charAt(0).toUpperCase() + f.slice(1)}
-            </button>
-          ))}
+        {/* Filters */}
+        <div className="space-y-3">
+          {/* Status Filter */}
+          <div className="flex items-center gap-2">
+            <Filter className="h-4 w-4 text-muted-foreground" />
+            <div className="flex gap-1">
+              {filterOptions.map(f => (
+                <button
+                  key={f.id}
+                  onClick={() => setStatusFilter(f.id)}
+                  className={cn(
+                    "px-3 py-1.5 rounded-lg text-sm font-medium transition-all",
+                    "border-2",
+                    statusFilter === f.id
+                      ? "bg-primary text-primary-foreground border-primary"
+                      : "border-border text-muted-foreground hover:border-muted-foreground/50"
+                  )}
+                >
+                  {f.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Type Filter */}
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-muted-foreground w-4">ACTS</span>
+            <div className="flex gap-1">
+              {typeFilters.map(f => (
+                <button
+                  key={f.id}
+                  onClick={() => setTypeFilter(f.id)}
+                  title={f.id === 'all' ? 'All Types' : f.full}
+                  className={cn(
+                    "px-2.5 py-1 rounded-lg text-sm font-bold transition-all",
+                    "border-2 min-w-[32px]",
+                    typeFilter === f.id
+                      ? f.id === 'adoration' ? "bg-orange-500/20 text-orange-400 border-orange-500/50"
+                      : f.id === 'confession' ? "bg-purple-500/20 text-purple-400 border-purple-500/50"
+                      : f.id === 'thanksgiving' ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/50"
+                      : f.id === 'supplication' ? "bg-blue-500/20 text-blue-400 border-blue-500/50"
+                      : "bg-primary text-primary-foreground border-primary"
+                      : "border-border text-muted-foreground hover:border-muted-foreground/50"
+                  )}
+                >
+                  {f.label}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
 
         {/* Prayer List */}
-        <div className="space-y-4">
+        <div className="space-y-4 stagger-children">
           {filteredPrayers.map(prayer => (
             <PrayerCard 
               key={prayer.id} 
               prayer={prayer}
-              onMarkAnswered={() => markAnswered(prayer.id)}
+              onMarkAnswered={(note) => markAnswered(prayer.id, note)}
             />
           ))}
           
           {filteredPrayers.length === 0 && (
-            <div className="text-center py-12">
-              <Sparkles className="h-12 w-12 text-muted-foreground/30 mx-auto mb-3" />
-              <p className="text-muted-foreground">No prayers yet. Start your conversation with God!</p>
+            <div className="gym-card p-8 text-center">
+              <div className="w-16 h-16 rounded-full bg-muted/50 flex items-center justify-center mx-auto mb-4">
+                <Sparkles className="h-8 w-8 text-muted-foreground/50" />
+              </div>
+              <p className="text-lg font-display uppercase tracking-wider text-muted-foreground mb-2">
+                No Prayers Found
+              </p>
+              <p className="text-sm text-muted-foreground">
+                {statusFilter === 'answered' 
+                  ? "Keep praying — God is always listening!"
+                  : "Start your conversation with the Almighty"}
+              </p>
             </div>
           )}
         </div>
       </div>
     </PageLayout>
-  );
-}
-
-function PrayerCard({ prayer, onMarkAnswered }: { prayer: PrayerEntry; onMarkAnswered: () => void }) {
-  const type = prayerTypes.find(t => t.id === prayer.type);
-
-  return (
-    <div className={cn(
-      "spiritual-card p-4 space-y-3",
-      prayer.answered && "border-sage/30 bg-sage/5"
-    )}>
-      <div className="flex items-start justify-between">
-        <div className="flex items-center gap-2">
-          <span>{type?.emoji}</span>
-          <span className={cn("text-sm font-medium", type?.color)}>{type?.label}</span>
-          <span className="text-xs text-muted-foreground">• {prayer.date}</span>
-        </div>
-        {!prayer.answered && (
-          <Button variant="ghost" size="sm" onClick={onMarkAnswered} className="text-sage">
-            <Check className="h-4 w-4 mr-1" />
-            Answered
-          </Button>
-        )}
-      </div>
-      
-      <p className="text-foreground/90">{prayer.content}</p>
-      
-      {prayer.answered && (
-        <div className="flex items-center gap-2 text-sm text-sage">
-          <Heart className="h-4 w-4 fill-current" />
-          <span>Answered on {prayer.answeredDate}</span>
-        </div>
-      )}
-    </div>
   );
 }
