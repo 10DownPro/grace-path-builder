@@ -75,6 +75,12 @@ export default function Session() {
     const currentDuration = todaySession?.duration_minutes || 0;
     updates.duration_minutes = currentDuration + phase.duration;
 
+    // Track verses read when completing scripture phase (1 verse per scripture session)
+    if (currentPhase === 'scripture') {
+      const currentVerses = todaySession?.verses_read || 0;
+      updates.verses_read = currentVerses + 1;
+    }
+
     const result = await updateTodaySession(updates as any);
     setSaving(false);
 

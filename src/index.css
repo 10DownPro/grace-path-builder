@@ -302,3 +302,8 @@
 .stagger-children > *:nth-child(6) { animation-delay: 300ms; }
 .stagger-children > *:nth-child(7) { animation-delay: 360ms; }
 .stagger-children > *:nth-child(8) { animation-delay: 420ms; }
+
+/* Safe area padding for mobile devices with notches/home indicators */
+.safe-area-pb {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}

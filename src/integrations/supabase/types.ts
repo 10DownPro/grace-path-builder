@@ -326,6 +326,42 @@ export type Database = {
         }
         Relationships: []
       }
+      notification_preferences: {
+        Row: {
+          created_at: string
+          enabled: boolean
+          id: string
+          last_notified_at: string | null
+          preferred_time: string
+          push_subscription: Json | null
+          timezone: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          last_notified_at?: string | null
+          preferred_time?: string
+          push_subscription?: Json | null
+          timezone?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          last_notified_at?: string | null
+          preferred_time?: string
+          push_subscription?: Json | null
+          timezone?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       prayers: {
         Row: {
           answered: boolean
@@ -413,6 +449,7 @@ export type Database = {
           session_date: string
           updated_at: string
           user_id: string
+          verses_read: number
           worship_completed: boolean
         }
         Insert: {
@@ -426,6 +463,7 @@ export type Database = {
           session_date?: string
           updated_at?: string
           user_id: string
+          verses_read?: number
           worship_completed?: boolean
         }
         Update: {
@@ -439,6 +477,7 @@ export type Database = {
           session_date?: string
           updated_at?: string
           user_id?: string
+          verses_read?: number
           worship_completed?: boolean
         }
         Relationships: []
