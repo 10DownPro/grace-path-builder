@@ -2,8 +2,10 @@ import { PageLayout } from '@/components/layout/PageLayout';
 import { useUserProgress } from '@/hooks/useUserProgress';
 import { usePrayers } from '@/hooks/usePrayers';
 import { useSessions } from '@/hooks/useSessions';
-import { Flame, Trophy, Clock, BookOpen, Calendar, TrendingUp, Award, Dumbbell, Target, Zap, Loader2 } from 'lucide-react';
+import { useMilestones } from '@/hooks/useMilestones';
+import { Flame, Trophy, Clock, BookOpen, Calendar, TrendingUp, Award, Dumbbell, Target, Zap, Loader2, ChevronDown, ChevronUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useState } from 'react';
 
 // Simple bar chart component
 function SimpleBarChart({ data, maxValue }: { data: number[]; maxValue: number }) {
@@ -79,14 +81,16 @@ function ProgressRing({ value, max, size = 80, strokeWidth = 8, children }: {
   );
 }
 
-// Milestone badge graphics
-const badgeStyles = {
+// Badge styles for different tiers
+const badgeStyles: Record<string, string> = {
   bronze: 'from-amber-700 to-amber-500',
   silver: 'from-slate-400 to-slate-300',
   gold: 'from-yellow-500 to-yellow-300',
+  platinum: 'from-cyan-400 to-blue-300',
+  diamond: 'from-purple-400 to-pink-300',
 };
 
-function MilestoneBadge({ type, achieved }: { type: 'bronze' | 'silver' | 'gold'; achieved: boolean }) {
+function MilestoneBadge({ tier, achieved, emoji }: { tier: string; achieved: boolean; emoji?: string }) {
   if (!achieved) {
     return (
       <div className="w-12 h-12 rounded-xl bg-muted flex items-center justify-center">
@@ -95,58 +99,31 @@ function MilestoneBadge({ type, achieved }: { type: 'bronze' | 'silver' | 'gold'
     );
   }
 
+  const style = badgeStyles[tier] || badgeStyles.bronze;
+
   return (
     <div className={cn(
       "w-12 h-12 rounded-xl bg-gradient-to-br flex items-center justify-center shadow-lg",
-      badgeStyles[type]
+      style
     )}>
-      <Trophy className="h-6 w-6 text-white drop-shadow-md" />
+      {emoji ? (
+        <span className="text-xl">{emoji}</span>
+      ) : (
+        <Trophy className="h-6 w-6 text-white drop-shadow-md" />
+      )}
     </div>
   );
 }
 
-// Default milestones for new users
-const defaultMilestones = [
-  {
-    id: '1',
-    name: 'First Steps',
-    description: 'Complete your first devotional session',
-    scripture: '"For we walk by faith, not by sight." - 2 Corinthians 5:7',
-    achieved: false,
-    icon: '🌱'
-  },
-  {
-    id: '2',
-    name: 'Week of Faith',
-    description: 'Complete 7 consecutive days',
-    scripture: '"But they that wait upon the LORD shall renew their strength." - Isaiah 40:31',
-    achieved: false,
-    icon: '🌿'
-  },
-  {
-    id: '3',
-    name: 'Prayer Warrior',
-    description: 'Write 30 prayer entries',
-    scripture: '"Pray without ceasing." - 1 Thessalonians 5:17',
-    achieved: false,
-    icon: '🙏'
-  },
-  {
-    id: '4',
-    name: 'Month of Devotion',
-    description: 'Complete 30 consecutive days',
-    scripture: '"Be still, and know that I am God." - Psalm 46:10',
-    achieved: false,
-    icon: '🌳'
-  }
-];
 
 export default function Progress() {
   const { progress, loading: progressLoading } = useUserProgress();
   const { prayers, loading: prayersLoading } = usePrayers();
   const { sessions, getCompletedDates, getWeeklyData, loading: sessionsLoading } = useSessions();
+  const { milestones, userMilestones, isMilestoneAchieved, loading: milestonesLoading } = useMilestones();
+  const [showAllMilestones, setShowAllMilestones] = useState(false);
 
-  if (progressLoading || prayersLoading || sessionsLoading) {
+  if (progressLoading || prayersLoading || sessionsLoading || milestonesLoading) {
     return (
       <PageLayout>
         <div className="min-h-screen flex items-center justify-center">
@@ -277,22 +254,18 @@ export default function Progress() {
     { label: 'Total Prayers', value: prayers.length.toString(), icon: Target },
   ];
 
-  // Calculate milestones based on actual progress
-  const milestones = defaultMilestones.map(m => {
-    let achieved = false;
-    if (m.id === '1') achieved = totalSessions >= 1;
-    if (m.id === '2') achieved = longestStreak >= 7;
-    if (m.id === '3') achieved = prayers.length >= 30;
-    if (m.id === '4') achieved = longestStreak >= 30;
-    return { ...m, achieved };
-  });
-
-  // Determine badge type based on milestone
-  const getBadgeType = (name: string): 'bronze' | 'silver' | 'gold' => {
-    if (name.includes('Month')) return 'gold';
-    if (name.includes('Week') || name.includes('Warrior')) return 'silver';
-    return 'bronze';
-  };
+  // Group milestones by type for display
+  const milestoneTypes = ['streak', 'sessions', 'prayer', 'scripture', 'worship', 'battles', 'time', 'community', 'growth', 'comeback', 'saved_verses'];
+  
+  // Get achieved and unachieved milestones
+  const achievedMilestoneIds = new Set(userMilestones.map(um => um.milestone_id));
+  const displayMilestones = milestones.map(m => ({
+    ...m,
+    achieved: achievedMilestoneIds.has(m.id)
+  }));
+  
+  // Show first 6 milestones by default, or all if expanded
+  const visibleMilestones = showAllMilestones ? displayMilestones : displayMilestones.slice(0, 6);
 
   return (
     <PageLayout>
@@ -453,12 +426,16 @@ export default function Progress() {
 
         {/* Milestones with actual badge graphics */}
         <div className="space-y-3">
-          <div className="flex items-center gap-2">
-            <Trophy className="h-5 w-5 text-warning" />
-            <h2 className="font-display text-lg text-warning uppercase tracking-wide">Milestones</h2>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Trophy className="h-5 w-5 text-warning" />
+              <h2 className="font-display text-lg text-warning uppercase tracking-wide">
+                Milestones ({achievedMilestoneIds.size}/{milestones.length})
+              </h2>
+            </div>
           </div>
           
-          {milestones.map(milestone => (
+          {visibleMilestones.map(milestone => (
             <div 
               key={milestone.id}
               className={cn(
@@ -467,12 +444,23 @@ export default function Progress() {
               )}
             >
               <MilestoneBadge 
-                type={getBadgeType(milestone.name)} 
-                achieved={milestone.achieved} 
+                tier={milestone.tier} 
+                achieved={milestone.achieved}
+                emoji={milestone.icon_emoji}
               />
               <div className="flex-1">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
                   <p className="font-display text-sm text-foreground uppercase tracking-wide">{milestone.name}</p>
+                  <span className={cn(
+                    "text-xs px-2 py-0.5 rounded-md font-bold uppercase",
+                    milestone.tier === 'bronze' && "bg-amber-500/20 text-amber-500",
+                    milestone.tier === 'silver' && "bg-slate-400/20 text-slate-400",
+                    milestone.tier === 'gold' && "bg-yellow-500/20 text-yellow-500",
+                    milestone.tier === 'platinum' && "bg-cyan-400/20 text-cyan-400",
+                    milestone.tier === 'diamond' && "bg-purple-400/20 text-purple-400"
+                  )}>
+                    {milestone.tier}
+                  </span>
                   {milestone.achieved && (
                     <span className="text-xs bg-success/20 text-success px-2 py-0.5 rounded-md font-bold uppercase">
                       Unlocked
@@ -480,10 +468,34 @@ export default function Progress() {
                   )}
                 </div>
                 <p className="text-sm text-muted-foreground mt-1">{milestone.description}</p>
-                <p className="text-xs text-primary mt-2 italic">{milestone.scripture}</p>
+                {milestone.scripture_reference && (
+                  <p className="text-xs text-primary mt-2 italic">
+                    "{milestone.scripture_text}" — {milestone.scripture_reference}
+                  </p>
+                )}
               </div>
             </div>
           ))}
+
+          {/* Show more/less button */}
+          {milestones.length > 6 && (
+            <button
+              onClick={() => setShowAllMilestones(!showAllMilestones)}
+              className="w-full py-3 text-center text-sm font-display uppercase tracking-wide text-primary hover:text-primary/80 flex items-center justify-center gap-2"
+            >
+              {showAllMilestones ? (
+                <>
+                  <ChevronUp className="h-4 w-4" />
+                  Show Less
+                </>
+              ) : (
+                <>
+                  <ChevronDown className="h-4 w-4" />
+                  Show All {milestones.length} Milestones
+                </>
+              )}
+            </button>
+          )}
         </div>
 
         {/* Growth Insight with gritty styling */}
