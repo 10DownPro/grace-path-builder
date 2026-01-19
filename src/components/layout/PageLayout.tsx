@@ -1,0 +1,18 @@
+import { ReactNode } from 'react';
+import { Navigation } from './Navigation';
+
+interface PageLayoutProps {
+  children: ReactNode;
+  showNav?: boolean;
+}
+
+export function PageLayout({ children, showNav = true }: PageLayoutProps) {
+  return (
+    <div className="min-h-screen gradient-dawn">
+      <main className="pb-24">
+        {children}
+      </main>
+      {showNav && <Navigation />}
+    </div>
+  );
+}
