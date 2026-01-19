@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Heart, Shield, Target, Users } from 'lucide-react';
+import { Home, Heart, Shield, BarChart3, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { LucideIcon } from 'lucide-react';
 
@@ -13,8 +13,8 @@ const navItems: NavItem[] = [
   { path: '/', icon: Home, label: 'Home' },
   { path: '/session', icon: Heart, label: 'Train' },
   { path: '/battles', icon: Shield, label: 'Battles' },
+  { path: '/progress', icon: BarChart3, label: 'Stats' },
   { path: '/friends', icon: Users, label: 'Squad' },
-  { path: '/prayer', icon: Target, label: 'Prayer' },
 ];
 
 export function Navigation() {
