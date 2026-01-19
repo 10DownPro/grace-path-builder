@@ -1,6 +1,7 @@
 import { PageLayout } from '@/components/layout/PageLayout';
-import { useProgress } from '@/hooks/useProgress';
-import { Flame, Trophy, Clock, BookOpen, Calendar, TrendingUp, Award, Star, Dumbbell, Target, Zap } from 'lucide-react';
+import { useUserProgress } from '@/hooks/useUserProgress';
+import { usePrayers } from '@/hooks/usePrayers';
+import { Flame, Trophy, Clock, BookOpen, Calendar, TrendingUp, Award, Dumbbell, Target, Zap, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 // Simple bar chart component
@@ -8,7 +9,7 @@ function SimpleBarChart({ data, maxValue }: { data: number[]; maxValue: number }
   return (
     <div className="flex items-end justify-between gap-1 h-20">
       {data.map((value, index) => {
-        const height = (value / maxValue) * 100;
+        const height = maxValue > 0 ? (value / maxValue) * 100 : 0;
         return (
           <div key={index} className="flex-1 flex flex-col items-center gap-1">
             <div 
@@ -35,7 +36,7 @@ function ProgressRing({ value, max, size = 80, strokeWidth = 8, children }: {
 }) {
   const radius = (size - strokeWidth) / 2;
   const circumference = radius * 2 * Math.PI;
-  const progress = Math.min(value / max, 1);
+  const progress = max > 0 ? Math.min(value / max, 1) : 0;
   const offset = circumference - (progress * circumference);
 
   return (
@@ -103,43 +104,106 @@ function MilestoneBadge({ type, achieved }: { type: 'bronze' | 'silver' | 'gold'
   );
 }
 
+// Default milestones for new users
+const defaultMilestones = [
+  {
+    id: '1',
+    name: 'First Steps',
+    description: 'Complete your first devotional session',
+    scripture: '"For we walk by faith, not by sight." - 2 Corinthians 5:7',
+    achieved: false,
+    icon: '🌱'
+  },
+  {
+    id: '2',
+    name: 'Week of Faith',
+    description: 'Complete 7 consecutive days',
+    scripture: '"But they that wait upon the LORD shall renew their strength." - Isaiah 40:31',
+    achieved: false,
+    icon: '🌿'
+  },
+  {
+    id: '3',
+    name: 'Prayer Warrior',
+    description: 'Write 30 prayer entries',
+    scripture: '"Pray without ceasing." - 1 Thessalonians 5:17',
+    achieved: false,
+    icon: '🙏'
+  },
+  {
+    id: '4',
+    name: 'Month of Devotion',
+    description: 'Complete 30 consecutive days',
+    scripture: '"Be still, and know that I am God." - Psalm 46:10',
+    achieved: false,
+    icon: '🌳'
+  }
+];
+
 export default function Progress() {
-  const { progress } = useProgress();
+  const { progress, loading: progressLoading } = useUserProgress();
+  const { prayers, loading: prayersLoading } = usePrayers();
+
+  if (progressLoading || prayersLoading) {
+    return (
+      <PageLayout>
+        <div className="min-h-screen flex items-center justify-center">
+          <Loader2 className="h-8 w-8 text-primary animate-spin" />
+        </div>
+      </PageLayout>
+    );
+  }
+
+  const currentStreak = progress?.current_streak || 0;
+  const longestStreak = progress?.longest_streak || 0;
+  const totalSessions = progress?.total_sessions || 0;
+  const totalMinutes = progress?.total_minutes || 0;
 
   const stats = [
-    { label: 'Current Streak', value: progress.currentStreak, suffix: 'days', icon: Flame, color: 'text-primary' },
-    { label: 'Best Streak', value: progress.longestStreak, suffix: 'days', icon: Trophy, color: 'text-warning' },
-    { label: 'Total Sessions', value: progress.totalSessions, suffix: '', icon: Dumbbell, color: 'text-success' },
-    { label: 'Time in Prayer', value: progress.totalMinutes, suffix: 'min', icon: Clock, color: 'text-secondary' },
+    { label: 'Current Streak', value: currentStreak, suffix: 'days', icon: Flame, color: 'text-primary' },
+    { label: 'Best Streak', value: longestStreak, suffix: 'days', icon: Trophy, color: 'text-warning' },
+    { label: 'Total Sessions', value: totalSessions, suffix: '', icon: Dumbbell, color: 'text-success' },
+    { label: 'Time in Prayer', value: totalMinutes, suffix: 'min', icon: Clock, color: 'text-secondary' },
   ];
 
-  // Generate calendar data for current month
+  // Generate calendar data - no completed days for new users
   const today = new Date();
   const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
   const firstDay = new Date(today.getFullYear(), today.getMonth(), 1).getDay();
-  const completedDays = new Set([1, 2, 3, 4, 5, 6, 7, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]);
+  // Empty set - will be populated from database later
+  const completedDays = new Set<number>();
 
-  // Weekly session data (mock)
-  const weeklyData = [4, 3, 4, 2, 4, 3, 4]; // Sessions per day this week
+  // Weekly session data - zeros for new users
+  const weeklyData = [0, 0, 0, 0, 0, 0, 0];
 
-  // Weekly goals
+  // Weekly goals - use actual data from database
   const weeklyGoals = [
-    { label: 'Sessions', current: 5, target: 7, icon: Zap },
-    { label: 'Prayers', current: 12, target: 15, icon: Target },
-    { label: 'Verses', current: 18, target: 20, icon: BookOpen },
+    { label: 'Sessions', current: totalSessions, target: 7, icon: Zap },
+    { label: 'Prayers', current: prayers.length, target: 15, icon: Target },
+    { label: 'Verses', current: 0, target: 20, icon: BookOpen },
   ];
 
-  // Personal records
+  // Personal records - based on actual progress
   const personalRecords = [
-    { label: 'Longest Session', value: '47 min', icon: Clock },
-    { label: 'Consecutive Days', value: '21', icon: Flame },
-    { label: 'Total Verses', value: '847', icon: BookOpen },
+    { label: 'Longest Session', value: totalMinutes > 0 ? `${Math.min(totalMinutes, 60)} min` : '0 min', icon: Clock },
+    { label: 'Consecutive Days', value: longestStreak.toString(), icon: Flame },
+    { label: 'Total Prayers', value: prayers.length.toString(), icon: Target },
   ];
+
+  // Calculate milestones based on actual progress
+  const milestones = defaultMilestones.map(m => {
+    let achieved = false;
+    if (m.id === '1') achieved = totalSessions >= 1;
+    if (m.id === '2') achieved = longestStreak >= 7;
+    if (m.id === '3') achieved = prayers.length >= 30;
+    if (m.id === '4') achieved = longestStreak >= 30;
+    return { ...m, achieved };
+  });
 
   // Determine badge type based on milestone
   const getBadgeType = (name: string): 'bronze' | 'silver' | 'gold' => {
-    if (name.includes('100') || name.includes('Year')) return 'gold';
-    if (name.includes('30') || name.includes('Month')) return 'silver';
+    if (name.includes('Month')) return 'gold';
+    if (name.includes('Week') || name.includes('Warrior')) return 'silver';
     return 'bronze';
   };
 
@@ -159,8 +223,10 @@ export default function Progress() {
               <Flame className="h-8 w-8 text-primary" />
             </div>
             <div>
-              <p className="font-display text-5xl text-foreground">{progress.currentStreak}</p>
-              <p className="font-display text-sm text-primary uppercase tracking-wide">Day Grind 🔥</p>
+              <p className="font-display text-5xl text-foreground">{currentStreak}</p>
+              <p className="font-display text-sm text-primary uppercase tracking-wide">
+                {currentStreak === 0 ? 'Start Your Grind 💪' : 'Day Grind 🔥'}
+              </p>
             </div>
           </div>
           <p className="mt-4 text-sm text-muted-foreground italic border-l-2 border-primary/30 pl-3">
@@ -277,7 +343,7 @@ export default function Progress() {
                         ? "bg-muted/30 text-muted-foreground/50" 
                         : "bg-muted/50 text-muted-foreground"
                   )}
-                  title={isCompleted ? `Day ${day}: Completed 4/4 sets` : undefined}
+                  title={isCompleted ? `Day ${day}: Completed` : undefined}
                 >
                   {day}
                 </div>
@@ -305,7 +371,7 @@ export default function Progress() {
             <h2 className="font-display text-lg text-warning uppercase tracking-wide">Milestones</h2>
           </div>
           
-          {progress.milestones.map(milestone => (
+          {milestones.map(milestone => (
             <div 
               key={milestone.id}
               className={cn(
@@ -340,8 +406,11 @@ export default function Progress() {
             <span className="font-display text-sm uppercase tracking-wide">Growth Insight</span>
           </div>
           <p className="text-foreground">
-            You've spent an average of <strong className="text-primary">15 minutes</strong> in prayer each session. 
-            Your consistency is building a strong foundation. <span className="text-primary font-bold">Keep grinding!</span>
+            {totalSessions === 0 ? (
+              <>Start your first session to begin tracking your spiritual growth. <span className="text-primary font-bold">Let's go!</span></>
+            ) : (
+              <>You've completed <strong className="text-primary">{totalSessions} session{totalSessions !== 1 ? 's' : ''}</strong> and spent <strong className="text-primary">{totalMinutes} minutes</strong> in devotion. <span className="text-primary font-bold">Keep grinding!</span></>
+            )}
           </p>
         </div>
       </div>
