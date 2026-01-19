@@ -1,11 +1,20 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { PageLayout } from '@/components/layout/PageLayout';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, Play, Check, Heart, BookOpen, PenLine, Lightbulb, ExternalLink } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Play, Check, Heart, BookOpen, PenLine, Lightbulb, ExternalLink, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { todayScripture, worshipResources, dailyPrompts } from '@/lib/sampleData';
+import { worshipResources, dailyPrompts } from '@/lib/sampleData';
 import { Link } from 'react-router-dom';
 import { Textarea } from '@/components/ui/textarea';
+import { useScripture, BibleTranslation, translationNames } from '@/hooks/useScripture';
+import { Scripture } from '@/types/faith';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 type SessionPhase = 'worship' | 'scripture' | 'prayer' | 'reflection';
 
@@ -38,12 +47,6 @@ export default function Session() {
     }
   };
 
-  const goNext = () => {
-    if (currentIndex < phases.length - 1) {
-      setCurrentPhase(phases[currentIndex + 1].id);
-    }
-  };
-
   return (
     <PageLayout>
       <div className="min-h-screen flex flex-col">
@@ -63,7 +66,7 @@ export default function Session() {
 
           {/* Progress dots */}
           <div className="flex items-center justify-center gap-2">
-            {phases.map((p, i) => (
+            {phases.map((p) => (
               <button
                 key={p.id}
                 onClick={() => setCurrentPhase(p.id)}
@@ -179,19 +182,61 @@ function WorshipContent() {
 }
 
 function ScriptureContent() {
+  const [translation, setTranslation] = useState<BibleTranslation>('kjv');
+  const [scripture, setScripture] = useState<Scripture | null>(null);
+  const { fetchDailyVerse, loading, error } = useScripture();
+
+  useEffect(() => {
+    loadScripture();
+  }, [translation]);
+
+  const loadScripture = async () => {
+    const verse = await fetchDailyVerse(translation);
+    if (verse) {
+      setScripture(verse);
+    }
+  };
+
   return (
     <div className="space-y-6">
-      <p className="text-muted-foreground">
-        Read today's Scripture slowly and let the words sink deep into your heart.
-      </p>
-
-      <div className="p-6 rounded-xl bg-muted/30 border border-border/50">
-        <p className="text-sm font-medium text-primary mb-3">{todayScripture.reference}</p>
-        <blockquote className="font-scripture text-xl leading-relaxed text-foreground italic">
-          "{todayScripture.text}"
-        </blockquote>
-        <p className="text-sm text-muted-foreground mt-3">{todayScripture.translation}</p>
+      <div className="flex items-center justify-between">
+        <p className="text-muted-foreground">
+          Read today's Scripture slowly and let the words sink deep into your heart.
+        </p>
+        <Select value={translation} onValueChange={(v) => setTranslation(v as BibleTranslation)}>
+          <SelectTrigger className="w-20">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {(Object.keys(translationNames) as BibleTranslation[]).map((t) => (
+              <SelectItem key={t} value={t}>
+                {t.toUpperCase()}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
+
+      {loading ? (
+        <div className="flex items-center justify-center py-12">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      ) : error ? (
+        <div className="p-6 rounded-xl bg-destructive/10 border border-destructive/20 text-center">
+          <p className="text-destructive mb-3">Failed to load scripture</p>
+          <Button variant="outline" size="sm" onClick={loadScripture}>
+            Try Again
+          </Button>
+        </div>
+      ) : scripture ? (
+        <div className="p-6 rounded-xl bg-muted/30 border border-border/50">
+          <p className="text-sm font-medium text-primary mb-3">{scripture.reference}</p>
+          <blockquote className="font-scripture text-xl leading-relaxed text-foreground italic">
+            "{scripture.text}"
+          </blockquote>
+          <p className="text-sm text-muted-foreground mt-3">{scripture.translation}</p>
+        </div>
+      ) : null}
 
       <div className="space-y-2">
         <h3 className="font-medium text-foreground">Reflection Questions</h3>
