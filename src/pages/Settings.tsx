@@ -1,13 +1,22 @@
 import { PageLayout } from '@/components/layout/PageLayout';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, Bell, BookOpen, Clock, User, Moon, Shield, HelpCircle, Heart } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Bell, BookOpen, Clock, User, Moon, Shield, HelpCircle, Heart, RotateCcw } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Switch } from '@/components/ui/switch';
 import { useState } from 'react';
+import { useOnboarding } from '@/hooks/useOnboarding';
+import { toast } from 'sonner';
 
 export default function Settings() {
   const [notifications, setNotifications] = useState(true);
   const [darkMode, setDarkMode] = useState(false);
+  const { userData, resetOnboarding } = useOnboarding();
+
+  const handleResetOnboarding = () => {
+    resetOnboarding();
+    toast.success('Onboarding reset! Refresh to see it again.');
+    window.location.href = '/';
+  };
 
   const settingsGroups = [
     {
@@ -49,7 +58,7 @@ export default function Settings() {
         {
           icon: User,
           label: 'Profile',
-          description: 'Manage your account',
+          description: userData?.name || 'Manage your account',
           type: 'link' as const
         },
         {
@@ -57,6 +66,13 @@ export default function Settings() {
           label: 'Privacy',
           description: 'Data and privacy settings',
           type: 'link' as const
+        },
+        {
+          icon: RotateCcw,
+          label: 'Reset Onboarding',
+          description: 'Go through setup again',
+          type: 'action' as const,
+          action: handleResetOnboarding
         },
       ]
     },
@@ -108,6 +124,15 @@ export default function Settings() {
                   </div>
                   {item.type === 'toggle' ? (
                     <Switch checked={item.value} onCheckedChange={item.onChange} />
+                  ) : item.type === 'action' ? (
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={item.action}
+                      className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                    >
+                      Reset
+                    </Button>
                   ) : (
                     <ChevronRight className="h-5 w-5 text-muted-foreground" />
                   )}

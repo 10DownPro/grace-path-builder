@@ -6,7 +6,9 @@ import { WeeklyGrind } from '@/components/home/WeeklyGrind';
 import { MissionCard } from '@/components/home/MissionCard';
 import { BattleVerse } from '@/components/home/BattleVerse';
 import { BattleMode } from '@/components/session/BattleMode';
+import { OnboardingFlow } from '@/components/onboarding/OnboardingFlow';
 import { useProgress } from '@/hooks/useProgress';
+import { useOnboarding } from '@/hooks/useOnboarding';
 import { Settings, Shield, Flame, Zap, Trophy, TrendingUp } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -32,6 +34,7 @@ const dailyMissions = [
 
 export default function Index() {
   const { progress } = useProgress();
+  const { isComplete, userData, completeOnboarding } = useOnboarding();
   const [battleModeOpen, setBattleModeOpen] = useState(false);
   const formattedDate = getFormattedDate();
   
@@ -42,6 +45,24 @@ export default function Index() {
   const handleBattleModeComplete = () => {
     toast.success('Battle Mode Victory! 🏆 Streak maintained!');
   };
+
+  // Show loading state while checking onboarding status
+  if (isComplete === null) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center animate-pulse">
+          <Flame className="h-6 w-6 text-primary" />
+        </div>
+      </div>
+    );
+  }
+
+  // Show onboarding if not complete
+  if (!isComplete) {
+    return <OnboardingFlow onComplete={completeOnboarding} />;
+  }
+
+  const userName = userData?.name || 'Soldier';
 
   return (
     <PageLayout>
@@ -65,10 +86,10 @@ export default function Index() {
                 <p className="text-xs text-primary font-display uppercase tracking-[0.3em]">
                   {formattedDate}
                 </p>
-                <h1 className="font-display text-5xl text-foreground uppercase tracking-wide leading-none">
-                  Time to
+                <h1 className="font-display text-4xl text-foreground uppercase tracking-wide leading-none">
+                  Let's go,
                   <br />
-                  <span className="text-primary">Train</span>
+                  <span className="text-primary">{userName}</span>
                 </h1>
                 <p className="text-sm text-muted-foreground uppercase tracking-widest font-medium">
                   No days off. No excuses.
