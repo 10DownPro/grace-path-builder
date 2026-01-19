@@ -14,6 +14,86 @@ export type Database = {
   }
   public: {
     Tables: {
+      challenge_progress: {
+        Row: {
+          challenge_id: string
+          current_value: number
+          id: string
+          last_updated: string
+          user_id: string
+        }
+        Insert: {
+          challenge_id: string
+          current_value?: number
+          id?: string
+          last_updated?: string
+          user_id: string
+        }
+        Update: {
+          challenge_id?: string
+          current_value?: number
+          id?: string
+          last_updated?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "challenge_progress_challenge_id_fkey"
+            columns: ["challenge_id"]
+            isOneToOne: false
+            referencedRelation: "challenges"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      challenges: {
+        Row: {
+          challenge_name: string
+          challenge_type: string
+          challenged_id: string
+          challenger_id: string
+          created_at: string
+          description: string | null
+          end_date: string
+          id: string
+          start_date: string
+          status: string
+          target_value: number
+          updated_at: string
+          winner_id: string | null
+        }
+        Insert: {
+          challenge_name: string
+          challenge_type: string
+          challenged_id: string
+          challenger_id: string
+          created_at?: string
+          description?: string | null
+          end_date: string
+          id?: string
+          start_date?: string
+          status?: string
+          target_value?: number
+          updated_at?: string
+          winner_id?: string | null
+        }
+        Update: {
+          challenge_name?: string
+          challenge_type?: string
+          challenged_id?: string
+          challenger_id?: string
+          created_at?: string
+          description?: string | null
+          end_date?: string
+          id?: string
+          start_date?: string
+          status?: string
+          target_value?: number
+          updated_at?: string
+          winner_id?: string | null
+        }
+        Relationships: []
+      }
       crisis_resources: {
         Row: {
           category_id: string | null
@@ -168,6 +248,84 @@ export type Database = {
           },
         ]
       }
+      friendships: {
+        Row: {
+          addressee_id: string
+          created_at: string
+          id: string
+          requester_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          addressee_id: string
+          created_at?: string
+          id?: string
+          requester_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          addressee_id?: string
+          created_at?: string
+          id?: string
+          requester_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      milestones: {
+        Row: {
+          created_at: string
+          description: string
+          display_order: number
+          icon_emoji: string
+          id: string
+          is_active: boolean
+          milestone_type: string
+          name: string
+          requirement_type: string
+          requirement_value: number
+          reward_message: string | null
+          scripture_reference: string | null
+          scripture_text: string | null
+          tier: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          display_order?: number
+          icon_emoji?: string
+          id?: string
+          is_active?: boolean
+          milestone_type: string
+          name: string
+          requirement_type: string
+          requirement_value: number
+          reward_message?: string | null
+          scripture_reference?: string | null
+          scripture_text?: string | null
+          tier?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          display_order?: number
+          icon_emoji?: string
+          id?: string
+          is_active?: boolean
+          milestone_type?: string
+          name?: string
+          requirement_type?: string
+          requirement_value?: number
+          reward_message?: string | null
+          scripture_reference?: string | null
+          scripture_text?: string | null
+          tier?: string
+        }
+        Relationships: []
+      }
       prayers: {
         Row: {
           answered: boolean
@@ -209,6 +367,7 @@ export type Database = {
           commitment: string
           created_at: string
           focus_areas: string[] | null
+          friend_code: string | null
           id: string
           name: string
           preferred_time: string
@@ -220,6 +379,7 @@ export type Database = {
           commitment?: string
           created_at?: string
           focus_areas?: string[] | null
+          friend_code?: string | null
           id?: string
           name?: string
           preferred_time?: string
@@ -231,6 +391,7 @@ export type Database = {
           commitment?: string
           created_at?: string
           focus_areas?: string[] | null
+          friend_code?: string | null
           id?: string
           name?: string
           preferred_time?: string
@@ -316,6 +477,41 @@ export type Database = {
             columns: ["category_id"]
             isOneToOne: false
             referencedRelation: "feeling_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_milestones: {
+        Row: {
+          achieved_at: string
+          id: string
+          is_viewed: boolean
+          milestone_id: string
+          shared_count: number
+          user_id: string
+        }
+        Insert: {
+          achieved_at?: string
+          id?: string
+          is_viewed?: boolean
+          milestone_id: string
+          shared_count?: number
+          user_id: string
+        }
+        Update: {
+          achieved_at?: string
+          id?: string
+          is_viewed?: boolean
+          milestone_id?: string
+          shared_count?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_milestones_milestone_id_fkey"
+            columns: ["milestone_id"]
+            isOneToOne: false
+            referencedRelation: "milestones"
             referencedColumns: ["id"]
           },
         ]
