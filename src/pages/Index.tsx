@@ -157,7 +157,7 @@ export default function Index() {
           <WeeklyGrind 
             sessions={totalSessions} 
             prayers={prayers.length} 
-            verses={18} 
+            verses={0} 
           />
 
           {/* Daily Mission */}
