@@ -11,6 +11,7 @@ import { Scripture } from '@/types/faith';
 import { YouTubeWorshipPlayer } from '@/components/session/YouTubeWorshipPlayer';
 import { toast } from 'sonner';
 import { useSessions } from '@/hooks/useSessions';
+import { useMilestoneChecker } from '@/hooks/useMilestoneChecker';
 import {
   Select,
   SelectContent,
@@ -31,6 +32,7 @@ const phases: { id: SessionPhase; label: string; icon: React.ElementType; durati
 export default function Session() {
   const navigate = useNavigate();
   const { todaySession, updateTodaySession, getOrCreateTodaySession, loading: sessionsLoading } = useSessions();
+  const { checkAndAwardMilestones } = useMilestoneChecker();
   const [currentPhase, setCurrentPhase] = useState<SessionPhase>('worship');
   const [prayerText, setPrayerText] = useState('');
   const [reflectionText, setReflectionText] = useState('');
@@ -94,8 +96,11 @@ export default function Session() {
       toast.success('Set complete! 💪 Keep pushing!');
     } else {
       toast.success('Training session complete! 🏆 You showed up today!');
-      // Navigate back to home after completing all
-      setTimeout(() => navigate('/'), 1500);
+      // Check and award any earned milestones
+      setTimeout(async () => {
+        await checkAndAwardMilestones();
+        navigate('/');
+      }, 1500);
     }
   };
 

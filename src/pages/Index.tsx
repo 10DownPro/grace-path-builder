@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { PageLayout } from '@/components/layout/PageLayout';
 import { StreakBadge } from '@/components/home/StreakBadge';
 import { WorkoutCard } from '@/components/home/WorkoutCard';
@@ -11,6 +11,7 @@ import { useProfile } from '@/hooks/useProfile';
 import { useUserProgress } from '@/hooks/useUserProgress';
 import { usePrayers } from '@/hooks/usePrayers';
 import { useSessions } from '@/hooks/useSessions';
+import { useMilestoneChecker } from '@/hooks/useMilestoneChecker';
 import { Settings, Shield, Flame, Zap, Trophy, TrendingUp } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -32,8 +33,16 @@ export default function Index() {
   const { progress, loading: progressLoading } = useUserProgress();
   const { prayers } = usePrayers();
   const { todaySession, loading: sessionsLoading, getWeeklyData, getWeeklyVersesRead } = useSessions();
+  const { checkAndAwardMilestones } = useMilestoneChecker();
   const [battleModeOpen, setBattleModeOpen] = useState(false);
   const formattedDate = getFormattedDate();
+
+  // Check milestones on page load
+  useEffect(() => {
+    if (!profileLoading && !progressLoading && !sessionsLoading && profile) {
+      checkAndAwardMilestones();
+    }
+  }, [profileLoading, progressLoading, sessionsLoading, profile]);
   
   // Get consistent daily mission
   const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000);
