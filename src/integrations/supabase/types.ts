@@ -938,7 +938,42 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      public_profiles: {
+        Row: {
+          commitment: string | null
+          created_at: string | null
+          focus_areas: string[] | null
+          id: string | null
+          name: string | null
+          preferred_time: string | null
+          updated_at: string | null
+          user_id: string | null
+          weekly_goal: number | null
+        }
+        Insert: {
+          commitment?: string | null
+          created_at?: string | null
+          focus_areas?: string[] | null
+          id?: string | null
+          name?: string | null
+          preferred_time?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          weekly_goal?: number | null
+        }
+        Update: {
+          commitment?: string | null
+          created_at?: string | null
+          focus_areas?: string[] | null
+          id?: string | null
+          name?: string | null
+          preferred_time?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          weekly_goal?: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       is_squad_member: {
