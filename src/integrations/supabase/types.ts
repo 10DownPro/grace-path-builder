@@ -867,6 +867,13 @@ export type Database = {
         Args: { _squad_id: string; _user_id: string }
         Returns: boolean
       }
+      lookup_friend_by_code: {
+        Args: { _friend_code: string }
+        Returns: {
+          display_name: string
+          user_id: string
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
