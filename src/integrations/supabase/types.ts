@@ -14,6 +14,160 @@ export type Database = {
   }
   public: {
     Tables: {
+      crisis_resources: {
+        Row: {
+          category_id: string | null
+          contact_info: string | null
+          country: string | null
+          created_at: string | null
+          description: string | null
+          display_order: number | null
+          id: string
+          is_emergency: boolean | null
+          name: string | null
+          resource_type: string | null
+        }
+        Insert: {
+          category_id?: string | null
+          contact_info?: string | null
+          country?: string | null
+          created_at?: string | null
+          description?: string | null
+          display_order?: number | null
+          id?: string
+          is_emergency?: boolean | null
+          name?: string | null
+          resource_type?: string | null
+        }
+        Update: {
+          category_id?: string | null
+          contact_info?: string | null
+          country?: string | null
+          created_at?: string | null
+          description?: string | null
+          display_order?: number | null
+          id?: string
+          is_emergency?: boolean | null
+          name?: string | null
+          resource_type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crisis_resources_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "feeling_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      feeling_categories: {
+        Row: {
+          category_type: string | null
+          created_at: string | null
+          description: string | null
+          emoji: string | null
+          id: string
+          is_crisis: boolean | null
+          name: string
+          sort_order: number | null
+        }
+        Insert: {
+          category_type?: string | null
+          created_at?: string | null
+          description?: string | null
+          emoji?: string | null
+          id: string
+          is_crisis?: boolean | null
+          name: string
+          sort_order?: number | null
+        }
+        Update: {
+          category_type?: string | null
+          created_at?: string | null
+          description?: string | null
+          emoji?: string | null
+          id?: string
+          is_crisis?: boolean | null
+          name?: string
+          sort_order?: number | null
+        }
+        Relationships: []
+      }
+      feeling_verses: {
+        Row: {
+          book: string
+          category_id: string | null
+          chapter: number
+          context_note: string | null
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          is_power_verse: boolean | null
+          reference: string
+          relevance_score: number | null
+          text_esv: string | null
+          text_kjv: string | null
+          text_niv: string | null
+          text_nlt: string | null
+          times_saved: number | null
+          times_shown: number | null
+          updated_at: string | null
+          verse_end: number | null
+          verse_start: number
+        }
+        Insert: {
+          book: string
+          category_id?: string | null
+          chapter: number
+          context_note?: string | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_power_verse?: boolean | null
+          reference: string
+          relevance_score?: number | null
+          text_esv?: string | null
+          text_kjv?: string | null
+          text_niv?: string | null
+          text_nlt?: string | null
+          times_saved?: number | null
+          times_shown?: number | null
+          updated_at?: string | null
+          verse_end?: number | null
+          verse_start: number
+        }
+        Update: {
+          book?: string
+          category_id?: string | null
+          chapter?: number
+          context_note?: string | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_power_verse?: boolean | null
+          reference?: string
+          relevance_score?: number | null
+          text_esv?: string | null
+          text_kjv?: string | null
+          text_niv?: string | null
+          text_nlt?: string | null
+          times_saved?: number | null
+          times_shown?: number | null
+          updated_at?: string | null
+          verse_end?: number | null
+          verse_start?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feeling_verses_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "feeling_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       prayers: {
         Row: {
           answered: boolean
@@ -128,6 +282,44 @@ export type Database = {
         }
         Relationships: []
       }
+      support_messages: {
+        Row: {
+          category_id: string | null
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          message_text: string
+          times_shown: number | null
+          tone: string | null
+        }
+        Insert: {
+          category_id?: string | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          message_text: string
+          times_shown?: number | null
+          tone?: string | null
+        }
+        Update: {
+          category_id?: string | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          message_text?: string
+          times_shown?: number | null
+          tone?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "support_messages_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "feeling_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_progress: {
         Row: {
           created_at: string
@@ -163,6 +355,86 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      user_saved_verses: {
+        Row: {
+          category_id: string | null
+          id: string
+          personal_note: string | null
+          saved_at: string | null
+          user_id: string
+          verse_id: string | null
+        }
+        Insert: {
+          category_id?: string | null
+          id?: string
+          personal_note?: string | null
+          saved_at?: string | null
+          user_id: string
+          verse_id?: string | null
+        }
+        Update: {
+          category_id?: string | null
+          id?: string
+          personal_note?: string | null
+          saved_at?: string | null
+          user_id?: string
+          verse_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_saved_verses_verse_id_fkey"
+            columns: ["verse_id"]
+            isOneToOne: false
+            referencedRelation: "feeling_verses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_verse_interactions: {
+        Row: {
+          category_id: string | null
+          helped_rating: number | null
+          id: string
+          interaction_type: string | null
+          user_id: string
+          verse_id: string | null
+          viewed_at: string | null
+        }
+        Insert: {
+          category_id?: string | null
+          helped_rating?: number | null
+          id?: string
+          interaction_type?: string | null
+          user_id: string
+          verse_id?: string | null
+          viewed_at?: string | null
+        }
+        Update: {
+          category_id?: string | null
+          helped_rating?: number | null
+          id?: string
+          interaction_type?: string | null
+          user_id?: string
+          verse_id?: string | null
+          viewed_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_verse_interactions_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "feeling_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_verse_interactions_verse_id_fkey"
+            columns: ["verse_id"]
+            isOneToOne: false
+            referencedRelation: "feeling_verses"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
