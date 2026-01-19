@@ -6,11 +6,16 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useFriends } from '@/hooks/useFriends';
+import { useEncouragements } from '@/hooks/useEncouragements';
 import { FriendsList } from '@/components/friends/FriendsList';
 import { ChallengesList } from '@/components/friends/ChallengesList';
 import { CreateChallengeDialog } from '@/components/friends/CreateChallengeDialog';
 import { Leaderboard } from '@/components/friends/Leaderboard';
-import { Users, Trophy, Swords, Copy, UserPlus, Crown } from 'lucide-react';
+import { EncouragementsList } from '@/components/friends/EncouragementsList';
+import { SquadsList } from '@/components/friends/SquadsList';
+import { PersonalChallengesList } from '@/components/friends/PersonalChallengesList';
+import { SendEncouragementDialog } from '@/components/friends/SendEncouragementDialog';
+import { Users, Trophy, Swords, Copy, UserPlus, Crown, MessageCircle, Target, Shield } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
 export default function Friends() {
@@ -32,7 +37,9 @@ export default function Friends() {
   const [friendCodeInput, setFriendCodeInput] = useState('');
   const [isAddingFriend, setIsAddingFriend] = useState(false);
   const [challengeDialogOpen, setChallengeDialogOpen] = useState(false);
-  const [selectedFriend, setSelectedFriend] = useState<string | null>(null);
+  const [selectedFriend, setSelectedFriend] = useState<{ id: string; name: string } | null>(null);
+  const [encourageDialogOpen, setEncourageDialogOpen] = useState(false);
+  const { unreadCount } = useEncouragements();
 
   const handleCopyCode = () => {
     navigator.clipboard.writeText(myFriendCode);
@@ -65,7 +72,8 @@ export default function Friends() {
   };
 
   const handleStartChallenge = (friendId: string) => {
-    setSelectedFriend(friendId);
+    const friend = friends.find(f => f.user_id === friendId);
+    setSelectedFriend({ id: friendId, name: friend?.name || 'Friend' });
     setChallengeDialogOpen(true);
   };
 
@@ -79,7 +87,7 @@ export default function Friends() {
     if (!selectedFriend) return;
     
     const { error } = await createChallenge(
-      selectedFriend,
+      selectedFriend.id,
       challengeType,
       challengeName,
       targetValue,

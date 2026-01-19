@@ -141,6 +141,36 @@ export type Database = {
           },
         ]
       }
+      encouragements: {
+        Row: {
+          created_at: string
+          encouragement_type: string | null
+          from_user_id: string
+          id: string
+          is_read: boolean | null
+          message: string
+          to_user_id: string
+        }
+        Insert: {
+          created_at?: string
+          encouragement_type?: string | null
+          from_user_id: string
+          id?: string
+          is_read?: boolean | null
+          message: string
+          to_user_id: string
+        }
+        Update: {
+          created_at?: string
+          encouragement_type?: string | null
+          from_user_id?: string
+          id?: string
+          is_read?: boolean | null
+          message?: string
+          to_user_id?: string
+        }
+        Relationships: []
+      }
       feeling_categories: {
         Row: {
           category_type: string | null
@@ -362,6 +392,63 @@ export type Database = {
         }
         Relationships: []
       }
+      personal_challenges: {
+        Row: {
+          challenge_name: string
+          challenge_type: string
+          completed_at: string | null
+          created_at: string
+          current_value: number | null
+          description: string | null
+          difficulty_level: string | null
+          duration_days: number
+          ends_at: string
+          icon_emoji: string | null
+          id: string
+          scripture_motivation: string | null
+          started_at: string
+          status: string | null
+          target_value: number
+          user_id: string
+        }
+        Insert: {
+          challenge_name: string
+          challenge_type: string
+          completed_at?: string | null
+          created_at?: string
+          current_value?: number | null
+          description?: string | null
+          difficulty_level?: string | null
+          duration_days: number
+          ends_at: string
+          icon_emoji?: string | null
+          id?: string
+          scripture_motivation?: string | null
+          started_at?: string
+          status?: string | null
+          target_value: number
+          user_id: string
+        }
+        Update: {
+          challenge_name?: string
+          challenge_type?: string
+          completed_at?: string | null
+          created_at?: string
+          current_value?: number | null
+          description?: string | null
+          difficulty_level?: string | null
+          duration_days?: number
+          ends_at?: string
+          icon_emoji?: string | null
+          id?: string
+          scripture_motivation?: string | null
+          started_at?: string
+          status?: string | null
+          target_value?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       prayers: {
         Row: {
           answered: boolean
@@ -479,6 +566,106 @@ export type Database = {
           user_id?: string
           verses_read?: number
           worship_completed?: boolean
+        }
+        Relationships: []
+      }
+      squad_activities: {
+        Row: {
+          activity_data: Json | null
+          activity_type: string
+          created_at: string
+          id: string
+          squad_id: string
+          user_id: string
+        }
+        Insert: {
+          activity_data?: Json | null
+          activity_type: string
+          created_at?: string
+          id?: string
+          squad_id: string
+          user_id: string
+        }
+        Update: {
+          activity_data?: Json | null
+          activity_type?: string
+          created_at?: string
+          id?: string
+          squad_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "squad_activities_squad_id_fkey"
+            columns: ["squad_id"]
+            isOneToOne: false
+            referencedRelation: "squads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      squad_members: {
+        Row: {
+          id: string
+          joined_at: string
+          role: string | null
+          squad_id: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          joined_at?: string
+          role?: string | null
+          squad_id: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          joined_at?: string
+          role?: string | null
+          squad_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "squad_members_squad_id_fkey"
+            columns: ["squad_id"]
+            isOneToOne: false
+            referencedRelation: "squads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      squads: {
+        Row: {
+          created_at: string
+          created_by: string
+          description: string | null
+          icon_emoji: string | null
+          id: string
+          max_members: number | null
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          description?: string | null
+          icon_emoji?: string | null
+          id?: string
+          max_members?: number | null
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          icon_emoji?: string | null
+          id?: string
+          max_members?: number | null
+          name?: string
+          updated_at?: string
         }
         Relationships: []
       }
