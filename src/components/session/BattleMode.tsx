@@ -263,7 +263,7 @@ export function BattleMode({ isOpen, onClose, onComplete }: BattleModeProps) {
               </div>
 
               <p className="text-center text-white/40 text-sm">
-                5 minutes of focused worship. Let it lift your spirit.
+                Focused worship. Let it lift your spirit.
               </p>
             </div>
           )}
