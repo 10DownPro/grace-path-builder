@@ -7,10 +7,12 @@ import { MissionCard } from '@/components/home/MissionCard';
 import { BattleVerse } from '@/components/home/BattleVerse';
 import { BattleMode } from '@/components/session/BattleMode';
 import { useProgress } from '@/hooks/useProgress';
-import { Settings, Shield } from 'lucide-react';
+import { Settings, Shield, Flame, Zap, Trophy, TrendingUp } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { cn } from '@/lib/utils';
+
 const todaySteps = [
   { name: 'Worship', icon: '🎵', completed: true, duration: '15 min' },
   { name: 'Scripture', icon: '📖', completed: true, duration: '10 min' },
@@ -40,35 +42,56 @@ export default function Index() {
   const handleBattleModeComplete = () => {
     toast.success('Battle Mode Victory! 🏆 Streak maintained!');
   };
+
   return (
     <PageLayout>
-      <div className="min-h-screen texture-noise">
-        <div className="px-4 pt-6 pb-28 space-y-6 stagger-children">
-          {/* Header */}
-          <div className="flex items-start justify-between border-b-4 border-primary pb-5">
-            <div className="space-y-1">
-              <p className="text-xs text-muted-foreground uppercase tracking-widest">
-                {formattedDate}
-              </p>
-              <h1 className="font-display text-4xl text-foreground uppercase tracking-wide">
-                Time to Train
-              </h1>
-              <p className="text-sm text-primary uppercase tracking-wide font-medium">
-                No days off. No excuses.
-              </p>
-            </div>
-            <Link to="/settings">
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="text-muted-foreground hover:text-foreground hover:bg-muted"
-              >
-                <Settings className="h-6 w-6" />
-              </Button>
-            </Link>
+      <div className="min-h-screen">
+        {/* Hero Header with Gradient Background */}
+        <div className="relative overflow-hidden">
+          {/* Gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-background to-background" />
+          
+          {/* Grid pattern overlay */}
+          <div className="absolute inset-0 opacity-5">
+            <div className="absolute inset-0" style={{
+              backgroundImage: 'linear-gradient(hsl(var(--primary)) 1px, transparent 1px), linear-gradient(to right, hsl(var(--primary)) 1px, transparent 1px)',
+              backgroundSize: '40px 40px'
+            }} />
           </div>
+          
+          <div className="relative px-4 pt-6 pb-8">
+            <div className="flex items-start justify-between">
+              <div className="space-y-2">
+                <p className="text-xs text-primary font-display uppercase tracking-[0.3em]">
+                  {formattedDate}
+                </p>
+                <h1 className="font-display text-5xl text-foreground uppercase tracking-wide leading-none">
+                  Time to
+                  <br />
+                  <span className="text-primary">Train</span>
+                </h1>
+                <p className="text-sm text-muted-foreground uppercase tracking-widest font-medium">
+                  No days off. No excuses.
+                </p>
+              </div>
+              <Link to="/settings">
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="text-muted-foreground hover:text-primary hover:bg-primary/10"
+                >
+                  <Settings className="h-6 w-6" />
+                </Button>
+              </Link>
+            </div>
+          </div>
+          
+          {/* Bottom border accent */}
+          <div className="h-1 bg-gradient-to-r from-primary via-warning to-primary" />
+        </div>
 
-          {/* Streak Badge */}
+        <div className="px-4 pb-28 space-y-5 -mt-2">
+          {/* Streak Badge - Enhanced */}
           <StreakBadge streak={progress.currentStreak} />
 
           {/* Today's Workout */}
@@ -81,9 +104,9 @@ export default function Index() {
           <Button
             variant="outline"
             onClick={() => setBattleModeOpen(true)}
-            className="w-full border-2 border-destructive/50 hover:border-destructive hover:bg-destructive/10 text-destructive font-display uppercase tracking-wide"
+            className="w-full h-14 border-2 border-destructive/50 hover:border-destructive hover:bg-destructive/10 text-destructive font-display uppercase tracking-wide text-base"
           >
-            <Shield className="h-4 w-4 mr-2" />
+            <Shield className="h-5 w-5 mr-2" />
             Struggling today? Battle Mode →
           </Button>
 
@@ -100,18 +123,58 @@ export default function Index() {
           {/* Battle Verse */}
           <BattleVerse />
 
-          {/* Bottom Stats Row */}
+          {/* Stats Row with Icons */}
           <div className="grid grid-cols-3 gap-3">
-            <StatCard label="Total Sessions" value={progress.totalSessions} />
-            <StatCard label="Total Minutes" value={progress.totalMinutes} />
-            <StatCard label="Best Streak" value={progress.longestStreak} />
+            <StatCard 
+              label="Sessions" 
+              value={progress.totalSessions} 
+              icon={Zap}
+              color="text-primary"
+            />
+            <StatCard 
+              label="Minutes" 
+              value={progress.totalMinutes}
+              icon={Flame}
+              color="text-warning"
+            />
+            <StatCard 
+              label="Best Streak" 
+              value={progress.longestStreak}
+              icon={Trophy}
+              color="text-success"
+            />
+          </div>
+
+          {/* Growth Card */}
+          <div className="gym-card p-5 border-l-4 border-l-success">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-10 h-10 rounded-lg bg-success/20 flex items-center justify-center">
+                <TrendingUp className="h-5 w-5 text-success" />
+              </div>
+              <div>
+                <p className="font-display text-sm text-success uppercase tracking-wide">Growth Track</p>
+                <p className="text-xs text-muted-foreground">You're building momentum</p>
+              </div>
+            </div>
+            <div className="h-2 rounded-full bg-muted overflow-hidden">
+              <div 
+                className="h-full rounded-full bg-gradient-to-r from-success to-primary transition-all duration-1000"
+                style={{ width: '67%' }}
+              />
+            </div>
+            <p className="text-xs text-muted-foreground mt-2">
+              67% to your next milestone • Keep grinding!
+            </p>
           </div>
 
           {/* Motivational Footer */}
-          <div className="text-center py-4">
-            <p className="text-xs text-muted-foreground uppercase tracking-widest">
-              Faith won't build itself. Put in the work.
-            </p>
+          <div className="text-center py-6">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-muted/50 border border-border">
+              <Flame className="h-4 w-4 text-primary" />
+              <p className="text-xs text-muted-foreground uppercase tracking-widest">
+                Faith won't build itself
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -126,13 +189,32 @@ export default function Index() {
   );
 }
 
-function StatCard({ label, value }: { label: string; value: number }) {
+interface StatCardProps {
+  label: string;
+  value: number;
+  icon: React.ElementType;
+  color: string;
+}
+
+function StatCard({ label, value, icon: Icon, color }: StatCardProps) {
   return (
-    <div className="gym-card p-4 text-center">
-      <p className="stat-number text-3xl">{value}</p>
-      <p className="text-[10px] text-muted-foreground uppercase tracking-wide mt-1">
-        {label}
-      </p>
+    <div className="gym-card p-4 text-center relative overflow-hidden group hover:border-primary/50 transition-colors">
+      {/* Background glow on hover */}
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+      
+      <div className="relative">
+        <div className={cn("w-8 h-8 rounded-lg mx-auto mb-2 flex items-center justify-center", 
+          color === 'text-primary' && "bg-primary/20",
+          color === 'text-warning' && "bg-warning/20",
+          color === 'text-success' && "bg-success/20"
+        )}>
+          <Icon className={cn("h-4 w-4", color)} />
+        </div>
+        <p className="font-display text-3xl text-foreground">{value}</p>
+        <p className="text-[10px] text-muted-foreground uppercase tracking-wider mt-1">
+          {label}
+        </p>
+      </div>
     </div>
   );
 }
