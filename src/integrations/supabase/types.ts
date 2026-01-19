@@ -86,6 +86,48 @@ export type Database = {
         }
         Relationships: []
       }
+      sessions: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          duration_minutes: number
+          id: string
+          prayer_completed: boolean
+          reflection_completed: boolean
+          scripture_completed: boolean
+          session_date: string
+          updated_at: string
+          user_id: string
+          worship_completed: boolean
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          duration_minutes?: number
+          id?: string
+          prayer_completed?: boolean
+          reflection_completed?: boolean
+          scripture_completed?: boolean
+          session_date?: string
+          updated_at?: string
+          user_id: string
+          worship_completed?: boolean
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          duration_minutes?: number
+          id?: string
+          prayer_completed?: boolean
+          reflection_completed?: boolean
+          scripture_completed?: boolean
+          session_date?: string
+          updated_at?: string
+          user_id?: string
+          worship_completed?: boolean
+        }
+        Relationships: []
+      }
       user_progress: {
         Row: {
           created_at: string

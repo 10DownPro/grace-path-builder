@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { PageLayout } from '@/components/layout/PageLayout';
 import { StreakBadge } from '@/components/home/StreakBadge';
 import { WorkoutCard } from '@/components/home/WorkoutCard';
@@ -10,18 +10,12 @@ import { OnboardingFlow } from '@/components/onboarding/OnboardingFlow';
 import { useProfile } from '@/hooks/useProfile';
 import { useUserProgress } from '@/hooks/useUserProgress';
 import { usePrayers } from '@/hooks/usePrayers';
+import { useSessions } from '@/hooks/useSessions';
 import { Settings, Shield, Flame, Zap, Trophy, TrendingUp } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
-
-const todaySteps = [
-  { name: 'Worship', icon: '🎵', completed: false, duration: '15 min' },
-  { name: 'Scripture', icon: '📖', completed: false, duration: '10 min' },
-  { name: 'Prayer', icon: '🙏', completed: false, duration: '10 min' },
-  { name: 'Reflect', icon: '✍️', completed: false, duration: '5 min' },
-];
 
 const dailyMissions = [
   "Pray for someone who wronged you",
@@ -37,6 +31,7 @@ export default function Index() {
   const { profile, loading: profileLoading, updateProfile } = useProfile();
   const { progress, loading: progressLoading } = useUserProgress();
   const { prayers } = usePrayers();
+  const { todaySession, loading: sessionsLoading } = useSessions();
   const [battleModeOpen, setBattleModeOpen] = useState(false);
   const formattedDate = getFormattedDate();
   
@@ -65,7 +60,7 @@ export default function Index() {
   };
 
   // Show loading state
-  if (profileLoading || progressLoading) {
+  if (profileLoading || progressLoading || sessionsLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center animate-pulse">
@@ -85,6 +80,14 @@ export default function Index() {
   const totalSessions = progress?.total_sessions || 0;
   const totalMinutes = progress?.total_minutes || 0;
   const longestStreak = progress?.longest_streak || 0;
+
+  // Build today's steps from session data
+  const todaySteps = [
+    { name: 'Worship', icon: '🎵', completed: todaySession?.worship_completed || false, duration: '15 min' },
+    { name: 'Scripture', icon: '📖', completed: todaySession?.scripture_completed || false, duration: '10 min' },
+    { name: 'Prayer', icon: '🙏', completed: todaySession?.prayer_completed || false, duration: '10 min' },
+    { name: 'Reflect', icon: '✍️', completed: todaySession?.reflection_completed || false, duration: '5 min' },
+  ];
 
   return (
     <PageLayout>

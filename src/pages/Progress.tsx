@@ -1,6 +1,7 @@
 import { PageLayout } from '@/components/layout/PageLayout';
 import { useUserProgress } from '@/hooks/useUserProgress';
 import { usePrayers } from '@/hooks/usePrayers';
+import { useSessions } from '@/hooks/useSessions';
 import { Flame, Trophy, Clock, BookOpen, Calendar, TrendingUp, Award, Dumbbell, Target, Zap, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -143,8 +144,9 @@ const defaultMilestones = [
 export default function Progress() {
   const { progress, loading: progressLoading } = useUserProgress();
   const { prayers, loading: prayersLoading } = usePrayers();
+  const { sessions, getCompletedDates, getWeeklyData, loading: sessionsLoading } = useSessions();
 
-  if (progressLoading || prayersLoading) {
+  if (progressLoading || prayersLoading || sessionsLoading) {
     return (
       <PageLayout>
         <div className="min-h-screen flex items-center justify-center">
@@ -166,15 +168,23 @@ export default function Progress() {
     { label: 'Time in Prayer', value: totalMinutes, suffix: 'min', icon: Clock, color: 'text-secondary' },
   ];
 
-  // Generate calendar data - no completed days for new users
+  // Generate calendar data from sessions
   const today = new Date();
   const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
   const firstDay = new Date(today.getFullYear(), today.getMonth(), 1).getDay();
-  // Empty set - will be populated from database later
+  
+  // Get completed dates from database
+  const completedDateStrings = getCompletedDates();
   const completedDays = new Set<number>();
+  completedDateStrings.forEach(dateStr => {
+    const date = new Date(dateStr);
+    if (date.getFullYear() === today.getFullYear() && date.getMonth() === today.getMonth()) {
+      completedDays.add(date.getDate());
+    }
+  });
 
-  // Weekly session data - zeros for new users
-  const weeklyData = [0, 0, 0, 0, 0, 0, 0];
+  // Weekly session data from database
+  const weeklyData = getWeeklyData();
 
   // Weekly goals - use actual data from database
   const weeklyGoals = [
