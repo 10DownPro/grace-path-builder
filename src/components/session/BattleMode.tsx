@@ -33,8 +33,8 @@ const fallbackBattleVerses = [
 // Battle worship video - user selected
 const battleWorshipVideo = {
   videoId: 'brnlnjYe52o',
-  title: 'Worship Song',
-  artist: 'Artist'
+  title: 'Never Lost',
+  artist: 'TRIBL / Maverick City Music'
 };
 
 interface BattleVerse {
