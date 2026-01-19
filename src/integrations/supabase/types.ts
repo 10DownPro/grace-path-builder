@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      book_codes: {
+        Row: {
+          batch_number: number | null
+          book_edition: string | null
+          code: string
+          created_at: string
+          id: string
+          is_redeemed: boolean
+          redeemed_at: string | null
+          redeemed_by_user_id: string | null
+        }
+        Insert: {
+          batch_number?: number | null
+          book_edition?: string | null
+          code: string
+          created_at?: string
+          id?: string
+          is_redeemed?: boolean
+          redeemed_at?: string | null
+          redeemed_by_user_id?: string | null
+        }
+        Update: {
+          batch_number?: number | null
+          book_edition?: string | null
+          code?: string
+          created_at?: string
+          id?: string
+          is_redeemed?: boolean
+          redeemed_at?: string | null
+          redeemed_by_user_id?: string | null
+        }
+        Relationships: []
+      }
       challenge_progress: {
         Row: {
           challenge_id: string
@@ -487,37 +520,55 @@ export type Database = {
       }
       profiles: {
         Row: {
+          book_code_used: string | null
           commitment: string
           created_at: string
           focus_areas: string[] | null
           friend_code: string | null
+          has_book: boolean
+          hide_book_promos: boolean
           id: string
+          is_premium: boolean
           name: string
           preferred_time: string
+          premium_activated_at: string | null
+          premium_source: string | null
           updated_at: string
           user_id: string
           weekly_goal: number
         }
         Insert: {
+          book_code_used?: string | null
           commitment?: string
           created_at?: string
           focus_areas?: string[] | null
           friend_code?: string | null
+          has_book?: boolean
+          hide_book_promos?: boolean
           id?: string
+          is_premium?: boolean
           name?: string
           preferred_time?: string
+          premium_activated_at?: string | null
+          premium_source?: string | null
           updated_at?: string
           user_id: string
           weekly_goal?: number
         }
         Update: {
+          book_code_used?: string | null
           commitment?: string
           created_at?: string
           focus_areas?: string[] | null
           friend_code?: string | null
+          has_book?: boolean
+          hide_book_promos?: boolean
           id?: string
+          is_premium?: boolean
           name?: string
           preferred_time?: string
+          premium_activated_at?: string | null
+          premium_source?: string | null
           updated_at?: string
           user_id?: string
           weekly_goal?: number
@@ -707,6 +758,33 @@ export type Database = {
           },
         ]
       }
+      user_book_promotions: {
+        Row: {
+          clicked: boolean
+          dismissed: boolean
+          id: string
+          promotion_type: string
+          shown_at: string
+          user_id: string
+        }
+        Insert: {
+          clicked?: boolean
+          dismissed?: boolean
+          id?: string
+          promotion_type: string
+          shown_at?: string
+          user_id: string
+        }
+        Update: {
+          clicked?: boolean
+          dismissed?: boolean
+          id?: string
+          promotion_type?: string
+          shown_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_milestones: {
         Row: {
           achieved_at: string
@@ -872,6 +950,14 @@ export type Database = {
         Returns: {
           display_name: string
           user_id: string
+        }[]
+      }
+      redeem_book_code: {
+        Args: { _code: string }
+        Returns: {
+          code_info: Json
+          message: string
+          success: boolean
         }[]
       }
     }

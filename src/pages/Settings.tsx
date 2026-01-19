@@ -1,13 +1,16 @@
 import { PageLayout } from '@/components/layout/PageLayout';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, Bell, BookOpen, Clock, User, Moon, Shield, HelpCircle, Heart, LogOut, Sun } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Bell, BookOpen, Clock, User, Moon, Shield, HelpCircle, Heart, LogOut, Sun, Crown, Sparkles, Check, Loader2, AlertCircle, ExternalLink, Share2, Star, Download } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Switch } from '@/components/ui/switch';
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useProfile } from '@/hooks/useProfile';
 import { useNotifications } from '@/hooks/useNotifications';
+import { usePremium } from '@/hooks/usePremium';
+import { useBookCode } from '@/hooks/useBookCode';
 import { toast } from 'sonner';
+import { cn } from '@/lib/utils';
 import {
   Dialog,
   DialogContent,
@@ -28,7 +31,9 @@ export default function Settings() {
   const navigate = useNavigate();
   const { signOut } = useAuth();
   const { profile, updateProfile } = useProfile();
-  const { preferences: notifPrefs, scheduleNotification, permissionStatus, sendTestNotification } = useNotifications();
+  const { preferences: notifPrefs, scheduleNotification, sendTestNotification } = useNotifications();
+  const { isPremium, premiumSource, bookCodeUsed, premiumActivatedAt, hideBookPromos, setHideBookPromos } = usePremium();
+  const { redeemCode, formatCodeInput, validateCodeFormat, loading: redeemLoading } = useBookCode();
   
   // Settings state
   const [notifications, setNotifications] = useState(notifPrefs?.enabled ?? true);
@@ -39,12 +44,15 @@ export default function Settings() {
   const [translationOpen, setTranslationOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [commitmentOpen, setCommitmentOpen] = useState(false);
+  const [bookCodeOpen, setBookCodeOpen] = useState(false);
   
   // Form states
   const [sessionTime, setSessionTime] = useState(profile?.preferred_time || '6:00 AM');
   const [selectedTranslation, setSelectedTranslation] = useState('KJV');
   const [profileName, setProfileName] = useState(profile?.name || '');
   const [commitment, setCommitment] = useState<'starter' | 'committed' | 'warrior'>(profile?.commitment as 'starter' | 'committed' | 'warrior' || 'committed');
+  const [bookCode, setBookCode] = useState('');
+  const [bookCodeError, setBookCodeError] = useState<string | null>(null);
 
   // Load saved settings
   useEffect(() => {
@@ -104,6 +112,12 @@ export default function Settings() {
     }
   };
 
+  // Handle book promos toggle
+  const handleHidePromosToggle = async (hide: boolean) => {
+    await setHideBookPromos(hide);
+    toast.success(hide ? 'Book promotions hidden' : 'Book promotions enabled');
+  };
+
   // Save session time
   const handleSaveSessionTime = async () => {
     // Map display time to profile time format
@@ -141,6 +155,27 @@ export default function Settings() {
     await updateProfile({ commitment });
     setCommitmentOpen(false);
     toast.success('Commitment level updated');
+  };
+
+  // Handle book code redemption
+  const handleRedeemCode = async () => {
+    if (!validateCodeFormat(bookCode)) {
+      setBookCodeError('Please enter a valid code (Format: FT-XXXXXX)');
+      return;
+    }
+
+    const result = await redeemCode(bookCode);
+    
+    if (result.success) {
+      setBookCodeOpen(false);
+      setBookCode('');
+      toast.success('Premium unlocked! Welcome to the inner circle.', {
+        icon: '🔥',
+        duration: 5000,
+      });
+    } else {
+      setBookCodeError(result.message);
+    }
   };
 
   const handleSignOut = async () => {
@@ -209,6 +244,50 @@ export default function Settings() {
       ]
     },
     {
+      title: 'Resources',
+      items: [
+        {
+          icon: BookOpen,
+          label: 'Buy the Faith Training Guide',
+          description: 'Get the companion book',
+          type: 'link' as const,
+          onClick: () => window.open('#', '_blank') // Placeholder
+        },
+        {
+          icon: Download,
+          label: 'Download Free Chapter',
+          description: 'Read Chapter 1 for free',
+          type: 'link' as const,
+          onClick: () => toast.info('Free chapter download coming soon!')
+        },
+        {
+          icon: Share2,
+          label: 'Share Faith Training',
+          description: 'Invite friends to train',
+          type: 'link' as const,
+          onClick: () => {
+            if (navigator.share) {
+              navigator.share({
+                title: 'Faith Training',
+                text: 'Your spiritual gym for building unshakeable faith',
+                url: window.location.origin
+              });
+            } else {
+              navigator.clipboard.writeText(window.location.origin);
+              toast.success('Link copied to clipboard!');
+            }
+          }
+        },
+        {
+          icon: Star,
+          label: 'Rate This App',
+          description: 'Leave a review',
+          type: 'link' as const,
+          onClick: () => toast.info('App store link coming soon!')
+        },
+      ]
+    },
+    {
       title: 'Support',
       items: [
         {
@@ -223,8 +302,16 @@ export default function Settings() {
           label: 'About',
           description: 'Version 1.0.0',
           type: 'link' as const,
-          onClick: () => toast.info('Faith Training v1.0.0 - Made with 🙏 for believers')
+          onClick: () => toast.info('Faith Training v1.0.0 - Made with 💪 for believers putting in the work')
         },
+        ...(!isPremium ? [{
+          icon: ExternalLink,
+          label: 'Hide Book Promotions',
+          description: hideBookPromos ? 'Hidden' : 'Visible',
+          type: 'toggle' as const,
+          value: hideBookPromos,
+          onChange: handleHidePromosToggle
+        }] : []),
       ]
     }
   ];
@@ -240,6 +327,66 @@ export default function Settings() {
             </Button>
           </Link>
           <h1 className="text-xl font-bold text-foreground">Settings</h1>
+        </div>
+
+        {/* Premium Status Card */}
+        <div className={cn(
+          "p-4 rounded-xl border-2",
+          isPremium 
+            ? "bg-warning/10 border-warning"
+            : "bg-muted border-border"
+        )}>
+          <div className="flex items-center gap-4">
+            <div className={cn(
+              "w-12 h-12 rounded-xl flex items-center justify-center",
+              isPremium ? "bg-warning/20" : "bg-muted"
+            )}>
+              {isPremium ? (
+                <Crown className="h-6 w-6 text-warning" />
+              ) : (
+                <Sparkles className="h-6 w-6 text-muted-foreground" />
+              )}
+            </div>
+            <div className="flex-1">
+              {isPremium ? (
+                <>
+                  <div className="flex items-center gap-2">
+                    <p className="font-display text-lg uppercase tracking-wider text-warning">
+                      Premium Unlocked
+                    </p>
+                    <Check className="h-4 w-4 text-warning" />
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    {premiumSource === 'book_code' ? 'Book Buyer - Lifetime Access' : 'Premium Member'}
+                  </p>
+                  {bookCodeUsed && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Code: {bookCodeUsed} 
+                      {premiumActivatedAt && ` (Redeemed ${new Date(premiumActivatedAt).toLocaleDateString()})`}
+                    </p>
+                  )}
+                </>
+              ) : (
+                <>
+                  <p className="font-display text-lg uppercase tracking-wider text-foreground">
+                    Free Account
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    Unlock premium with a book code
+                  </p>
+                </>
+              )}
+            </div>
+            {!isPremium && (
+              <Button
+                onClick={() => setBookCodeOpen(true)}
+                className="btn-gym"
+                size="sm"
+              >
+                <span className="font-display uppercase tracking-wider text-xs">Redeem</span>
+              </Button>
+            )}
+          </div>
         </div>
 
         {/* Settings Groups */}
@@ -283,7 +430,7 @@ export default function Settings() {
 
         {/* Footer */}
         <p className="text-center text-sm text-muted-foreground">
-          Made with 🙏 for believers everywhere
+          Made with 💪 for believers putting in the work
         </p>
       </div>
 
@@ -384,6 +531,73 @@ export default function Settings() {
               </Select>
             </div>
             <Button onClick={handleSaveCommitment} className="w-full">Save</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Book Code Redemption Dialog */}
+      <Dialog open={bookCodeOpen} onOpenChange={(open) => {
+        setBookCodeOpen(open);
+        if (!open) {
+          setBookCode('');
+          setBookCodeError(null);
+        }
+      }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="font-display text-xl uppercase tracking-wider flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-warning" />
+              Unlock Premium
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <p className="text-muted-foreground">
+              Enter the unique code from your Faith Training Guide book to unlock lifetime premium features.
+            </p>
+            <div className="space-y-2">
+              <Label>Book Code</Label>
+              <Input 
+                value={bookCode}
+                onChange={(e) => {
+                  setBookCodeError(null);
+                  setBookCode(formatCodeInput(e.target.value));
+                }}
+                placeholder="FT-XXXXXX"
+                className={cn(
+                  "font-display text-lg uppercase tracking-widest text-center",
+                  bookCodeError && "border-destructive"
+                )}
+                maxLength={9}
+              />
+              {bookCodeError && (
+                <div className="flex items-center gap-2 text-destructive text-sm">
+                  <AlertCircle className="h-4 w-4" />
+                  {bookCodeError}
+                </div>
+              )}
+              <p className="text-xs text-muted-foreground">
+                Find your code on the inside back cover of your book.
+              </p>
+            </div>
+            <Button 
+              onClick={handleRedeemCode} 
+              className="w-full btn-gym"
+              disabled={redeemLoading || bookCode.length < 9}
+            >
+              {redeemLoading ? (
+                <Loader2 className="h-5 w-5 animate-spin" />
+              ) : (
+                <span className="font-display uppercase tracking-wider">Redeem Code</span>
+              )}
+            </Button>
+            <div className="text-center">
+              <button
+                onClick={() => window.open('#', '_blank')} // Placeholder
+                className="text-sm text-muted-foreground hover:text-foreground underline"
+              >
+                Don't have the book? Get it here
+              </button>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
