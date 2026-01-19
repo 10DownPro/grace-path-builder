@@ -1,16 +1,116 @@
 import { PageLayout } from '@/components/layout/PageLayout';
 import { useProgress } from '@/hooks/useProgress';
-import { Flame, Trophy, Clock, BookOpen, Calendar, TrendingUp } from 'lucide-react';
+import { Flame, Trophy, Clock, BookOpen, Calendar, TrendingUp, Award, Star, Dumbbell, Target, Zap } from 'lucide-react';
 import { cn } from '@/lib/utils';
+
+// Simple bar chart component
+function SimpleBarChart({ data, maxValue }: { data: number[]; maxValue: number }) {
+  return (
+    <div className="flex items-end justify-between gap-1 h-20">
+      {data.map((value, index) => {
+        const height = (value / maxValue) * 100;
+        return (
+          <div key={index} className="flex-1 flex flex-col items-center gap-1">
+            <div 
+              className="w-full bg-gradient-to-t from-primary to-warning rounded-t-sm transition-all duration-500"
+              style={{ height: `${height}%`, minHeight: value > 0 ? '4px' : '0' }}
+            />
+            <span className="text-xs text-muted-foreground">
+              {['M', 'T', 'W', 'T', 'F', 'S', 'S'][index]}
+            </span>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// Circular progress ring
+function ProgressRing({ value, max, size = 80, strokeWidth = 8, children }: { 
+  value: number; 
+  max: number; 
+  size?: number;
+  strokeWidth?: number;
+  children?: React.ReactNode;
+}) {
+  const radius = (size - strokeWidth) / 2;
+  const circumference = radius * 2 * Math.PI;
+  const progress = Math.min(value / max, 1);
+  const offset = circumference - (progress * circumference);
+
+  return (
+    <div className="relative" style={{ width: size, height: size }}>
+      <svg width={size} height={size} className="transform -rotate-90">
+        {/* Background circle */}
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          fill="none"
+          stroke="hsl(var(--muted))"
+          strokeWidth={strokeWidth}
+        />
+        {/* Progress circle */}
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          fill="none"
+          stroke="url(#progressGradient)"
+          strokeWidth={strokeWidth}
+          strokeLinecap="round"
+          strokeDasharray={circumference}
+          strokeDashoffset={offset}
+          className="transition-all duration-500"
+        />
+        <defs>
+          <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="hsl(var(--primary))" />
+            <stop offset="100%" stopColor="hsl(var(--warning))" />
+          </linearGradient>
+        </defs>
+      </svg>
+      <div className="absolute inset-0 flex items-center justify-center">
+        {children}
+      </div>
+    </div>
+  );
+}
+
+// Milestone badge graphics
+const badgeStyles = {
+  bronze: 'from-amber-700 to-amber-500',
+  silver: 'from-slate-400 to-slate-300',
+  gold: 'from-yellow-500 to-yellow-300',
+};
+
+function MilestoneBadge({ type, achieved }: { type: 'bronze' | 'silver' | 'gold'; achieved: boolean }) {
+  if (!achieved) {
+    return (
+      <div className="w-12 h-12 rounded-xl bg-muted flex items-center justify-center">
+        <Trophy className="h-6 w-6 text-muted-foreground/30" />
+      </div>
+    );
+  }
+
+  return (
+    <div className={cn(
+      "w-12 h-12 rounded-xl bg-gradient-to-br flex items-center justify-center shadow-lg",
+      badgeStyles[type]
+    )}>
+      <Trophy className="h-6 w-6 text-white drop-shadow-md" />
+    </div>
+  );
+}
 
 export default function Progress() {
   const { progress } = useProgress();
 
   const stats = [
     { label: 'Current Streak', value: progress.currentStreak, suffix: 'days', icon: Flame, color: 'text-primary' },
-    { label: 'Best Streak', value: progress.longestStreak, suffix: 'days', icon: Trophy, color: 'text-accent' },
-    { label: 'Total Sessions', value: progress.totalSessions, suffix: '', icon: BookOpen, color: 'text-sage' },
-    { label: 'Time in Prayer', value: progress.totalMinutes, suffix: 'min', icon: Clock, color: 'text-navy' },
+    { label: 'Best Streak', value: progress.longestStreak, suffix: 'days', icon: Trophy, color: 'text-warning' },
+    { label: 'Total Sessions', value: progress.totalSessions, suffix: '', icon: Dumbbell, color: 'text-success' },
+    { label: 'Time in Prayer', value: progress.totalMinutes, suffix: 'min', icon: Clock, color: 'text-secondary' },
   ];
 
   // Generate calendar data for current month
@@ -19,57 +119,137 @@ export default function Progress() {
   const firstDay = new Date(today.getFullYear(), today.getMonth(), 1).getDay();
   const completedDays = new Set([1, 2, 3, 4, 5, 6, 7, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]);
 
+  // Weekly session data (mock)
+  const weeklyData = [4, 3, 4, 2, 4, 3, 4]; // Sessions per day this week
+
+  // Weekly goals
+  const weeklyGoals = [
+    { label: 'Sessions', current: 5, target: 7, icon: Zap },
+    { label: 'Prayers', current: 12, target: 15, icon: Target },
+    { label: 'Verses', current: 18, target: 20, icon: BookOpen },
+  ];
+
+  // Personal records
+  const personalRecords = [
+    { label: 'Longest Session', value: '47 min', icon: Clock },
+    { label: 'Consecutive Days', value: '21', icon: Flame },
+    { label: 'Total Verses', value: '847', icon: BookOpen },
+  ];
+
+  // Determine badge type based on milestone
+  const getBadgeType = (name: string): 'bronze' | 'silver' | 'gold' => {
+    if (name.includes('100') || name.includes('Year')) return 'gold';
+    if (name.includes('30') || name.includes('Month')) return 'silver';
+    return 'bronze';
+  };
+
   return (
     <PageLayout>
       <div className="px-4 pt-12 pb-6 space-y-6 stagger-children">
         {/* Header */}
         <div className="space-y-1">
-          <h1 className="text-2xl font-bold text-foreground">Your Progress</h1>
-          <p className="text-muted-foreground">Growing in faith, one day at a time</p>
+          <h1 className="font-display text-3xl text-primary uppercase tracking-wide">Your Stats</h1>
+          <p className="text-muted-foreground text-sm uppercase tracking-wider">Track your grind</p>
         </div>
 
-        {/* Streak highlight */}
-        <div className="spiritual-card p-6 gradient-golden">
+        {/* Streak highlight with gritty styling */}
+        <div className="gym-card-accent p-6">
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-full bg-primary-foreground/20 flex items-center justify-center">
-              <Flame className="h-8 w-8 text-primary-foreground" />
+            <div className="w-16 h-16 rounded-xl bg-primary/20 flex items-center justify-center glow-accent">
+              <Flame className="h-8 w-8 text-primary" />
             </div>
             <div>
-              <p className="text-4xl font-bold text-primary-foreground">{progress.currentStreak}</p>
-              <p className="text-primary-foreground/80">Day Streak 🔥</p>
+              <p className="font-display text-5xl text-foreground">{progress.currentStreak}</p>
+              <p className="font-display text-sm text-primary uppercase tracking-wide">Day Grind 🔥</p>
             </div>
           </div>
-          <p className="mt-4 text-sm text-primary-foreground/80 italic">
+          <p className="mt-4 text-sm text-muted-foreground italic border-l-2 border-primary/30 pl-3">
             "Let us not become weary in doing good, for at the proper time we will reap a harvest if we do not give up." — Galatians 6:9
           </p>
         </div>
 
-        {/* Stats grid */}
+        {/* Weekly Goals - Circular Progress */}
+        <div className="gym-card p-5">
+          <div className="flex items-center gap-2 mb-4">
+            <Target className="h-5 w-5 text-primary" />
+            <h2 className="font-display text-lg text-primary uppercase tracking-wide">Weekly Goals</h2>
+          </div>
+          <div className="flex justify-around">
+            {weeklyGoals.map(({ label, current, target, icon: Icon }) => (
+              <div key={label} className="flex flex-col items-center">
+                <ProgressRing value={current} max={target} size={70} strokeWidth={6}>
+                  <Icon className="h-5 w-5 text-primary" />
+                </ProgressRing>
+                <p className="font-display text-lg text-foreground mt-2">{current}/{target}</p>
+                <p className="text-xs text-muted-foreground uppercase">{label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* This Week's Activity - Bar Chart */}
+        <div className="gym-card p-5">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <TrendingUp className="h-5 w-5 text-primary" />
+              <h2 className="font-display text-lg text-primary uppercase tracking-wide">This Week</h2>
+            </div>
+            <span className="text-xs text-muted-foreground">Sessions per day</span>
+          </div>
+          <SimpleBarChart data={weeklyData} maxValue={5} />
+        </div>
+
+        {/* Stats grid with gritty styling */}
         <div className="grid grid-cols-2 gap-3">
           {stats.map(stat => (
-            <div key={stat.label} className="spiritual-card p-4">
-              <stat.icon className={cn("h-5 w-5 mb-2", stat.color)} />
-              <p className="text-2xl font-bold text-foreground">
+            <div key={stat.label} className="gym-card p-4">
+              <div className={cn(
+                "w-10 h-10 rounded-lg mb-2 flex items-center justify-center",
+                stat.color === 'text-primary' && "bg-primary/20",
+                stat.color === 'text-warning' && "bg-warning/20",
+                stat.color === 'text-success' && "bg-success/20",
+                stat.color === 'text-secondary' && "bg-secondary/20"
+              )}>
+                <stat.icon className={cn("h-5 w-5", stat.color)} />
+              </div>
+              <p className="font-display text-3xl text-foreground">
                 {stat.value}
                 {stat.suffix && <span className="text-sm text-muted-foreground ml-1">{stat.suffix}</span>}
               </p>
-              <p className="text-sm text-muted-foreground">{stat.label}</p>
+              <p className="text-xs text-muted-foreground uppercase tracking-wide">{stat.label}</p>
             </div>
           ))}
         </div>
 
-        {/* Calendar */}
-        <div className="spiritual-card p-5">
+        {/* Personal Records */}
+        <div className="gym-card p-5">
+          <div className="flex items-center gap-2 mb-4">
+            <Award className="h-5 w-5 text-warning" />
+            <h2 className="font-display text-lg text-warning uppercase tracking-wide">Personal Records</h2>
+          </div>
+          <div className="grid grid-cols-3 gap-3">
+            {personalRecords.map(({ label, value, icon: Icon }) => (
+              <div key={label} className="text-center p-3 rounded-lg bg-muted/50">
+                <Icon className="h-5 w-5 text-warning mx-auto mb-1" />
+                <p className="font-display text-xl text-foreground">{value}</p>
+                <p className="text-xs text-muted-foreground">{label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Calendar with enhanced styling */}
+        <div className="gym-card p-5">
           <div className="flex items-center gap-2 mb-4">
             <Calendar className="h-5 w-5 text-primary" />
-            <h2 className="font-semibold text-foreground">
+            <h2 className="font-display text-lg text-primary uppercase tracking-wide">
               {today.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
             </h2>
           </div>
           
           <div className="grid grid-cols-7 gap-1 text-center mb-2">
             {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, i) => (
-              <span key={i} className="text-xs text-muted-foreground font-medium py-1">
+              <span key={i} className="text-xs text-muted-foreground font-display uppercase py-1">
                 {day}
               </span>
             ))}
@@ -83,52 +263,66 @@ export default function Progress() {
               const day = i + 1;
               const isToday = day === today.getDate();
               const isCompleted = completedDays.has(day);
+              const isPast = day < today.getDate();
               
               return (
                 <div
                   key={day}
                   className={cn(
-                    "aspect-square rounded-lg flex items-center justify-center text-sm transition-all",
-                    isToday && "ring-2 ring-primary ring-offset-2",
+                    "aspect-square rounded-lg flex items-center justify-center text-sm font-bold transition-all",
+                    isToday && "ring-2 ring-primary ring-offset-2 ring-offset-background",
                     isCompleted 
-                      ? "gradient-golden text-primary-foreground font-medium" 
-                      : "bg-muted/50 text-muted-foreground"
+                      ? "bg-gradient-to-br from-primary to-warning text-background glow-accent" 
+                      : isPast 
+                        ? "bg-muted/30 text-muted-foreground/50" 
+                        : "bg-muted/50 text-muted-foreground"
                   )}
+                  title={isCompleted ? `Day ${day}: Completed 4/4 sets` : undefined}
                 >
                   {day}
                 </div>
               );
             })}
           </div>
+          
+          {/* Legend */}
+          <div className="flex items-center gap-4 mt-4 text-xs text-muted-foreground">
+            <div className="flex items-center gap-1">
+              <div className="w-3 h-3 rounded-sm bg-gradient-to-br from-primary to-warning" />
+              <span>Completed</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <div className="w-3 h-3 rounded-sm bg-muted/50" />
+              <span>Upcoming</span>
+            </div>
+          </div>
         </div>
 
-        {/* Milestones */}
+        {/* Milestones with actual badge graphics */}
         <div className="space-y-3">
           <div className="flex items-center gap-2">
-            <Trophy className="h-5 w-5 text-primary" />
-            <h2 className="font-semibold text-foreground">Milestones</h2>
+            <Trophy className="h-5 w-5 text-warning" />
+            <h2 className="font-display text-lg text-warning uppercase tracking-wide">Milestones</h2>
           </div>
           
           {progress.milestones.map(milestone => (
             <div 
               key={milestone.id}
               className={cn(
-                "spiritual-card p-4 flex items-start gap-4",
-                milestone.achieved && "border-sage/30"
+                "gym-card p-4 flex items-start gap-4",
+                milestone.achieved && "border-l-4 border-l-success"
               )}
             >
-              <div className={cn(
-                "w-12 h-12 rounded-xl flex items-center justify-center text-2xl",
-                milestone.achieved ? "bg-sage/10" : "bg-muted"
-              )}>
-                {milestone.icon}
-              </div>
+              <MilestoneBadge 
+                type={getBadgeType(milestone.name)} 
+                achieved={milestone.achieved} 
+              />
               <div className="flex-1">
                 <div className="flex items-center gap-2">
-                  <p className="font-medium text-foreground">{milestone.name}</p>
+                  <p className="font-display text-sm text-foreground uppercase tracking-wide">{milestone.name}</p>
                   {milestone.achieved && (
-                    <span className="text-xs bg-sage/10 text-sage px-2 py-0.5 rounded-full">
-                      Achieved
+                    <span className="text-xs bg-success/20 text-success px-2 py-0.5 rounded-md font-bold uppercase">
+                      Unlocked
                     </span>
                   )}
                 </div>
@@ -139,15 +333,15 @@ export default function Progress() {
           ))}
         </div>
 
-        {/* Encouragement */}
-        <div className="spiritual-card p-5 bg-navy/5 border-navy/20">
-          <div className="flex items-center gap-2 text-navy mb-2">
+        {/* Growth Insight with gritty styling */}
+        <div className="gym-card p-5 border-l-4 border-l-primary">
+          <div className="flex items-center gap-2 text-primary mb-2">
             <TrendingUp className="h-5 w-5" />
-            <span className="font-medium">Growth Insight</span>
+            <span className="font-display text-sm uppercase tracking-wide">Growth Insight</span>
           </div>
-          <p className="text-foreground/90">
-            You've spent an average of <strong>15 minutes</strong> in prayer each session. 
-            Your consistency is building a strong foundation of faith!
+          <p className="text-foreground">
+            You've spent an average of <strong className="text-primary">15 minutes</strong> in prayer each session. 
+            Your consistency is building a strong foundation. <span className="text-primary font-bold">Keep grinding!</span>
           </p>
         </div>
       </div>
