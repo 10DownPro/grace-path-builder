@@ -30,11 +30,11 @@ const fallbackBattleVerses = [
   },
 ];
 
-// Simple battle worship video - using a reliable worship video
+// Battle worship video - user selected
 const battleWorshipVideo = {
-  videoId: 'CqybaIesbuA',
-  title: 'Goodness of God',
-  artist: 'Bethel Music'
+  videoId: 'brnlnjYe52o',
+  title: 'Worship Song',
+  artist: 'Artist'
 };
 
 interface BattleVerse {
