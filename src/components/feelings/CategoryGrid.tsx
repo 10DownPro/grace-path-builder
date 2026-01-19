@@ -135,25 +135,25 @@ export function CategoryGrid({
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3 stagger-children">
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2 sm:gap-3 stagger-children">
               {filteredCategories.map((category) => (
                 <button
                   key={category.id}
                   onClick={() => onSelect(category)}
                   className={cn(
-                    "gym-card p-4 text-center transition-all duration-200 border-2",
+                    "gym-card p-3 sm:p-4 text-center transition-all duration-200 border-2",
                     "hover:scale-[1.02] active:scale-[0.98]",
                     "focus:outline-none focus:ring-2 focus:ring-primary/50",
                     getCategoryColor(category.id),
                     category.is_crisis && "ring-1 ring-destructive/30"
                   )}
                 >
-                  <div className="text-3xl mb-2">{category.emoji || '📖'}</div>
-                  <p className="font-display text-xs uppercase tracking-wide text-foreground leading-tight">
+                  <div className="text-2xl sm:text-3xl mb-1 sm:mb-2">{category.emoji || '📖'}</div>
+                  <p className="font-display text-[10px] sm:text-xs uppercase tracking-wide text-foreground leading-tight line-clamp-2">
                     {category.name}
                   </p>
                   {category.is_crisis && (
-                    <span className="inline-block mt-1 text-[10px] px-1.5 py-0.5 rounded bg-destructive/20 text-destructive font-medium">
+                    <span className="inline-block mt-1 text-[8px] sm:text-[10px] px-1 sm:px-1.5 py-0.5 rounded bg-destructive/20 text-destructive font-medium">
                       CRISIS
                     </span>
                   )}

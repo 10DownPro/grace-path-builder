@@ -11,7 +11,7 @@ interface VerseImageResult {
 const fallbackGradients: Record<string, string> = {
   strength: 'linear-gradient(135deg, hsl(0, 0%, 12%) 0%, hsl(25, 85%, 20%) 50%, hsl(0, 0%, 8%) 100%)',
   warfare: 'linear-gradient(135deg, hsl(0, 0%, 10%) 0%, hsl(220, 13%, 25%) 50%, hsl(0, 0%, 8%) 100%)',
-  mountain: 'linear-gradient(135deg, hsl(220, 20%, 15%) 0%, hsl(200, 15%, 20%) 50%, hsl(0, 0%, 10%) 100%)',
+  steadfast: 'linear-gradient(135deg, hsl(220, 20%, 15%) 0%, hsl(200, 15%, 20%) 50%, hsl(0, 0%, 10%) 100%)',
   fire: 'linear-gradient(135deg, hsl(25, 85%, 15%) 0%, hsl(35, 90%, 25%) 50%, hsl(0, 0%, 10%) 100%)',
   iron: 'linear-gradient(135deg, hsl(0, 0%, 15%) 0%, hsl(0, 0%, 25%) 50%, hsl(0, 0%, 10%) 100%)',
   shield: 'linear-gradient(135deg, hsl(45, 50%, 15%) 0%, hsl(25, 60%, 20%) 50%, hsl(0, 0%, 10%) 100%)',
@@ -74,8 +74,8 @@ export function useVerseImage() {
     if (text.includes('armor') || text.includes('sword') || text.includes('battle') || text.includes('fight') || text.includes('war')) {
       return 'warfare';
     }
-    if (text.includes('mountain') || text.includes('rock') || text.includes('high') || text.includes('lift')) {
-      return 'mountain';
+    if (text.includes('mountain') || text.includes('rock') || text.includes('high') || text.includes('lift') || text.includes('stand')) {
+      return 'steadfast';
     }
     if (text.includes('fire') || text.includes('refine') || text.includes('purify') || text.includes('burn')) {
       return 'fire';

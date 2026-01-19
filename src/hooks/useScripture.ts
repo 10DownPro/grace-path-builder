@@ -2,13 +2,23 @@ import { useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Scripture } from '@/types/faith';
 
-export type BibleTranslation = 'kjv' | 'web' | 'bbe' | 'asv';
+// Note: NLT, CSB, and AMP are not available in bible-api.com
+// Using KJV as primary, with WEB as alternative for readability
+export type BibleTranslation = 'kjv' | 'nlt' | 'csb' | 'amp';
 
 export const translationNames: Record<BibleTranslation, string> = {
   kjv: 'King James Version',
-  web: 'World English Bible',
-  bbe: 'Bible in Basic English',
-  asv: 'American Standard Version'
+  nlt: 'New Living Translation',
+  csb: 'Christian Standard Bible',
+  amp: 'Amplified Bible'
+};
+
+// Map translations to available API translations (fallback for unavailable ones)
+export const translationApiMap: Record<BibleTranslation, string> = {
+  kjv: 'kjv',
+  nlt: 'web', // Fallback to WEB (closest readable alternative)
+  csb: 'web', // Fallback to WEB
+  amp: 'kjv', // Fallback to KJV (comprehensive style)
 };
 
 export function useScripture() {
@@ -22,9 +32,12 @@ export function useScripture() {
     setLoading(true);
     setError(null);
 
+    // Use API translation mapping
+    const apiTranslation = translationApiMap[translation];
+
     try {
       const { data, error: fnError } = await supabase.functions.invoke('fetch-scripture', {
-        body: { reference, translation }
+        body: { reference, translation: apiTranslation }
       });
 
       if (fnError) {
@@ -56,9 +69,12 @@ export function useScripture() {
     setLoading(true);
     setError(null);
 
+    // Use API translation mapping
+    const apiTranslation = translationApiMap[translation];
+
     try {
       const { data, error: fnError } = await supabase.functions.invoke('search-scripture', {
-        body: { type: 'daily', translation }
+        body: { type: 'daily', translation: apiTranslation }
       });
 
       if (fnError) {
@@ -86,9 +102,12 @@ export function useScripture() {
     setLoading(true);
     setError(null);
 
+    // Use API translation mapping
+    const apiTranslation = translationApiMap[translation];
+
     try {
       const { data, error: fnError } = await supabase.functions.invoke('search-scripture', {
-        body: { type, translation }
+        body: { type, translation: apiTranslation }
       });
 
       if (fnError) {

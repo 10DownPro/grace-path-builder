@@ -31,7 +31,7 @@ export default function Index() {
   const { profile, loading: profileLoading, updateProfile } = useProfile();
   const { progress, loading: progressLoading } = useUserProgress();
   const { prayers } = usePrayers();
-  const { todaySession, loading: sessionsLoading } = useSessions();
+  const { todaySession, loading: sessionsLoading, getWeeklyData } = useSessions();
   const [battleModeOpen, setBattleModeOpen] = useState(false);
   const formattedDate = getFormattedDate();
   
@@ -146,20 +146,27 @@ export default function Index() {
             allCompleted={todaySteps.every(s => s.completed)} 
           />
 
-          {/* Battle Mode Button */}
+          {/* Battle Mode Button - Mobile Optimized */}
           <Button
             variant="outline"
             onClick={() => setBattleModeOpen(true)}
-            className="w-full h-14 border-2 border-destructive/50 hover:border-destructive hover:bg-destructive/10 text-destructive font-display uppercase tracking-wide text-base"
+            className="w-full h-auto min-h-14 py-3 px-4 border-2 border-destructive/50 hover:border-destructive hover:bg-destructive/10 text-destructive font-display uppercase tracking-wide text-sm sm:text-base flex items-center justify-center gap-2"
           >
-            <Shield className="h-5 w-5 mr-2" />
-            Struggling today? Battle Mode →
+            <Shield className="h-5 w-5 flex-shrink-0" />
+            <span className="whitespace-normal text-center leading-tight">
+              Struggling today? Battle Mode →
+            </span>
           </Button>
 
-          {/* Weekly Stats */}
+          {/* Weekly Stats - Use weekly sessions count */}
           <WeeklyGrind 
-            sessions={totalSessions} 
-            prayers={prayers.length} 
+            sessions={getWeeklyData().filter(d => d === 1).length} 
+            prayers={prayers.filter(p => {
+              const prayerDate = new Date(p.created_at);
+              const weekAgo = new Date();
+              weekAgo.setDate(weekAgo.getDate() - 7);
+              return prayerDate >= weekAgo;
+            }).length} 
             verses={0} 
           />
 

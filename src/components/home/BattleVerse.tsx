@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useScripture, BibleTranslation, translationNames } from '@/hooks/useScripture';
 import { useVerseImage } from '@/hooks/useVerseImage';
+import { ShareDialog } from '@/components/ui/ShareDialog';
 import { Scripture } from '@/types/faith';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
@@ -21,6 +22,7 @@ export function BattleVerse() {
   } = useVerseImage();
   const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
   const [currentTheme, setCurrentTheme] = useState<string>('iron');
+  const [shareOpen, setShareOpen] = useState(false);
 
   useEffect(() => {
     loadVerse();
@@ -51,29 +53,14 @@ export function BattleVerse() {
     }
   };
 
-  const handleShare = async () => {
+  const handleShare = () => {
     if (!scripture) return;
-    
-    const shareText = `"${scripture.text}" — ${scripture.reference}\n\n#FaithTraining #BattleVerse`;
-    
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: 'Battle Verse',
-          text: shareText,
-        });
-      } catch (err) {
-        // User cancelled or share failed
-        copyToClipboard(shareText);
-      }
-    } else {
-      copyToClipboard(shareText);
-    }
+    setShareOpen(true);
   };
 
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
-    toast.success('Verse copied to clipboard!');
+  const getShareText = () => {
+    if (!scripture) return '';
+    return `"${scripture.text}" — ${scripture.reference}\n\n#FaithTraining #BattleVerse`;
   };
 
   const handleDownload = async () => {
@@ -83,7 +70,6 @@ export function BattleVerse() {
     }
 
     try {
-      // Create a link to download the image
       const link = document.createElement('a');
       link.href = backgroundImage;
       link.download = `battle-verse-${scripture.reference.replace(/\s+/g, '-')}.png`;
@@ -94,6 +80,20 @@ export function BattleVerse() {
     } catch {
       toast.error('Failed to download image');
     }
+  };
+
+  // Get display name for theme (don't show raw theme names)
+  const getThemeDisplayName = (theme: string): string => {
+    const names: Record<string, string> = {
+      warfare: 'Battle Ready',
+      steadfast: 'Stand Firm',
+      fire: 'Refiner\'s Fire',
+      shield: 'Protected',
+      storm: 'Through the Storm',
+      strength: 'Strength',
+      iron: 'Forged'
+    };
+    return names[theme] || 'Forged';
   };
 
   const backgroundStyle = backgroundImage
@@ -226,11 +226,19 @@ export function BattleVerse() {
         {scripture && (
           <div className="absolute top-4 right-4 z-10">
             <span className="px-2 py-1 rounded-md bg-black/50 text-xs font-display text-primary uppercase tracking-wider">
-              {currentTheme}
+              {getThemeDisplayName(currentTheme)}
             </span>
           </div>
         )}
       </div>
+
+      {/* Share Dialog */}
+      <ShareDialog
+        isOpen={shareOpen}
+        onClose={() => setShareOpen(false)}
+        title="Battle Verse"
+        text={getShareText()}
+      />
     </div>
   );
 }
