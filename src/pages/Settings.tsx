@@ -6,6 +6,7 @@ import { Switch } from '@/components/ui/switch';
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useProfile } from '@/hooks/useProfile';
+import { useNotifications } from '@/hooks/useNotifications';
 import { toast } from 'sonner';
 import {
   Dialog,
@@ -27,9 +28,10 @@ export default function Settings() {
   const navigate = useNavigate();
   const { signOut } = useAuth();
   const { profile, updateProfile } = useProfile();
+  const { preferences: notifPrefs, scheduleNotification, permissionStatus, sendTestNotification } = useNotifications();
   
   // Settings state
-  const [notifications, setNotifications] = useState(true);
+  const [notifications, setNotifications] = useState(notifPrefs?.enabled ?? true);
   const [darkMode, setDarkMode] = useState(true);
   
   // Dialog states
@@ -74,19 +76,20 @@ export default function Settings() {
   };
 
   // Handle notifications toggle
-  const handleNotificationsToggle = (enabled: boolean) => {
+  const handleNotificationsToggle = async (enabled: boolean) => {
     setNotifications(enabled);
     localStorage.setItem('notifications', String(enabled));
+    
     if (enabled) {
-      // Request notification permission
-      if ('Notification' in window) {
-        Notification.requestPermission().then(permission => {
-          if (permission === 'granted') {
-            toast.success('Daily reminders enabled');
-          } else {
-            toast.info('Please allow notifications in your browser settings');
-          }
-        });
+      // Request notification permission and schedule
+      const result = await scheduleNotification(sessionTime);
+      if (result.error) {
+        toast.info('Please allow notifications in your browser settings');
+        setNotifications(false);
+      } else {
+        toast.success('Daily reminders enabled');
+        // Send a test notification
+        setTimeout(() => sendTestNotification(), 1000);
       }
     } else {
       toast.success('Daily reminders disabled');
@@ -101,6 +104,12 @@ export default function Settings() {
       '12:00 PM': 'afternoon', '6:00 PM': 'evening', '8:00 PM': 'evening', '9:00 PM': 'evening'
     };
     await updateProfile({ preferred_time: timeMap[sessionTime] || 'morning' });
+    
+    // Also update notification schedule if enabled
+    if (notifications) {
+      await scheduleNotification(sessionTime);
+    }
+    
     setSessionTimeOpen(false);
     toast.success('Session time updated');
   };

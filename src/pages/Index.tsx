@@ -31,7 +31,7 @@ export default function Index() {
   const { profile, loading: profileLoading, updateProfile } = useProfile();
   const { progress, loading: progressLoading } = useUserProgress();
   const { prayers } = usePrayers();
-  const { todaySession, loading: sessionsLoading, getWeeklyData } = useSessions();
+  const { todaySession, loading: sessionsLoading, getWeeklyData, getWeeklyVersesRead } = useSessions();
   const [battleModeOpen, setBattleModeOpen] = useState(false);
   const formattedDate = getFormattedDate();
   
@@ -158,7 +158,7 @@ export default function Index() {
             </span>
           </Button>
 
-          {/* Weekly Stats - Use weekly sessions count */}
+          {/* Weekly Stats - Use weekly session count */}
           <WeeklyGrind 
             sessions={getWeeklyData().filter(d => d === 1).length} 
             prayers={prayers.filter(p => {
@@ -167,7 +167,7 @@ export default function Index() {
               weekAgo.setDate(weekAgo.getDate() - 7);
               return prayerDate >= weekAgo;
             }).length} 
-            verses={0} 
+            verses={getWeeklyVersesRead()} 
           />
 
           {/* Daily Mission */}

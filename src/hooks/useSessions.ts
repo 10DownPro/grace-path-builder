@@ -11,6 +11,7 @@ export interface Session {
   prayer_completed: boolean;
   reflection_completed: boolean;
   duration_minutes: number;
+  verses_read: number;
   completed_at: string | null;
   created_at: string;
   updated_at: string;
@@ -109,7 +110,7 @@ export function useSessions() {
     return { error: null, data: session };
   };
 
-  const updateTodaySession = async (updates: Partial<Pick<Session, 'worship_completed' | 'scripture_completed' | 'prayer_completed' | 'reflection_completed' | 'duration_minutes'>>) => {
+  const updateTodaySession = async (updates: Partial<Pick<Session, 'worship_completed' | 'scripture_completed' | 'prayer_completed' | 'reflection_completed' | 'duration_minutes' | 'verses_read'>>) => {
     if (!user) return { error: new Error('Not authenticated') };
 
     // Ensure today's session exists
@@ -206,6 +207,24 @@ export function useSessions() {
     return weekData;
   };
 
+  // Get weekly verses read count
+  const getWeeklyVersesRead = (): number => {
+    const now = new Date();
+    const dayOfWeek = now.getDay();
+    
+    // Get start of week (Sunday)
+    const weekStart = new Date(now);
+    weekStart.setDate(now.getDate() - dayOfWeek);
+    weekStart.setHours(0, 0, 0, 0);
+
+    return sessions
+      .filter(session => {
+        const sessionDate = new Date(session.session_date);
+        return sessionDate >= weekStart;
+      })
+      .reduce((acc, session) => acc + (session.verses_read || 0), 0);
+  };
+
   return {
     sessions,
     todaySession,
@@ -216,6 +235,7 @@ export function useSessions() {
     getCompletedDates,
     getSessionsForMonth,
     getWeeklyData,
+    getWeeklyVersesRead,
     refetch: fetchSessions
   };
 }
