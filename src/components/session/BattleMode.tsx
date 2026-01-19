@@ -39,13 +39,13 @@ const battleWorshipPlaylist = [
   },
   {
     videoId: 'kKN7Tpe1p2s',
-    title: 'We Want Revival',
-    artist: 'Worship'
+    title: 'Holy',
+    artist: 'Lathan Warlick / SVRCINA'
   },
   {
     videoId: 'YbGFYaA0SbY',
-    title: 'Battle Worship',
-    artist: 'Worship'
+    title: 'We Want Revival',
+    artist: 'Red Worship / Lizzie Morgan / Jonathan Stamper'
   }
 ];
 
