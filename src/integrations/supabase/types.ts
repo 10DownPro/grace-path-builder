@@ -14,7 +14,114 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      prayers: {
+        Row: {
+          answered: boolean
+          answered_date: string | null
+          answered_note: string | null
+          content: string
+          created_at: string
+          id: string
+          type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          answered?: boolean
+          answered_date?: string | null
+          answered_note?: string | null
+          content: string
+          created_at?: string
+          id?: string
+          type: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          answered?: boolean
+          answered_date?: string | null
+          answered_note?: string | null
+          content?: string
+          created_at?: string
+          id?: string
+          type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          commitment: string
+          created_at: string
+          focus_areas: string[] | null
+          id: string
+          name: string
+          preferred_time: string
+          updated_at: string
+          user_id: string
+          weekly_goal: number
+        }
+        Insert: {
+          commitment?: string
+          created_at?: string
+          focus_areas?: string[] | null
+          id?: string
+          name?: string
+          preferred_time?: string
+          updated_at?: string
+          user_id: string
+          weekly_goal?: number
+        }
+        Update: {
+          commitment?: string
+          created_at?: string
+          focus_areas?: string[] | null
+          id?: string
+          name?: string
+          preferred_time?: string
+          updated_at?: string
+          user_id?: string
+          weekly_goal?: number
+        }
+        Relationships: []
+      }
+      user_progress: {
+        Row: {
+          created_at: string
+          current_streak: number
+          id: string
+          last_session_date: string | null
+          longest_streak: number
+          total_minutes: number
+          total_sessions: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          current_streak?: number
+          id?: string
+          last_session_date?: string | null
+          longest_streak?: number
+          total_minutes?: number
+          total_sessions?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          current_streak?: number
+          id?: string
+          last_session_date?: string | null
+          longest_streak?: number
+          total_minutes?: number
+          total_sessions?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

@@ -3,10 +3,11 @@ import { PageLayout } from '@/components/layout/PageLayout';
 import { PrayerCard } from '@/components/prayer/PrayerCard';
 import { PrayerStats } from '@/components/prayer/PrayerStats';
 import { AddPrayerDialog } from '@/components/prayer/AddPrayerDialog';
-import { samplePrayers } from '@/lib/sampleData';
+import { usePrayers, type Prayer } from '@/hooks/usePrayers';
 import { PrayerEntry } from '@/types/faith';
 import { cn } from '@/lib/utils';
-import { Filter, Sparkles, Target, BookOpen } from 'lucide-react';
+import { Filter, Sparkles, Target, BookOpen, Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
 
 const filterOptions = [
   { id: 'all', label: 'All' },
@@ -22,12 +23,27 @@ const typeFilters = [
   { id: 'supplication', label: 'S', full: 'Supplication' },
 ] as const;
 
+// Convert database Prayer to PrayerEntry for components
+function toPrayerEntry(prayer: Prayer): PrayerEntry {
+  return {
+    id: prayer.id,
+    date: prayer.created_at.split('T')[0],
+    type: prayer.type,
+    content: prayer.content,
+    answered: prayer.answered,
+    answeredDate: prayer.answered_date || undefined,
+    answeredNote: prayer.answered_note || undefined,
+  };
+}
+
 export default function Prayer() {
-  const [prayers, setPrayers] = useState<PrayerEntry[]>(samplePrayers);
+  const { prayers, loading, addPrayer, markAnswered } = usePrayers();
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'answered'>('all');
   const [typeFilter, setTypeFilter] = useState<'all' | PrayerEntry['type']>('all');
 
-  const filteredPrayers = prayers.filter(p => {
+  const prayerEntries = prayers.map(toPrayerEntry);
+
+  const filteredPrayers = prayerEntries.filter(p => {
     const matchesStatus = statusFilter === 'all' 
       || (statusFilter === 'answered' && p.answered)
       || (statusFilter === 'active' && !p.answered);
@@ -35,26 +51,36 @@ export default function Prayer() {
     return matchesStatus && matchesType;
   });
 
-  const addPrayer = (newPrayer: Omit<PrayerEntry, 'id'>) => {
-    const prayer: PrayerEntry = {
-      ...newPrayer,
-      id: Date.now().toString(),
-    };
-    setPrayers([prayer, ...prayers]);
+  const handleAddPrayer = async (newPrayer: Omit<PrayerEntry, 'id'>) => {
+    const { error } = await addPrayer({
+      type: newPrayer.type,
+      content: newPrayer.content,
+    });
+    if (error) {
+      toast.error('Failed to add prayer');
+    } else {
+      toast.success('Prayer lifted up! 🙏');
+    }
   };
 
-  const markAnswered = (id: string, note: string) => {
-    setPrayers(prayers.map(p => 
-      p.id === id 
-        ? { 
-            ...p, 
-            answered: true, 
-            answeredDate: new Date().toISOString().split('T')[0],
-            answeredNote: note || undefined,
-          }
-        : p
-    ));
+  const handleMarkAnswered = async (id: string, note: string) => {
+    const { error } = await markAnswered(id, note);
+    if (error) {
+      toast.error('Failed to update prayer');
+    } else {
+      toast.success('Praise God! Prayer answered! 🎉');
+    }
   };
+
+  if (loading) {
+    return (
+      <PageLayout>
+        <div className="min-h-screen flex items-center justify-center">
+          <Loader2 className="h-8 w-8 text-primary animate-spin" />
+        </div>
+      </PageLayout>
+    );
+  }
 
   return (
     <PageLayout>
@@ -96,7 +122,7 @@ export default function Prayer() {
               </div>
             </div>
             
-            <AddPrayerDialog onAddPrayer={addPrayer} />
+            <AddPrayerDialog onAddPrayer={handleAddPrayer} />
           </div>
           
           {/* Corner decoration */}
@@ -104,7 +130,7 @@ export default function Prayer() {
         </div>
 
         {/* Stats */}
-        <PrayerStats prayers={prayers} />
+        <PrayerStats prayers={prayerEntries} />
 
         {/* Filters */}
         <div className="space-y-3">
@@ -164,7 +190,7 @@ export default function Prayer() {
             <PrayerCard 
               key={prayer.id} 
               prayer={prayer}
-              onMarkAnswered={(note) => markAnswered(prayer.id, note)}
+              onMarkAnswered={(note) => handleMarkAnswered(prayer.id, note)}
             />
           ))}
           
