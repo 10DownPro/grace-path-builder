@@ -4,12 +4,13 @@ import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, Play, Check, Heart, BookOpen, PenLine, Lightbulb, Loader2, Flame, Clock, Plus, Minus, Music } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { dailyPrompts } from '@/lib/sampleData';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Textarea } from '@/components/ui/textarea';
 import { useScripture, BibleTranslation, translationNames } from '@/hooks/useScripture';
 import { Scripture } from '@/types/faith';
 import { YouTubeWorshipPlayer } from '@/components/session/YouTubeWorshipPlayer';
 import { toast } from 'sonner';
+import { useSessions } from '@/hooks/useSessions';
 import {
   Select,
   SelectContent,
@@ -28,12 +29,26 @@ const phases: { id: SessionPhase; label: string; icon: React.ElementType; durati
 ];
 
 export default function Session() {
+  const navigate = useNavigate();
+  const { todaySession, updateTodaySession, getOrCreateTodaySession, loading: sessionsLoading } = useSessions();
   const [currentPhase, setCurrentPhase] = useState<SessionPhase>('worship');
-  const [completedPhases, setCompletedPhases] = useState<Set<SessionPhase>>(new Set());
   const [prayerText, setPrayerText] = useState('');
   const [reflectionText, setReflectionText] = useState('');
   const [worshipElapsed, setWorshipElapsed] = useState(0);
   const [worshipRating, setWorshipRating] = useState<'powerful' | 'peaceful' | 'struggled' | null>(null);
+  const [saving, setSaving] = useState(false);
+
+  // Initialize session on mount
+  useEffect(() => {
+    getOrCreateTodaySession();
+  }, []);
+
+  // Build completed phases from todaySession
+  const completedPhases = new Set<SessionPhase>();
+  if (todaySession?.worship_completed) completedPhases.add('worship');
+  if (todaySession?.scripture_completed) completedPhases.add('scripture');
+  if (todaySession?.prayer_completed) completedPhases.add('prayer');
+  if (todaySession?.reflection_completed) completedPhases.add('reflection');
 
   const currentIndex = phases.findIndex(p => p.id === currentPhase);
   const phase = phases[currentIndex];
@@ -41,13 +56,40 @@ export default function Session() {
   const completedTime = phases.slice(0, currentIndex).reduce((acc, p) => acc + p.duration, 0);
   const remainingTime = totalSessionTime - completedTime;
 
-  const markComplete = () => {
-    setCompletedPhases(prev => new Set([...prev, currentPhase]));
+  const markComplete = async () => {
+    setSaving(true);
+    
+    // Map phase to database field
+    const updateField: Record<SessionPhase, string> = {
+      worship: 'worship_completed',
+      scripture: 'scripture_completed',
+      prayer: 'prayer_completed',
+      reflection: 'reflection_completed',
+    };
+
+    const updates: Record<string, boolean | number> = {
+      [updateField[currentPhase]]: true,
+    };
+
+    // Add duration for this phase
+    const currentDuration = todaySession?.duration_minutes || 0;
+    updates.duration_minutes = currentDuration + phase.duration;
+
+    const result = await updateTodaySession(updates as any);
+    setSaving(false);
+
+    if (result.error) {
+      toast.error('Failed to save progress');
+      return;
+    }
+
     if (currentIndex < phases.length - 1) {
       setCurrentPhase(phases[currentIndex + 1].id);
       toast.success('Set complete! 💪 Keep pushing!');
     } else {
       toast.success('Training session complete! 🏆 You showed up today!');
+      // Navigate back to home after completing all
+      setTimeout(() => navigate('/'), 1500);
     }
   };
 
@@ -164,12 +206,18 @@ export default function Session() {
             <Button 
               size="lg" 
               onClick={markComplete}
+              disabled={saving || completedPhases.has(currentPhase)}
               className={cn(
                 "flex-1 btn-gym text-lg",
                 completedPhases.has(currentPhase) && "bg-success border-success/60"
               )}
             >
-              {completedPhases.has(currentPhase) ? (
+              {saving ? (
+                <>
+                  <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                  Saving...
+                </>
+              ) : completedPhases.has(currentPhase) ? (
                 <>
                   <Check className="h-5 w-5 mr-2" />
                   Set Done
