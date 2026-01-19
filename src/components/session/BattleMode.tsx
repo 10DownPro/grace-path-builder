@@ -30,9 +30,9 @@ const fallbackBattleVerses = [
   },
 ];
 
-// Simple battle worship video
+// Simple battle worship video - using a reliable worship video
 const battleWorshipVideo = {
-  videoId: 'Fo4RlXs-mGI',
+  videoId: 'CqybaIesbuA',
   title: 'Goodness of God',
   artist: 'Bethel Music'
 };
@@ -316,8 +316,8 @@ export function BattleMode({ isOpen, onClose, onComplete }: BattleModeProps) {
           )}
         </div>
 
-        {/* Footer */}
-        <div className="p-6">
+        {/* Footer - with safe area padding for mobile nav */}
+        <div className="p-6 pb-28 sm:pb-6">
           <Button
             onClick={handleNextPhase}
             className="w-full btn-gym text-lg py-6"
