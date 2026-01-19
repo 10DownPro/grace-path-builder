@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react';
 import { PageLayout } from '@/components/layout/PageLayout';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, Play, Check, Heart, BookOpen, PenLine, Lightbulb, ExternalLink, Loader2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Play, Check, Heart, BookOpen, PenLine, Lightbulb, Loader2, Flame, Clock, Plus, Minus, Music } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { worshipResources, dailyPrompts } from '@/lib/sampleData';
+import { dailyPrompts } from '@/lib/sampleData';
 import { Link } from 'react-router-dom';
 import { Textarea } from '@/components/ui/textarea';
 import { useScripture, BibleTranslation, translationNames } from '@/hooks/useScripture';
 import { Scripture } from '@/types/faith';
+import { YouTubeWorshipPlayer } from '@/components/session/YouTubeWorshipPlayer';
+import { toast } from 'sonner';
 import {
   Select,
   SelectContent,
@@ -18,11 +20,11 @@ import {
 
 type SessionPhase = 'worship' | 'scripture' | 'prayer' | 'reflection';
 
-const phases: { id: SessionPhase; label: string; icon: React.ElementType; duration: string }[] = [
-  { id: 'worship', label: 'Worship', icon: Heart, duration: '5 min' },
-  { id: 'scripture', label: 'Scripture', icon: BookOpen, duration: '10 min' },
-  { id: 'prayer', label: 'Prayer', icon: PenLine, duration: '10 min' },
-  { id: 'reflection', label: 'Reflection', icon: Lightbulb, duration: '5 min' },
+const phases: { id: SessionPhase; label: string; icon: React.ElementType; duration: number; emoji: string }[] = [
+  { id: 'worship', label: 'Worship', icon: Music, duration: 15, emoji: '🎵' },
+  { id: 'scripture', label: 'Scripture', icon: BookOpen, duration: 10, emoji: '📖' },
+  { id: 'prayer', label: 'Prayer', icon: Heart, duration: 10, emoji: '🙏' },
+  { id: 'reflection', label: 'Reflect', icon: PenLine, duration: 5, emoji: '✍️' },
 ];
 
 export default function Session() {
@@ -30,14 +32,22 @@ export default function Session() {
   const [completedPhases, setCompletedPhases] = useState<Set<SessionPhase>>(new Set());
   const [prayerText, setPrayerText] = useState('');
   const [reflectionText, setReflectionText] = useState('');
+  const [worshipElapsed, setWorshipElapsed] = useState(0);
+  const [worshipRating, setWorshipRating] = useState<'powerful' | 'peaceful' | 'struggled' | null>(null);
 
   const currentIndex = phases.findIndex(p => p.id === currentPhase);
   const phase = phases[currentIndex];
+  const totalSessionTime = phases.reduce((acc, p) => acc + p.duration, 0);
+  const completedTime = phases.slice(0, currentIndex).reduce((acc, p) => acc + p.duration, 0);
+  const remainingTime = totalSessionTime - completedTime;
 
   const markComplete = () => {
     setCompletedPhases(prev => new Set([...prev, currentPhase]));
     if (currentIndex < phases.length - 1) {
       setCurrentPhase(phases[currentIndex + 1].id);
+      toast.success('Set complete! 💪 Keep pushing!');
+    } else {
+      toast.success('Training session complete! 🏆 You showed up today!');
     }
   };
 
@@ -47,56 +57,86 @@ export default function Session() {
     }
   };
 
+  const allComplete = completedPhases.size === phases.length;
+
   return (
     <PageLayout>
       <div className="min-h-screen flex flex-col">
-        {/* Header */}
-        <div className="px-4 pt-6 pb-4">
+        {/* Header - Gritty Gym Style */}
+        <div className="px-4 pt-6 pb-4 bg-gradient-to-b from-card to-background border-b-2 border-border">
           <div className="flex items-center justify-between mb-4">
             <Link to="/">
-              <Button variant="ghost" size="sm" className="gap-2">
+              <Button variant="ghost" size="sm" className="gap-2 font-display uppercase text-sm">
                 <ChevronLeft className="h-4 w-4" />
-                Back
+                Exit
               </Button>
             </Link>
-            <span className="text-sm text-muted-foreground">
-              {currentIndex + 1} of {phases.length}
-            </span>
+            <div className="flex items-center gap-2 text-sm">
+              <Clock className="h-4 w-4 text-primary" />
+              <span className="font-display text-primary">~{remainingTime} MIN LEFT</span>
+            </div>
           </div>
 
-          {/* Progress dots */}
-          <div className="flex items-center justify-center gap-2">
+          {/* Phase Progress Bar */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between text-xs text-muted-foreground uppercase tracking-wider">
+              <span className="font-display">Set {currentIndex + 1} of {phases.length}</span>
+              <span className="font-display text-primary">
+                {completedPhases.size}/{phases.length} Complete
+              </span>
+            </div>
+            <div className="progress-gym">
+              <div 
+                className="progress-gym-fill"
+                style={{ width: `${(completedPhases.size / phases.length) * 100}%` }}
+              />
+            </div>
+          </div>
+
+          {/* Phase Indicators */}
+          <div className="flex items-center justify-center gap-3 mt-4">
             {phases.map((p) => (
               <button
                 key={p.id}
                 onClick={() => setCurrentPhase(p.id)}
                 className={cn(
-                  "w-3 h-3 rounded-full transition-all duration-200",
+                  "flex flex-col items-center gap-1 p-2 rounded-lg transition-all",
                   p.id === currentPhase
-                    ? "bg-primary w-8"
+                    ? "bg-primary/20 scale-110"
                     : completedPhases.has(p.id)
-                    ? "bg-sage"
-                    : "bg-muted"
+                    ? "opacity-60"
+                    : "opacity-40 hover:opacity-60"
                 )}
-              />
+              >
+                <span className="text-lg">{p.emoji}</span>
+                {completedPhases.has(p.id) && (
+                  <Check className="h-3 w-3 text-success" />
+                )}
+              </button>
             ))}
           </div>
         </div>
 
         {/* Phase content */}
-        <div className="flex-1 px-4 pb-32">
-          <div className="spiritual-card p-6 h-full">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 rounded-xl gradient-golden flex items-center justify-center">
-                <phase.icon className="h-6 w-6 text-primary-foreground" />
+        <div className="flex-1 px-4 pb-32 pt-4">
+          <div className="gym-card p-5">
+            <div className="flex items-center gap-3 mb-5 pb-4 border-b-2 border-border">
+              <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center glow-accent">
+                <phase.icon className="h-6 w-6 text-primary" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-foreground">{phase.label}</h1>
-                <p className="text-sm text-muted-foreground">{phase.duration}</p>
+                <h1 className="font-display text-2xl text-foreground uppercase tracking-wide">{phase.label}</h1>
+                <p className="text-sm text-muted-foreground">{phase.duration} min • Set {currentIndex + 1}</p>
               </div>
             </div>
 
-            {currentPhase === 'worship' && <WorshipContent />}
+            {currentPhase === 'worship' && (
+              <WorshipContent 
+                onTimeUpdate={setWorshipElapsed} 
+                rating={worshipRating}
+                onRating={setWorshipRating}
+              />
+            )}
             {currentPhase === 'scripture' && <ScriptureContent />}
             {currentPhase === 'prayer' && (
               <PrayerContent value={prayerText} onChange={setPrayerText} />
@@ -107,32 +147,42 @@ export default function Session() {
           </div>
         </div>
 
-        {/* Navigation */}
+        {/* Navigation - Heavy Gym Button */}
         <div className="fixed bottom-20 left-0 right-0 px-4">
           <div className="max-w-lg mx-auto flex items-center gap-3">
             {currentIndex > 0 && (
-              <Button variant="outline" size="lg" onClick={goBack} className="flex-1">
+              <Button 
+                variant="outline" 
+                size="lg" 
+                onClick={goBack} 
+                className="flex-1 border-2 border-border hover:border-primary font-display uppercase"
+              >
                 <ChevronLeft className="h-4 w-4 mr-2" />
-                Previous
+                Back
               </Button>
             )}
             <Button 
-              variant="golden" 
               size="lg" 
               onClick={markComplete}
-              className="flex-1"
+              className={cn(
+                "flex-1 btn-gym text-lg",
+                completedPhases.has(currentPhase) && "bg-success border-success/60"
+              )}
             >
               {completedPhases.has(currentPhase) ? (
                 <>
-                  <Check className="h-4 w-4 mr-2" />
-                  Completed
+                  <Check className="h-5 w-5 mr-2" />
+                  Set Done
                 </>
               ) : currentIndex === phases.length - 1 ? (
-                'Finish Session'
+                <>
+                  <Flame className="h-5 w-5 mr-2" />
+                  Finish Training
+                </>
               ) : (
                 <>
-                  Complete & Continue
-                  <ChevronRight className="h-4 w-4 ml-2" />
+                  Complete Set
+                  <ChevronRight className="h-5 w-5 ml-2" />
                 </>
               )}
             </Button>
@@ -143,38 +193,85 @@ export default function Session() {
   );
 }
 
-function WorshipContent() {
+function WorshipContent({ 
+  onTimeUpdate, 
+  rating, 
+  onRating 
+}: { 
+  onTimeUpdate: (time: number) => void;
+  rating: 'powerful' | 'peaceful' | 'struggled' | null;
+  onRating: (rating: 'powerful' | 'peaceful' | 'struggled') => void;
+}) {
+  const [extraTime, setExtraTime] = useState(0);
+
+  const addTime = () => setExtraTime(prev => prev + 5);
+  const subtractTime = () => setExtraTime(prev => Math.max(0, prev - 5));
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <p className="text-muted-foreground">
-        Begin your session with worship. Let your heart be still and focused on God's presence.
+        Begin your training with worship. Let your heart be still and focused on God's presence.
       </p>
 
-      <div className="space-y-3">
-        <h3 className="font-medium text-foreground">Suggested Songs</h3>
-        {worshipResources.slice(0, 3).map(song => (
-          <a
-            key={song.id}
-            href={song.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-4 p-4 rounded-xl bg-muted/50 hover:bg-muted transition-colors"
+      {/* Embedded YouTube Player */}
+      <YouTubeWorshipPlayer onTimeUpdate={onTimeUpdate} />
+
+      {/* Time Controls */}
+      <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30 border-2 border-border">
+        <span className="text-sm text-muted-foreground">Feeling it?</span>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={subtractTime}
+            disabled={extraTime === 0}
+            className="border-border"
           >
-            <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-              <Play className="h-4 w-4 text-primary" />
-            </div>
-            <div className="flex-1">
-              <p className="font-medium text-foreground">{song.title}</p>
-              <p className="text-sm text-muted-foreground">{song.artist}</p>
-            </div>
-            <ExternalLink className="h-4 w-4 text-muted-foreground" />
-          </a>
-        ))}
+            <Minus className="h-4 w-4" />
+          </Button>
+          <span className="font-display text-lg w-20 text-center">
+            {extraTime > 0 ? `+${extraTime}` : '0'} min
+          </span>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={addTime}
+            className="border-border"
+          >
+            <Plus className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
 
-      <div className="p-4 rounded-xl bg-primary/5 border border-primary/20">
+      {/* Worship Rating */}
+      <div className="space-y-2">
+        <p className="text-sm text-muted-foreground font-display uppercase tracking-wide">How was worship?</p>
+        <div className="flex gap-2">
+          {[
+            { id: 'powerful', emoji: '🔥', label: 'Powerful' },
+            { id: 'peaceful', emoji: '😌', label: 'Peaceful' },
+            { id: 'struggled', emoji: '😔', label: 'Struggled' },
+          ].map(option => (
+            <button
+              key={option.id}
+              onClick={() => onRating(option.id as 'powerful' | 'peaceful' | 'struggled')}
+              className={cn(
+                "flex-1 flex flex-col items-center gap-1 p-3 rounded-lg border-2 transition-all",
+                rating === option.id
+                  ? "border-primary bg-primary/10"
+                  : "border-border hover:border-primary/50"
+              )}
+            >
+              <span className="text-2xl">{option.emoji}</span>
+              <span className="text-xs font-display uppercase">{option.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="p-4 rounded-lg bg-primary/5 border-2 border-primary/20">
         <p className="text-sm text-muted-foreground">
-          💡 <strong>Tip:</strong> Close your eyes, take three deep breaths, and let the music draw your heart toward God.
+          💡 <strong className="text-foreground">Tip:</strong> Close your eyes, take three deep breaths, and let the music draw your heart toward God.
         </p>
       </div>
     </div>
@@ -198,13 +295,13 @@ function ScriptureContent() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <div className="flex items-center justify-between">
         <p className="text-muted-foreground">
-          Read today's Scripture slowly and let the words sink deep into your heart.
+          Read today's Scripture slowly. Let the words sink deep.
         </p>
         <Select value={translation} onValueChange={(v) => setTranslation(v as BibleTranslation)}>
-          <SelectTrigger className="w-20">
+          <SelectTrigger className="w-20 bg-muted border-border">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -218,32 +315,42 @@ function ScriptureContent() {
       </div>
 
       {loading ? (
-        <div className="flex items-center justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <div className="flex flex-col items-center justify-center py-12 gap-3">
+          <Loader2 className="h-10 w-10 animate-spin text-primary" />
+          <p className="font-display text-sm text-muted-foreground uppercase">Loading ammo...</p>
         </div>
       ) : error ? (
-        <div className="p-6 rounded-xl bg-destructive/10 border border-destructive/20 text-center">
-          <p className="text-destructive mb-3">Failed to load scripture</p>
-          <Button variant="outline" size="sm" onClick={loadScripture}>
+        <div className="p-6 rounded-lg bg-destructive/10 border-2 border-destructive/30 text-center">
+          <p className="text-destructive font-display uppercase mb-3">Failed to load</p>
+          <Button variant="outline" size="sm" onClick={loadScripture} className="border-destructive">
             Try Again
           </Button>
         </div>
       ) : scripture ? (
-        <div className="p-6 rounded-xl bg-muted/30 border border-border/50">
-          <p className="text-sm font-medium text-primary mb-3">{scripture.reference}</p>
-          <blockquote className="font-scripture text-xl leading-relaxed text-foreground italic">
+        <div className="p-5 rounded-lg bg-muted/30 border-2 border-border">
+          <p className="font-display text-sm text-primary uppercase tracking-wide mb-3">{scripture.reference}</p>
+          <blockquote className="text-xl leading-relaxed text-foreground font-bold">
             "{scripture.text}"
           </blockquote>
-          <p className="text-sm text-muted-foreground mt-3">{scripture.translation}</p>
+          <p className="text-xs text-muted-foreground uppercase mt-3">{scripture.translation}</p>
         </div>
       ) : null}
 
       <div className="space-y-2">
-        <h3 className="font-medium text-foreground">Reflection Questions</h3>
+        <h3 className="font-display text-sm text-primary uppercase tracking-wide">Reflection Questions</h3>
         <ul className="space-y-2 text-muted-foreground">
-          <li>• What word or phrase stands out to you?</li>
-          <li>• What is God revealing about Himself?</li>
-          <li>• How does this apply to your life today?</li>
+          <li className="flex items-start gap-2">
+            <span className="text-primary">•</span>
+            <span>What word or phrase stands out to you?</span>
+          </li>
+          <li className="flex items-start gap-2">
+            <span className="text-primary">•</span>
+            <span>What is God revealing about Himself?</span>
+          </li>
+          <li className="flex items-start gap-2">
+            <span className="text-primary">•</span>
+            <span>How does this apply to your training today?</span>
+          </li>
         </ul>
       </div>
     </div>
@@ -260,10 +367,17 @@ function PrayerContent({ value, onChange }: { value: string; onChange: (v: strin
     supplication: "Bring your requests, needs, and intercessions before God..."
   };
 
+  const tabConfig = {
+    adoration: { emoji: '🙌', label: 'Adoration' },
+    confession: { emoji: '💭', label: 'Confession' },
+    thanksgiving: { emoji: '🙏', label: 'Thanks' },
+    supplication: { emoji: '🎯', label: 'Requests' },
+  };
+
   return (
     <div className="space-y-4">
       <p className="text-muted-foreground">
-        Use the ACTS prayer method to guide your conversation with God.
+        Use the ACTS method to structure your conversation with God.
       </p>
 
       <div className="flex gap-2 overflow-x-auto pb-2">
@@ -272,13 +386,14 @@ function PrayerContent({ value, onChange }: { value: string; onChange: (v: strin
             key={tab}
             onClick={() => setActiveTab(tab)}
             className={cn(
-              "px-3 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-all",
+              "flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-display uppercase tracking-wide whitespace-nowrap transition-all border-2",
               activeTab === tab
-                ? "bg-primary text-primary-foreground"
-                : "bg-muted text-muted-foreground hover:bg-muted/80"
+                ? "bg-primary/20 border-primary text-primary"
+                : "bg-muted/30 border-border text-muted-foreground hover:border-primary/50"
             )}
           >
-            {tab.charAt(0).toUpperCase() + tab.slice(1)}
+            <span>{tabConfig[tab].emoji}</span>
+            <span>{tabConfig[tab].label}</span>
           </button>
         ))}
       </div>
@@ -287,7 +402,7 @@ function PrayerContent({ value, onChange }: { value: string; onChange: (v: strin
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={prompts[activeTab]}
-        className="min-h-[200px] resize-none bg-muted/30 border-border/50"
+        className="min-h-[180px] resize-none bg-muted/30 border-2 border-border focus:border-primary"
       />
     </div>
   );
@@ -302,16 +417,16 @@ function ReflectionContent({ value, onChange }: { value: string; onChange: (v: s
         Take a moment to reflect on what God is teaching you today.
       </p>
 
-      <div className="p-4 rounded-xl bg-primary/5 border border-primary/20">
-        <p className="text-sm text-muted-foreground mb-1">Today's Prompt</p>
-        <p className="font-medium text-foreground">{todayPrompt}</p>
+      <div className="p-4 rounded-lg bg-primary/10 border-2 border-primary/30">
+        <p className="text-xs text-primary font-display uppercase tracking-wide mb-1">Today's Prompt</p>
+        <p className="font-bold text-foreground">{todayPrompt}</p>
       </div>
 
       <Textarea
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder="Write your reflection here..."
-        className="min-h-[200px] resize-none bg-muted/30 border-border/50"
+        className="min-h-[180px] resize-none bg-muted/30 border-2 border-border focus:border-primary"
       />
     </div>
   );
