@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Shield, Flame, ChevronRight, X, Play, Pause, Volume2, VolumeX, Heart, Loader2 } from 'lucide-react';
+import { Shield, Flame, ChevronRight, X, Play, Pause, Volume2, VolumeX, Heart, Loader2, SkipForward } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useVerseImage } from '@/hooks/useVerseImage';
@@ -30,12 +30,24 @@ const fallbackBattleVerses = [
   },
 ];
 
-// Battle worship video - user selected
-const battleWorshipVideo = {
-  videoId: 'brnlnjYe52o',
-  title: 'Never Lost',
-  artist: 'TRIBL / Maverick City Music'
-};
+// Battle worship playlist - high-impact worship songs
+const battleWorshipPlaylist = [
+  {
+    videoId: 'brnlnjYe52o',
+    title: 'Never Lost',
+    artist: 'TRIBL / Maverick City Music'
+  },
+  {
+    videoId: 'kKN7Tpe1p2s',
+    title: 'We Want Revival',
+    artist: 'Worship'
+  },
+  {
+    videoId: 'YbGFYaA0SbY',
+    title: 'Battle Worship',
+    artist: 'Worship'
+  }
+];
 
 interface BattleVerse {
   reference: string;
@@ -57,6 +69,7 @@ export function BattleMode({ isOpen, onClose, onComplete }: BattleModeProps) {
   const [isMuted, setIsMuted] = useState(false);
   const [battleVerses, setBattleVerses] = useState<BattleVerse[]>(fallbackBattleVerses);
   const [currentVerseIndex, setCurrentVerseIndex] = useState(0);
+  const [currentSongIndex, setCurrentSongIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const { getFallbackGradient } = useVerseImage();
 
@@ -222,8 +235,9 @@ export function BattleMode({ isOpen, onClose, onComplete }: BattleModeProps) {
             <div className="space-y-6">
               <div className="aspect-video rounded-xl overflow-hidden bg-black border-2 border-primary/30 relative">
                 <iframe
-                  src={`https://www.youtube.com/embed/${battleWorshipVideo.videoId}?autoplay=${isPlaying ? 1 : 0}&mute=${isMuted ? 1 : 0}&rel=0`}
-                  title={battleWorshipVideo.title}
+                  key={currentSongIndex}
+                  src={`https://www.youtube.com/embed/${battleWorshipPlaylist[currentSongIndex].videoId}?autoplay=${isPlaying ? 1 : 0}&mute=${isMuted ? 1 : 0}&rel=0`}
+                  title={battleWorshipPlaylist[currentSongIndex].title}
                   className="w-full h-full"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
@@ -231,8 +245,9 @@ export function BattleMode({ isOpen, onClose, onComplete }: BattleModeProps) {
               </div>
 
               <div className="text-center">
-                <p className="font-display text-xl text-white uppercase tracking-wide">{battleWorshipVideo.title}</p>
-                <p className="text-white/60">{battleWorshipVideo.artist}</p>
+                <p className="font-display text-xl text-white uppercase tracking-wide">{battleWorshipPlaylist[currentSongIndex].title}</p>
+                <p className="text-white/60">{battleWorshipPlaylist[currentSongIndex].artist}</p>
+                <p className="text-white/40 text-xs mt-1">Song {currentSongIndex + 1} of {battleWorshipPlaylist.length}</p>
               </div>
 
               <div className="flex items-center justify-center gap-4">
@@ -259,6 +274,14 @@ export function BattleMode({ isOpen, onClose, onComplete }: BattleModeProps) {
                   ) : (
                     <Volume2 className="h-6 w-6 text-white" />
                   )}
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setCurrentSongIndex((prev) => (prev + 1) % battleWorshipPlaylist.length)}
+                  className="bg-white/10 hover:bg-white/20"
+                >
+                  <SkipForward className="h-6 w-6 text-white" />
                 </Button>
               </div>
 
