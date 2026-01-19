@@ -310,14 +310,14 @@ function WorshipContent({
               key={option.id}
               onClick={() => onRating(option.id as 'powerful' | 'peaceful' | 'struggled')}
               className={cn(
-                "flex-1 flex flex-col items-center gap-1 p-3 rounded-lg border-2 transition-all",
+                "flex-1 flex flex-col items-center gap-1 p-3 rounded-lg border-2 transition-all bg-card",
                 rating === option.id
                   ? "border-primary bg-primary/10"
                   : "border-border hover:border-primary/50"
               )}
             >
               <span className="text-2xl">{option.emoji}</span>
-              <span className="text-xs font-display uppercase">{option.label}</span>
+              <span className="text-xs font-display uppercase text-foreground">{option.label}</span>
             </button>
           ))}
         </div>

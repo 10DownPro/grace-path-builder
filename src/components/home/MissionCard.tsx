@@ -74,7 +74,7 @@ export function MissionCard({ mission, subtitle = "The hardest reps build the mo
         </div>
         
         {/* Large Icon in background */}
-        <div className="absolute right-4 top-1/2 -translate-y-1/2 opacity-20">
+        <div className="absolute right-4 top-1/2 -translate-y-1/2 opacity-30">
           <Swords className="h-12 w-12 text-warning" />
         </div>
         
@@ -83,7 +83,7 @@ export function MissionCard({ mission, subtitle = "The hardest reps build the mo
           <div className={cn("w-10 h-10 rounded-full flex items-center justify-center", config.iconBg)}>
             <AlertTriangle className="h-5 w-5 text-warning" />
           </div>
-          <span className="font-display text-lg text-warning uppercase tracking-wide">
+          <span className="font-display text-lg text-warning uppercase tracking-wide drop-shadow-sm">
             Today's Mission
           </span>
         </div>
