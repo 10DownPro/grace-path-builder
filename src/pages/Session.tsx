@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { PageLayout } from '@/components/layout/PageLayout';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, Play, Check, Heart, BookOpen, PenLine, Lightbulb, Loader2, Flame, Clock, Plus, Minus, Music } from 'lucide-react';
@@ -12,6 +12,8 @@ import { YouTubeWorshipPlayer } from '@/components/session/YouTubeWorshipPlayer'
 import { toast } from 'sonner';
 import { useSessions } from '@/hooks/useSessions';
 import { useMilestoneChecker } from '@/hooks/useMilestoneChecker';
+import { useSwipeGesture } from '@/hooks/useSwipeGesture';
+import { useHapticFeedback } from '@/hooks/useHapticFeedback';
 import {
   Select,
   SelectContent,
@@ -33,12 +35,15 @@ export default function Session() {
   const navigate = useNavigate();
   const { todaySession, updateTodaySession, getOrCreateTodaySession, loading: sessionsLoading } = useSessions();
   const { checkAndAwardMilestones } = useMilestoneChecker();
+  const { lightTap, successPattern, celebrationPattern } = useHapticFeedback();
   const [currentPhase, setCurrentPhase] = useState<SessionPhase>('worship');
   const [prayerText, setPrayerText] = useState('');
   const [reflectionText, setReflectionText] = useState('');
   const [worshipElapsed, setWorshipElapsed] = useState(0);
   const [worshipRating, setWorshipRating] = useState<'powerful' | 'peaceful' | 'struggled' | null>(null);
   const [saving, setSaving] = useState(false);
+  const [showCompletionAnimation, setShowCompletionAnimation] = useState(false);
+  const [swipeDirection, setSwipeDirection] = useState<'left' | 'right' | null>(null);
 
   // Initialize session on mount
   useEffect(() => {
@@ -57,6 +62,35 @@ export default function Session() {
   const totalSessionTime = phases.reduce((acc, p) => acc + p.duration, 0);
   const completedTime = phases.slice(0, currentIndex).reduce((acc, p) => acc + p.duration, 0);
   const remainingTime = totalSessionTime - completedTime;
+
+  // Swipe navigation
+  const goToNextPhase = () => {
+    if (currentIndex < phases.length - 1) {
+      lightTap();
+      setSwipeDirection('left');
+      setTimeout(() => {
+        setCurrentPhase(phases[currentIndex + 1].id);
+        setSwipeDirection(null);
+      }, 150);
+    }
+  };
+
+  const goToPrevPhase = () => {
+    if (currentIndex > 0) {
+      lightTap();
+      setSwipeDirection('right');
+      setTimeout(() => {
+        setCurrentPhase(phases[currentIndex - 1].id);
+        setSwipeDirection(null);
+      }, 150);
+    }
+  };
+
+  const swipeHandlers = useSwipeGesture({
+    onSwipeLeft: goToNextPhase,
+    onSwipeRight: goToPrevPhase,
+    threshold: 75,
+  });
 
   const markComplete = async () => {
     setSaving(true);
@@ -91,13 +125,22 @@ export default function Session() {
       return;
     }
 
+    // Trigger haptic feedback and animation
+    setShowCompletionAnimation(true);
+    
     if (currentIndex < phases.length - 1) {
-      setCurrentPhase(phases[currentIndex + 1].id);
+      successPattern();
+      setTimeout(() => {
+        setShowCompletionAnimation(false);
+        setCurrentPhase(phases[currentIndex + 1].id);
+      }, 600);
       toast.success('Set complete! 💪 Keep pushing!');
     } else {
+      celebrationPattern();
       toast.success('Training session complete! 🏆 You showed up today!');
       // Check and award any earned milestones
       setTimeout(async () => {
+        setShowCompletionAnimation(false);
         await checkAndAwardMilestones();
         navigate('/');
       }, 1500);
@@ -105,6 +148,7 @@ export default function Session() {
   };
 
   const goBack = () => {
+    lightTap();
     if (currentIndex > 0) {
       setCurrentPhase(phases[currentIndex - 1].id);
     }
@@ -151,7 +195,10 @@ export default function Session() {
             {phases.map((p) => (
               <button
                 key={p.id}
-                onClick={() => setCurrentPhase(p.id)}
+                onClick={() => {
+                  lightTap();
+                  setCurrentPhase(p.id);
+                }}
                 className={cn(
                   "flex flex-col items-center gap-1 p-2 rounded-lg transition-all",
                   p.id === currentPhase
@@ -168,13 +215,40 @@ export default function Session() {
               </button>
             ))}
           </div>
+          
+          {/* Swipe hint */}
+          <p className="text-center text-xs text-muted-foreground mt-3 opacity-60">
+            ← Swipe to navigate →
+          </p>
         </div>
 
-        {/* Phase content */}
-        <div className="flex-1 px-4 pb-32 pt-4">
-          <div className="gym-card p-5">
+        {/* Phase content - swipeable area */}
+        <div 
+          className="flex-1 px-4 pb-32 pt-4 touch-pan-y"
+          {...swipeHandlers}
+        >
+          <div 
+            className={cn(
+              "gym-card p-5 transition-all duration-200 relative overflow-hidden",
+              swipeDirection === 'left' && "translate-x-[-20px] opacity-80",
+              swipeDirection === 'right' && "translate-x-[20px] opacity-80",
+              showCompletionAnimation && "scale-[1.02]"
+            )}
+          >
+            {/* Completion animation overlay */}
+            {showCompletionAnimation && (
+              <div className="absolute inset-0 bg-success/20 flex items-center justify-center z-10 animate-fade-in rounded-xl">
+                <div className="w-20 h-20 rounded-full bg-success/30 flex items-center justify-center animate-scale-in">
+                  <Check className="h-10 w-10 text-success" />
+                </div>
+              </div>
+            )}
+            
             <div className="flex items-center gap-3 mb-5 pb-4 border-b-2 border-border">
-              <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center glow-accent">
+              <div className={cn(
+                "w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center glow-accent transition-transform",
+                showCompletionAnimation && "scale-110"
+              )}>
                 <phase.icon className="h-6 w-6 text-primary" />
               </div>
               <div>
