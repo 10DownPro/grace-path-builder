@@ -1,6 +1,9 @@
 // Supabase Edge Function for generating verse background images
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
+const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY");
 const AI_GATEWAY_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
 
 const corsHeaders = {
@@ -46,6 +49,38 @@ function selectTheme(verseText: string): string {
   return 'iron';
 }
 
+// Verify JWT and get user
+async function verifyAuth(req: Request): Promise<{ userId: string } | null> {
+  const authHeader = req.headers.get('authorization');
+  
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return null;
+  }
+
+  const token = authHeader.replace('Bearer ', '');
+  
+  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+    console.error("Missing Supabase configuration");
+    return null;
+  }
+
+  const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false,
+    },
+  });
+
+  const { data: { user }, error } = await supabase.auth.getUser(token);
+  
+  if (error || !user) {
+    console.error("Auth verification failed:", error?.message);
+    return null;
+  }
+
+  return { userId: user.id };
+}
+
 Deno.serve(async (req) => {
   // Handle CORS preflight
   if (req.method === "OPTIONS") {
@@ -53,6 +88,18 @@ Deno.serve(async (req) => {
   }
 
   try {
+    // Verify authentication
+    const auth = await verifyAuth(req);
+    if (!auth) {
+      return new Response(
+        JSON.stringify({ error: "Unauthorized - valid authentication required" }),
+        { 
+          status: 401, 
+          headers: { ...corsHeaders, "Content-Type": "application/json" } 
+        }
+      );
+    }
+
     const { verseText, reference, theme: customTheme } = await req.json();
 
     if (!verseText || !reference) {
@@ -69,8 +116,7 @@ Deno.serve(async (req) => {
     const theme = customTheme || selectTheme(verseText);
     const prompt = themePrompts[theme] || themePrompts.iron;
 
-    console.log(`Generating image for theme: ${theme}`);
-    console.log(`Prompt: ${prompt}`);
+    console.log(`User ${auth.userId} generating image for theme: ${theme}`);
 
     // Generate image using Lovable AI Gateway
     const response = await fetch(AI_GATEWAY_URL, {

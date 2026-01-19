@@ -232,12 +232,11 @@ export function useFriends() {
   const sendFriendRequest = async (friendCode: string) => {
     if (!user) return { error: new Error('Not authenticated') };
 
-    // Find user by friend code
-    const { data: targetProfile, error: findError } = await supabase
-      .from('profiles')
-      .select('user_id, name')
-      .eq('friend_code', friendCode.toUpperCase())
-      .single();
+    // Find user by friend code using secure function (prevents profile enumeration)
+    const { data: targetProfiles, error: findError } = await supabase
+      .rpc('lookup_friend_by_code', { _friend_code: friendCode.toUpperCase() });
+
+    const targetProfile = targetProfiles?.[0];
 
     if (findError || !targetProfile) {
       return { error: new Error('Friend code not found') };
@@ -270,7 +269,7 @@ export function useFriends() {
       return { error };
     }
 
-    return { data: { name: targetProfile.name }, error: null };
+    return { data: { name: targetProfile.display_name }, error: null };
   };
 
   const acceptRequest = async (requestId: string) => {
