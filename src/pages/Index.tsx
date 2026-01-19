@@ -148,13 +148,13 @@ export default function Index() {
 
           {/* Battle Mode Button - Mobile Optimized */}
           <Button
-            variant="outline"
+            variant="destructive"
             onClick={() => setBattleModeOpen(true)}
-            className="w-full h-auto min-h-14 py-3 px-4 border-2 border-destructive/50 hover:border-destructive hover:bg-destructive/10 text-destructive font-display uppercase tracking-wide text-sm sm:text-base flex items-center justify-center gap-2"
+            className="w-full h-auto min-h-14 py-4 px-4 bg-destructive/90 hover:bg-destructive text-destructive-foreground font-display uppercase tracking-wide text-sm sm:text-base flex items-center justify-center gap-3 shadow-lg"
           >
-            <Shield className="h-5 w-5 flex-shrink-0" />
+            <Shield className="h-6 w-6 flex-shrink-0" />
             <span className="whitespace-normal text-center leading-tight">
-              Struggling today? Battle Mode →
+              Struggling today? Enter Battle Mode
             </span>
           </Button>
 

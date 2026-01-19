@@ -1,11 +1,13 @@
-import { useState } from 'react';
-import { Shield, Flame, ChevronRight, X, Play, Pause, Volume2, VolumeX, Heart } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Shield, Flame, ChevronRight, X, Play, Pause, Volume2, VolumeX, Heart, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useVerseImage } from '@/hooks/useVerseImage';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
 
-// Battle mode verses - powerful, encouraging verses for tough times
-const battleVerses = [
+// Fallback battle mode verses - powerful, encouraging verses for tough times
+const fallbackBattleVerses = [
   {
     reference: "Isaiah 41:10",
     text: "Fear thou not; for I am with thee: be not dismayed; for I am thy God: I will strengthen thee; yea, I will help thee; yea, I will uphold thee with the right hand of my righteousness."
@@ -35,6 +37,11 @@ const battleWorshipVideo = {
   artist: 'Bethel Music'
 };
 
+interface BattleVerse {
+  reference: string;
+  text: string;
+}
+
 interface BattleModeProps {
   isOpen: boolean;
   onClose: () => void;
@@ -44,13 +51,75 @@ interface BattleModeProps {
 type BattlePhase = 'verse' | 'worship' | 'prayer' | 'complete';
 
 export function BattleMode({ isOpen, onClose, onComplete }: BattleModeProps) {
+  const { user } = useAuth();
   const [phase, setPhase] = useState<BattlePhase>('verse');
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
+  const [battleVerses, setBattleVerses] = useState<BattleVerse[]>(fallbackBattleVerses);
+  const [currentVerseIndex, setCurrentVerseIndex] = useState(0);
+  const [loading, setLoading] = useState(true);
   const { getFallbackGradient } = useVerseImage();
 
-  // Get today's battle verse
-  const todayVerse = battleVerses[new Date().getDay() % battleVerses.length];
+  // Fetch user's saved verses for battle mode
+  useEffect(() => {
+    if (isOpen && user) {
+      fetchSavedVerses();
+    }
+  }, [isOpen, user]);
+
+  const fetchSavedVerses = async () => {
+    if (!user) {
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
+    try {
+      // Get user's saved verses with the verse text
+      const { data: savedVerses, error } = await supabase
+        .from('user_saved_verses')
+        .select(`
+          id,
+          verse_id,
+          feeling_verses (
+            reference,
+            text_kjv
+          )
+        `)
+        .eq('user_id', user.id)
+        .limit(10);
+
+      if (error) {
+        console.error('Error fetching saved verses:', error);
+        setLoading(false);
+        return;
+      }
+
+      if (savedVerses && savedVerses.length > 0) {
+        const formattedVerses: BattleVerse[] = savedVerses
+          .filter(sv => sv.feeling_verses)
+          .map(sv => ({
+            reference: (sv.feeling_verses as any)?.reference || 'Unknown',
+            text: (sv.feeling_verses as any)?.text_kjv || ''
+          }))
+          .filter(v => v.text);
+
+        if (formattedVerses.length > 0) {
+          setBattleVerses(formattedVerses);
+        }
+      }
+    } catch (err) {
+      console.error('Error fetching battle verses:', err);
+    }
+    setLoading(false);
+  };
+
+  // Get today's battle verse - rotate through saved verses
+  const todayVerse = battleVerses[currentVerseIndex % battleVerses.length];
+
+  const handleNextVerse = () => {
+    setCurrentVerseIndex(prev => (prev + 1) % battleVerses.length);
+  };
 
   const handleNextPhase = () => {
     switch (phase) {
@@ -107,16 +176,45 @@ export function BattleMode({ isOpen, onClose, onComplete }: BattleModeProps) {
               className="h-full flex flex-col items-center justify-center p-6 rounded-xl"
               style={{ background: getFallbackGradient('warfare') }}
             >
-              <div className="relative max-w-md text-center">
-                <span className="absolute -left-4 -top-6 text-8xl text-primary/30 font-display select-none">"</span>
-                <p className="text-2xl font-bold text-white leading-relaxed drop-shadow-lg">
-                  {todayVerse.text}
-                </p>
-                <span className="absolute -right-4 bottom-0 text-8xl text-primary/30 font-display rotate-180 select-none">"</span>
-              </div>
-              <p className="font-display text-xl text-primary uppercase tracking-widest mt-6 drop-shadow-md">
-                — {todayVerse.reference}
-              </p>
+              {loading ? (
+                <div className="flex flex-col items-center gap-3">
+                  <Loader2 className="h-10 w-10 animate-spin text-primary" />
+                  <p className="text-white/60">Loading your battle verses...</p>
+                </div>
+              ) : (
+                <>
+                  <div className="relative max-w-md text-center">
+                    <span className="absolute -left-4 -top-6 text-8xl text-primary/30 font-display select-none">"</span>
+                    <p className="text-2xl font-bold text-white leading-relaxed drop-shadow-lg">
+                      {todayVerse.text}
+                    </p>
+                    <span className="absolute -right-4 bottom-0 text-8xl text-primary/30 font-display rotate-180 select-none">"</span>
+                  </div>
+                  <p className="font-display text-xl text-primary uppercase tracking-widest mt-6 drop-shadow-md">
+                    — {todayVerse.reference}
+                  </p>
+                  
+                  {/* Verse navigation */}
+                  {battleVerses.length > 1 && (
+                    <div className="mt-6 flex items-center gap-4">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={handleNextVerse}
+                        className="text-white/60 hover:text-white hover:bg-white/10"
+                      >
+                        Next Verse ({currentVerseIndex + 1}/{battleVerses.length})
+                      </Button>
+                    </div>
+                  )}
+                  
+                  {battleVerses === fallbackBattleVerses && (
+                    <p className="text-white/40 text-xs mt-4 text-center">
+                      Save verses from Battles to use your personal arsenal here
+                    </p>
+                  )}
+                </>
+              )}
             </div>
           )}
 

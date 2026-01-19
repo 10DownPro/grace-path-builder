@@ -70,8 +70,16 @@ export default function Settings() {
   const handleDarkModeToggle = (enabled: boolean) => {
     setDarkMode(enabled);
     localStorage.setItem('darkMode', String(enabled));
-    document.documentElement.classList.toggle('dark', enabled);
-    document.documentElement.classList.toggle('light', !enabled);
+    
+    // Apply to document
+    if (enabled) {
+      document.documentElement.classList.remove('light');
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      document.documentElement.classList.add('light');
+    }
+    
     toast.success(enabled ? 'Dark mode enabled' : 'Light mode enabled');
   };
 
