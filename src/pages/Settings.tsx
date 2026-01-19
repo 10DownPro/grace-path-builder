@@ -1,21 +1,28 @@
 import { PageLayout } from '@/components/layout/PageLayout';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, Bell, BookOpen, Clock, User, Moon, Shield, HelpCircle, Heart, RotateCcw } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { ChevronLeft, ChevronRight, Bell, BookOpen, Clock, User, Moon, Shield, HelpCircle, Heart, LogOut } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Switch } from '@/components/ui/switch';
 import { useState } from 'react';
-import { useOnboarding } from '@/hooks/useOnboarding';
+import { useAuth } from '@/hooks/useAuth';
+import { useProfile } from '@/hooks/useProfile';
 import { toast } from 'sonner';
 
 export default function Settings() {
+  const navigate = useNavigate();
   const [notifications, setNotifications] = useState(true);
   const [darkMode, setDarkMode] = useState(false);
-  const { userData, resetOnboarding } = useOnboarding();
+  const { signOut } = useAuth();
+  const { profile } = useProfile();
 
-  const handleResetOnboarding = () => {
-    resetOnboarding();
-    toast.success('Onboarding reset! Refresh to see it again.');
-    window.location.href = '/';
+  const handleSignOut = async () => {
+    const { error } = await signOut();
+    if (error) {
+      toast.error('Failed to sign out');
+    } else {
+      toast.success('Signed out successfully');
+      navigate('/');
+    }
   };
 
   const settingsGroups = [
@@ -33,7 +40,7 @@ export default function Settings() {
         {
           icon: Clock,
           label: 'Session Time',
-          description: '6:00 AM',
+          description: profile?.preferred_time || '6:00 AM',
           type: 'link' as const
         },
         {
@@ -58,21 +65,14 @@ export default function Settings() {
         {
           icon: User,
           label: 'Profile',
-          description: userData?.name || 'Manage your account',
+          description: profile?.name || 'Manage your account',
           type: 'link' as const
         },
         {
           icon: Shield,
-          label: 'Privacy',
-          description: 'Data and privacy settings',
+          label: 'Commitment Level',
+          description: profile?.commitment ? profile.commitment.charAt(0).toUpperCase() + profile.commitment.slice(1) : 'Committed',
           type: 'link' as const
-        },
-        {
-          icon: RotateCcw,
-          label: 'Reset Onboarding',
-          description: 'Go through setup again',
-          type: 'action' as const,
-          action: handleResetOnboarding
         },
       ]
     },
@@ -112,8 +112,8 @@ export default function Settings() {
         {settingsGroups.map(group => (
           <div key={group.title} className="space-y-2">
             <h2 className="text-sm font-medium text-muted-foreground px-1">{group.title}</h2>
-            <div className="spiritual-card divide-y divide-border/50">
-              {group.items.map((item, index) => (
+            <div className="gym-card divide-y divide-border/50">
+              {group.items.map((item) => (
                 <div key={item.label} className="flex items-center gap-4 p-4">
                   <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center">
                     <item.icon className="h-5 w-5 text-muted-foreground" />
@@ -124,15 +124,6 @@ export default function Settings() {
                   </div>
                   {item.type === 'toggle' ? (
                     <Switch checked={item.value} onCheckedChange={item.onChange} />
-                  ) : item.type === 'action' ? (
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      onClick={item.action}
-                      className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                    >
-                      Reset
-                    </Button>
                   ) : (
                     <ChevronRight className="h-5 w-5 text-muted-foreground" />
                   )}
@@ -143,7 +134,12 @@ export default function Settings() {
         ))}
 
         {/* Sign Out */}
-        <Button variant="outline" className="w-full">
+        <Button 
+          variant="outline" 
+          className="w-full border-destructive/50 text-destructive hover:bg-destructive/10"
+          onClick={handleSignOut}
+        >
+          <LogOut className="h-4 w-4 mr-2" />
           Sign Out
         </Button>
 

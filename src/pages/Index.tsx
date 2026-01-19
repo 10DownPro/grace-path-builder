@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { PageLayout } from '@/components/layout/PageLayout';
 import { StreakBadge } from '@/components/home/StreakBadge';
 import { WorkoutCard } from '@/components/home/WorkoutCard';
@@ -7,8 +7,9 @@ import { MissionCard } from '@/components/home/MissionCard';
 import { BattleVerse } from '@/components/home/BattleVerse';
 import { BattleMode } from '@/components/session/BattleMode';
 import { OnboardingFlow } from '@/components/onboarding/OnboardingFlow';
-import { useProgress } from '@/hooks/useProgress';
-import { useOnboarding } from '@/hooks/useOnboarding';
+import { useProfile } from '@/hooks/useProfile';
+import { useUserProgress } from '@/hooks/useUserProgress';
+import { usePrayers } from '@/hooks/usePrayers';
 import { Settings, Shield, Flame, Zap, Trophy, TrendingUp } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -16,8 +17,8 @@ import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 
 const todaySteps = [
-  { name: 'Worship', icon: '🎵', completed: true, duration: '15 min' },
-  { name: 'Scripture', icon: '📖', completed: true, duration: '10 min' },
+  { name: 'Worship', icon: '🎵', completed: false, duration: '15 min' },
+  { name: 'Scripture', icon: '📖', completed: false, duration: '10 min' },
   { name: 'Prayer', icon: '🙏', completed: false, duration: '10 min' },
   { name: 'Reflect', icon: '✍️', completed: false, duration: '5 min' },
 ];
@@ -33,8 +34,9 @@ const dailyMissions = [
 ];
 
 export default function Index() {
-  const { progress } = useProgress();
-  const { isComplete, userData, completeOnboarding } = useOnboarding();
+  const { profile, loading: profileLoading, updateProfile } = useProfile();
+  const { progress, loading: progressLoading } = useUserProgress();
+  const { prayers } = usePrayers();
   const [battleModeOpen, setBattleModeOpen] = useState(false);
   const formattedDate = getFormattedDate();
   
@@ -46,8 +48,24 @@ export default function Index() {
     toast.success('Battle Mode Victory! 🏆 Streak maintained!');
   };
 
-  // Show loading state while checking onboarding status
-  if (isComplete === null) {
+  const handleOnboardingComplete = async (data: {
+    name: string;
+    commitment: 'starter' | 'committed' | 'warrior';
+    preferredTime: 'morning' | 'afternoon' | 'evening' | 'flexible';
+    focusAreas: string[];
+    weeklyGoal: number;
+  }) => {
+    await updateProfile({
+      name: data.name,
+      commitment: data.commitment,
+      preferred_time: data.preferredTime,
+      focus_areas: data.focusAreas,
+      weekly_goal: data.weeklyGoal
+    });
+  };
+
+  // Show loading state
+  if (profileLoading || progressLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center animate-pulse">
@@ -57,12 +75,16 @@ export default function Index() {
     );
   }
 
-  // Show onboarding if not complete
-  if (!isComplete) {
-    return <OnboardingFlow onComplete={completeOnboarding} />;
+  // Show onboarding if profile has no name set
+  if (profile && !profile.name) {
+    return <OnboardingFlow onComplete={handleOnboardingComplete} />;
   }
 
-  const userName = userData?.name || 'Soldier';
+  const userName = profile?.name || 'Soldier';
+  const currentStreak = progress?.current_streak || 0;
+  const totalSessions = progress?.total_sessions || 0;
+  const totalMinutes = progress?.total_minutes || 0;
+  const longestStreak = progress?.longest_streak || 0;
 
   return (
     <PageLayout>
@@ -113,7 +135,7 @@ export default function Index() {
 
         <div className="px-4 pb-28 space-y-5 -mt-2">
           {/* Streak Badge - Enhanced */}
-          <StreakBadge streak={progress.currentStreak} />
+          <StreakBadge streak={currentStreak} />
 
           {/* Today's Workout */}
           <WorkoutCard 
@@ -133,8 +155,8 @@ export default function Index() {
 
           {/* Weekly Stats */}
           <WeeklyGrind 
-            sessions={progress.totalSessions} 
-            prayers={12} 
+            sessions={totalSessions} 
+            prayers={prayers.length} 
             verses={18} 
           />
 
@@ -148,19 +170,19 @@ export default function Index() {
           <div className="grid grid-cols-3 gap-3">
             <StatCard 
               label="Sessions" 
-              value={progress.totalSessions} 
+              value={totalSessions} 
               icon={Zap}
               color="text-primary"
             />
             <StatCard 
               label="Minutes" 
-              value={progress.totalMinutes}
+              value={totalMinutes}
               icon={Flame}
               color="text-warning"
             />
             <StatCard 
               label="Best Streak" 
-              value={progress.longestStreak}
+              value={longestStreak}
               icon={Trophy}
               color="text-success"
             />
