@@ -156,10 +156,77 @@ export default function Progress() {
     );
   }
 
-  const currentStreak = progress?.current_streak || 0;
-  const longestStreak = progress?.longest_streak || 0;
-  const totalSessions = progress?.total_sessions || 0;
-  const totalMinutes = progress?.total_minutes || 0;
+  // Calculate actual stats from sessions table
+  const completedSessions = sessions.filter(s => s.completed_at !== null);
+  const totalSessions = completedSessions.length;
+  const totalMinutes = sessions.reduce((acc, s) => acc + (s.duration_minutes || 0), 0);
+  
+  // Calculate streak from completed sessions
+  const calculateStreak = () => {
+    if (completedSessions.length === 0) return { current: 0, longest: 0 };
+    
+    const sortedDates = completedSessions
+      .map(s => s.session_date)
+      .sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
+    
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    
+    let currentStreak = 0;
+    let longestStreak = 0;
+    let tempStreak = 1;
+    
+    // Check if today or yesterday has a session for current streak
+    const mostRecentDate = new Date(sortedDates[0]);
+    mostRecentDate.setHours(0, 0, 0, 0);
+    
+    const isActiveStreak = mostRecentDate.getTime() === today.getTime() || 
+                           mostRecentDate.getTime() === yesterday.getTime();
+    
+    for (let i = 0; i < sortedDates.length; i++) {
+      if (i === 0) {
+        tempStreak = 1;
+        continue;
+      }
+      
+      const curr = new Date(sortedDates[i]);
+      const prev = new Date(sortedDates[i - 1]);
+      const diffDays = Math.floor((prev.getTime() - curr.getTime()) / (1000 * 60 * 60 * 24));
+      
+      if (diffDays === 1) {
+        tempStreak++;
+      } else {
+        longestStreak = Math.max(longestStreak, tempStreak);
+        tempStreak = 1;
+      }
+    }
+    
+    longestStreak = Math.max(longestStreak, tempStreak);
+    currentStreak = isActiveStreak ? tempStreak : 0;
+    
+    // Recalculate current streak by walking back from most recent
+    if (isActiveStreak) {
+      currentStreak = 1;
+      for (let i = 1; i < sortedDates.length; i++) {
+        const curr = new Date(sortedDates[i]);
+        const prev = new Date(sortedDates[i - 1]);
+        const diffDays = Math.floor((prev.getTime() - curr.getTime()) / (1000 * 60 * 60 * 24));
+        if (diffDays === 1) {
+          currentStreak++;
+        } else {
+          break;
+        }
+      }
+    }
+    
+    return { current: currentStreak, longest: longestStreak };
+  };
+  
+  const streaks = calculateStreak();
+  const currentStreak = streaks.current;
+  const longestStreak = streaks.longest;
 
   const stats = [
     { label: 'Current Streak', value: currentStreak, suffix: 'days', icon: Flame, color: 'text-primary' },
@@ -185,17 +252,27 @@ export default function Progress() {
 
   // Weekly session data from database
   const weeklyData = getWeeklyData();
+  
+  // Count sessions this week
+  const weekStart = new Date(today);
+  weekStart.setDate(today.getDate() - today.getDay());
+  weekStart.setHours(0, 0, 0, 0);
+  const sessionsThisWeek = completedSessions.filter(s => {
+    const sessionDate = new Date(s.session_date);
+    return sessionDate >= weekStart;
+  }).length;
 
   // Weekly goals - use actual data from database
   const weeklyGoals = [
-    { label: 'Sessions', current: totalSessions, target: 7, icon: Zap },
+    { label: 'Sessions', current: sessionsThisWeek, target: 7, icon: Zap },
     { label: 'Prayers', current: prayers.length, target: 15, icon: Target },
     { label: 'Verses', current: 0, target: 20, icon: BookOpen },
   ];
 
   // Personal records - based on actual progress
+  const longestSession = sessions.length > 0 ? Math.max(...sessions.map(s => s.duration_minutes || 0)) : 0;
   const personalRecords = [
-    { label: 'Longest Session', value: totalMinutes > 0 ? `${Math.min(totalMinutes, 60)} min` : '0 min', icon: Clock },
+    { label: 'Longest Session', value: `${longestSession} min`, icon: Clock },
     { label: 'Consecutive Days', value: longestStreak.toString(), icon: Flame },
     { label: 'Total Prayers', value: prayers.length.toString(), icon: Target },
   ];
