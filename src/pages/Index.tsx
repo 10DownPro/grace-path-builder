@@ -7,11 +7,13 @@ import { MissionCard } from '@/components/home/MissionCard';
 import { BattleVerse } from '@/components/home/BattleVerse';
 import { BattleMode } from '@/components/session/BattleMode';
 import { OnboardingFlow } from '@/components/onboarding/OnboardingFlow';
+import { FreeChapterUnlockedDialog } from '@/components/rewards/FreeChapterUnlockedDialog';
 import { useProfile } from '@/hooks/useProfile';
 import { useUserProgress } from '@/hooks/useUserProgress';
 import { usePrayers } from '@/hooks/usePrayers';
 import { useSessions } from '@/hooks/useSessions';
 import { useMilestoneChecker } from '@/hooks/useMilestoneChecker';
+import { useFreeChapter } from '@/hooks/useFreeChapter';
 import { Settings, Shield, Flame, Zap, Trophy, TrendingUp } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -34,8 +36,21 @@ export default function Index() {
   const { prayers } = usePrayers();
   const { todaySession, loading: sessionsLoading, getWeeklyData, getWeeklyVersesRead } = useSessions();
   const { checkAndAwardMilestones } = useMilestoneChecker();
+  const { shouldShowUnlock, downloadChapter, closeDialog } = useFreeChapter();
   const [battleModeOpen, setBattleModeOpen] = useState(false);
+  const [freeChapterOpen, setFreeChapterOpen] = useState(false);
   const formattedDate = getFormattedDate();
+
+  // Show free chapter unlock dialog when user hits 7-day streak
+  useEffect(() => {
+    if (shouldShowUnlock) {
+      // Small delay to let the page load first
+      const timer = setTimeout(() => {
+        setFreeChapterOpen(true);
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [shouldShowUnlock]);
 
   // Check milestones on page load
   useEffect(() => {
@@ -246,6 +261,19 @@ export default function Index() {
         isOpen={battleModeOpen} 
         onClose={() => setBattleModeOpen(false)}
         onComplete={handleBattleModeComplete}
+      />
+
+      {/* Free Chapter Unlock Dialog - Triggered on 7-day streak */}
+      <FreeChapterUnlockedDialog
+        open={freeChapterOpen}
+        onOpenChange={(open) => {
+          setFreeChapterOpen(open);
+          if (!open) closeDialog();
+        }}
+        onDownload={() => {
+          downloadChapter();
+          toast.success('Chapter 1 unlocked! Check your downloads.', { icon: '📖' });
+        }}
       />
     </PageLayout>
   );
