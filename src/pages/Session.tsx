@@ -276,26 +276,26 @@ function WorshipContent({
       <YouTubeWorshipPlayer onTimeUpdate={onTimeUpdate} />
 
       {/* Time Controls */}
-      <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30 border-2 border-border">
-        <span className="text-sm text-muted-foreground">Feeling it?</span>
-        <div className="flex items-center gap-2">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 rounded-lg bg-muted/30 border-2 border-border">
+        <span className="text-sm text-muted-foreground font-medium">Feeling it? Add time:</span>
+        <div className="flex items-center gap-3">
           <Button
             variant="outline"
-            size="sm"
+            size="icon"
             onClick={subtractTime}
             disabled={extraTime === 0}
-            className="border-border"
+            className="h-10 w-10 border-border shrink-0"
           >
             <Minus className="h-4 w-4" />
           </Button>
-          <span className="font-display text-lg w-20 text-center">
+          <span className="font-display text-xl w-24 text-center">
             {extraTime > 0 ? `+${extraTime}` : '0'} min
           </span>
           <Button
             variant="outline"
-            size="sm"
+            size="icon"
             onClick={addTime}
-            className="border-border"
+            className="h-10 w-10 border-border shrink-0"
           >
             <Plus className="h-4 w-4" />
           </Button>
@@ -303,9 +303,9 @@ function WorshipContent({
       </div>
 
       {/* Worship Rating */}
-      <div className="space-y-2">
+      <div className="space-y-3">
         <p className="text-sm text-muted-foreground font-display uppercase tracking-wide">How was worship?</p>
-        <div className="flex gap-2">
+        <div className="grid grid-cols-3 gap-2 sm:gap-3">
           {[
             { id: 'powerful', emoji: '🔥', label: 'Powerful' },
             { id: 'peaceful', emoji: '😌', label: 'Peaceful' },
@@ -315,14 +315,14 @@ function WorshipContent({
               key={option.id}
               onClick={() => onRating(option.id as 'powerful' | 'peaceful' | 'struggled')}
               className={cn(
-                "flex-1 flex flex-col items-center gap-1 p-3 rounded-lg border-2 transition-all bg-card",
+                "flex flex-col items-center gap-1.5 p-3 sm:p-4 rounded-xl border-2 transition-all bg-card shadow-sm",
                 rating === option.id
-                  ? "border-primary bg-primary/10"
+                  ? "border-primary bg-primary/10 shadow-md"
                   : "border-border hover:border-primary/50"
               )}
             >
-              <span className="text-2xl">{option.emoji}</span>
-              <span className="text-xs font-display uppercase text-foreground">{option.label}</span>
+              <span className="text-2xl sm:text-3xl">{option.emoji}</span>
+              <span className="text-[10px] sm:text-xs font-display uppercase text-foreground font-semibold tracking-wide">{option.label}</span>
             </button>
           ))}
         </div>
