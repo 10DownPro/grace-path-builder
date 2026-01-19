@@ -1,6 +1,6 @@
 import { PageLayout } from '@/components/layout/PageLayout';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, Bell, BookOpen, Clock, User, Moon, Shield, HelpCircle, Heart, LogOut, Sun, Crown, Sparkles, Check, Loader2, AlertCircle, ExternalLink, Share2, Star, Download } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Bell, BookOpen, Clock, User, Moon, Shield, HelpCircle, Heart, LogOut, Sun, Crown, Sparkles, Check, Loader2, AlertCircle, ExternalLink, Share2, Star } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Switch } from '@/components/ui/switch';
 import { useState, useEffect } from 'react';
@@ -243,50 +243,43 @@ export default function Settings() {
         },
       ]
     },
-    {
-      title: 'Resources',
-      items: [
-        {
-          icon: BookOpen,
-          label: 'Buy the Faith Training Guide',
-          description: 'Get the companion book',
-          type: 'link' as const,
-          onClick: () => window.open('#', '_blank') // Placeholder
-        },
-        {
-          icon: Download,
-          label: 'Download Free Chapter',
-          description: 'Read Chapter 1 for free',
-          type: 'link' as const,
-          onClick: () => toast.info('Free chapter download coming soon!')
-        },
-        {
-          icon: Share2,
-          label: 'Share Faith Training',
-          description: 'Invite friends to train',
-          type: 'link' as const,
-          onClick: () => {
-            if (navigator.share) {
-              navigator.share({
-                title: 'Faith Training',
-                text: 'Your spiritual gym for building unshakeable faith',
-                url: window.location.origin
-              });
-            } else {
-              navigator.clipboard.writeText(window.location.origin);
-              toast.success('Link copied to clipboard!');
+      {
+        title: 'Resources',
+        items: [
+          {
+            icon: BookOpen,
+            label: 'Buy the Faith Training Guide',
+            description: 'Get the companion book',
+            type: 'link' as const,
+            onClick: () => window.open('#', '_blank') // Placeholder
+          },
+          {
+            icon: Share2,
+            label: 'Share Faith Training',
+            description: 'Invite friends to train',
+            type: 'link' as const,
+            onClick: () => {
+              if (navigator.share) {
+                navigator.share({
+                  title: 'Faith Training',
+                  text: 'Your spiritual gym for building unshakeable faith',
+                  url: window.location.origin
+                });
+              } else {
+                navigator.clipboard.writeText(window.location.origin);
+                toast.success('Link copied to clipboard!');
+              }
             }
-          }
-        },
-        {
-          icon: Star,
-          label: 'Rate This App',
-          description: 'Leave a review',
-          type: 'link' as const,
-          onClick: () => toast.info('App store link coming soon!')
-        },
-      ]
-    },
+          },
+          {
+            icon: Star,
+            label: 'Rate This App',
+            description: 'Leave a review',
+            type: 'link' as const,
+            onClick: () => toast.info('App store link coming soon!')
+          },
+        ]
+      },
     {
       title: 'Support',
       items: [
