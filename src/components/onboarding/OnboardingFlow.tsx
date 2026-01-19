@@ -6,6 +6,8 @@ import {
   ChevronRight, ChevronLeft, Check, Zap,
   Sunrise, Sun, Moon, Clock
 } from 'lucide-react';
+import { BookOwnershipStep } from './BookOwnershipStep';
+import { BookCodeStep } from './BookCodeStep';
 
 interface OnboardingData {
   name: string;
@@ -13,6 +15,7 @@ interface OnboardingData {
   preferredTime: 'morning' | 'afternoon' | 'evening' | 'flexible';
   focusAreas: string[];
   weeklyGoal: number;
+  hasBook: boolean;
 }
 
 interface OnboardingFlowProps {
@@ -74,9 +77,12 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
     preferredTime: 'morning',
     focusAreas: [],
     weeklyGoal: 5,
+    hasBook: false,
   });
+  const [showBookCode, setShowBookCode] = useState(false);
 
-  const totalSteps = 5;
+  // Steps: 0=Welcome, 1=Name, 2=Commitment, 3=Time, 4=BookOwnership, 5=FocusAreas
+  const totalSteps = 6;
 
   const handleNext = () => {
     if (step < totalSteps - 1) {
@@ -87,7 +93,11 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
   };
 
   const handleBack = () => {
-    if (step > 0) setStep(step - 1);
+    if (showBookCode) {
+      setShowBookCode(false);
+    } else if (step > 0) {
+      setStep(step - 1);
+    }
   };
 
   const canProceed = () => {
@@ -96,7 +106,8 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
       case 1: return data.name.trim().length > 0;
       case 2: return data.commitment;
       case 3: return data.preferredTime;
-      case 4: return true; // Focus areas optional
+      case 4: return true; // Book ownership - handled by buttons
+      case 5: return true; // Focus areas optional
       default: return true;
     }
   };
@@ -110,6 +121,29 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
     }));
   };
 
+  const handleHasBook = () => {
+    setData(prev => ({ ...prev, hasBook: true }));
+    setShowBookCode(true);
+  };
+
+  const handleNoBook = () => {
+    setData(prev => ({ ...prev, hasBook: false }));
+    setStep(step + 1); // Skip to focus areas
+  };
+
+  const handleBookCodeSuccess = () => {
+    setShowBookCode(false);
+    setStep(step + 1); // Move to focus areas
+  };
+
+  const handleSkipCode = () => {
+    setShowBookCode(false);
+    setStep(step + 1); // Move to focus areas
+  };
+
+  // Determine visible step for progress bar (book code is sub-step of step 4)
+  const progressStep = showBookCode ? step : step;
+
   return (
     <div className="min-h-screen gradient-dawn flex flex-col">
       {/* Progress Bar */}
@@ -117,18 +151,18 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
         <div className="h-1.5 bg-muted rounded-full overflow-hidden">
           <div 
             className="h-full bg-gradient-to-r from-primary to-warning rounded-full transition-all duration-500"
-            style={{ width: `${((step + 1) / totalSteps) * 100}%` }}
+            style={{ width: `${((progressStep + 1) / totalSteps) * 100}%` }}
           />
         </div>
         <p className="text-xs text-muted-foreground text-center mt-2">
-          Step {step + 1} of {totalSteps}
+          Step {progressStep + 1} of {totalSteps}
         </p>
       </div>
 
       {/* Content */}
       <div className="flex-1 px-4 py-8 flex flex-col">
         {/* Step 0: Welcome */}
-        {step === 0 && (
+        {step === 0 && !showBookCode && (
           <div className="flex-1 flex flex-col items-center justify-center text-center space-y-6 animate-fade-in">
             <div className="w-24 h-24 rounded-2xl bg-primary/20 flex items-center justify-center animate-pulse-glow">
               <Flame className="h-12 w-12 text-primary" />
@@ -149,7 +183,7 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
         )}
 
         {/* Step 1: Name */}
-        {step === 1 && (
+        {step === 1 && !showBookCode && (
           <div className="flex-1 flex flex-col justify-center space-y-8 animate-fade-in">
             <div className="space-y-2 text-center">
               <h2 className="font-display text-2xl uppercase tracking-wider text-foreground">
@@ -183,7 +217,7 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
         )}
 
         {/* Step 2: Commitment Level */}
-        {step === 2 && (
+        {step === 2 && !showBookCode && (
           <div className="flex-1 flex flex-col justify-center space-y-6 animate-fade-in">
             <div className="space-y-2 text-center">
               <h2 className="font-display text-2xl uppercase tracking-wider text-foreground">
@@ -247,7 +281,7 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
         )}
 
         {/* Step 3: Preferred Time */}
-        {step === 3 && (
+        {step === 3 && !showBookCode && (
           <div className="flex-1 flex flex-col justify-center space-y-6 animate-fade-in">
             <div className="space-y-2 text-center">
               <h2 className="font-display text-2xl uppercase tracking-wider text-foreground">
@@ -290,8 +324,24 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
           </div>
         )}
 
-        {/* Step 4: Focus Areas & Goal */}
-        {step === 4 && (
+        {/* Step 4: Book Ownership */}
+        {step === 4 && !showBookCode && (
+          <BookOwnershipStep
+            onHasBook={handleHasBook}
+            onNoBook={handleNoBook}
+          />
+        )}
+
+        {/* Book Code Entry (sub-step of step 4) */}
+        {showBookCode && (
+          <BookCodeStep
+            onSuccess={handleBookCodeSuccess}
+            onSkip={handleSkipCode}
+          />
+        )}
+
+        {/* Step 5: Focus Areas & Goal */}
+        {step === 5 && !showBookCode && (
           <div className="flex-1 flex flex-col justify-center space-y-6 animate-fade-in">
             <div className="space-y-2 text-center">
               <h2 className="font-display text-2xl uppercase tracking-wider text-foreground">
@@ -363,21 +413,37 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
         )}
       </div>
 
-      {/* Navigation */}
-      <div className="px-4 pb-8 space-y-3">
-        <Button
-          onClick={handleNext}
-          disabled={!canProceed()}
-          className="w-full btn-gym"
-          size="lg"
-        >
-          <span className="font-display uppercase tracking-wider">
-            {step === totalSteps - 1 ? "Let's Go!" : "Continue"}
-          </span>
-          <ChevronRight className="h-5 w-5 ml-2" />
-        </Button>
-        
-        {step > 0 && (
+      {/* Navigation - Hidden during book ownership step since it has its own buttons */}
+      {step !== 4 && !showBookCode && (
+        <div className="px-4 pb-8 space-y-3">
+          <Button
+            onClick={handleNext}
+            disabled={!canProceed()}
+            className="w-full btn-gym"
+            size="lg"
+          >
+            <span className="font-display uppercase tracking-wider">
+              {step === totalSteps - 1 ? "Let's Go!" : "Continue"}
+            </span>
+            <ChevronRight className="h-5 w-5 ml-2" />
+          </Button>
+          
+          {step > 0 && (
+            <Button
+              onClick={handleBack}
+              variant="ghost"
+              className="w-full"
+            >
+              <ChevronLeft className="h-4 w-4 mr-2" />
+              Back
+            </Button>
+          )}
+        </div>
+      )}
+
+      {/* Back button for book code step */}
+      {showBookCode && (
+        <div className="px-4 pb-8">
           <Button
             onClick={handleBack}
             variant="ghost"
@@ -386,8 +452,8 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
             <ChevronLeft className="h-4 w-4 mr-2" />
             Back
           </Button>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

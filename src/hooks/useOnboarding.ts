@@ -6,6 +6,7 @@ export interface OnboardingData {
   preferredTime: 'morning' | 'afternoon' | 'evening' | 'flexible';
   focusAreas: string[];
   weeklyGoal: number;
+  hasBook: boolean;
   completedAt: string;
 }
 

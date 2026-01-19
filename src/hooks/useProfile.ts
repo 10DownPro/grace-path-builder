@@ -10,6 +10,13 @@ export interface Profile {
   preferred_time: 'morning' | 'afternoon' | 'evening' | 'flexible';
   focus_areas: string[];
   weekly_goal: number;
+  friend_code: string | null;
+  is_premium: boolean;
+  premium_source: string | null;
+  premium_activated_at: string | null;
+  book_code_used: string | null;
+  has_book: boolean;
+  hide_book_promos: boolean;
   created_at: string;
   updated_at: string;
 }
