@@ -5,7 +5,8 @@ import { Label } from '@/components/ui/label';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
-import { Flame, Mail, Lock, User, Loader2, ChevronRight } from 'lucide-react';
+import { Mail, Lock, User, Loader2, ChevronRight } from 'lucide-react';
+import logo from '@/assets/logo.png';
 
 interface AuthFormProps {
   onSuccess?: () => void;
@@ -57,8 +58,8 @@ export function AuthForm({ onSuccess }: AuthFormProps) {
     <div className="min-h-screen gradient-dawn flex flex-col items-center justify-center px-4">
       {/* Logo */}
       <div className="mb-8 text-center">
-        <div className="w-16 h-16 rounded-2xl bg-primary/20 flex items-center justify-center mx-auto mb-4 animate-pulse-glow">
-          <Flame className="h-8 w-8 text-primary" />
+        <div className="w-20 h-20 mx-auto mb-4">
+          <img src={logo} alt="Faith Training" className="w-full h-full object-contain" />
         </div>
         <h1 className="font-display text-3xl uppercase tracking-wider text-foreground">
           Faith Training
