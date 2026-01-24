@@ -7,15 +7,16 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useFriends } from '@/hooks/useFriends';
 import { useEncouragements } from '@/hooks/useEncouragements';
+import { useStudyGroups } from '@/hooks/useStudyGroups';
 import { FriendsList } from '@/components/friends/FriendsList';
 import { ChallengesList } from '@/components/friends/ChallengesList';
 import { CreateChallengeDialog } from '@/components/friends/CreateChallengeDialog';
 import { Leaderboard } from '@/components/friends/Leaderboard';
-import { EncouragementsList } from '@/components/friends/EncouragementsList';
-import { SquadsList } from '@/components/friends/SquadsList';
-import { PersonalChallengesList } from '@/components/friends/PersonalChallengesList';
-import { SendEncouragementDialog } from '@/components/friends/SendEncouragementDialog';
-import { Users, Trophy, Swords, Copy, UserPlus, Crown, MessageCircle, Target, Shield } from 'lucide-react';
+import { GroupsList } from '@/components/groups/GroupsList';
+import { GroupDetail } from '@/components/groups/GroupDetail';
+import { CreateGroupDialog } from '@/components/groups/CreateGroupDialog';
+import { JoinGroupDialog } from '@/components/groups/JoinGroupDialog';
+import { Users, Trophy, Swords, Copy, UserPlus, Crown, BookOpen } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
 export default function Friends() {
@@ -38,8 +39,31 @@ export default function Friends() {
   const [isAddingFriend, setIsAddingFriend] = useState(false);
   const [challengeDialogOpen, setChallengeDialogOpen] = useState(false);
   const [selectedFriend, setSelectedFriend] = useState<{ id: string; name: string } | null>(null);
-  const [encourageDialogOpen, setEncourageDialogOpen] = useState(false);
+  const [createGroupDialogOpen, setCreateGroupDialogOpen] = useState(false);
+  const [joinGroupDialogOpen, setJoinGroupDialogOpen] = useState(false);
   const { unreadCount } = useEncouragements();
+  
+  const {
+    groups,
+    currentGroup,
+    members,
+    studyPlans,
+    currentSession,
+    sessions,
+    discussions,
+    loading: groupsLoading,
+    createGroup,
+    joinGroupByCode,
+    selectGroup,
+    createStudyPlan,
+    createSession,
+    completeSession,
+    postDiscussion,
+    fetchDiscussions,
+    updateMemberSettings,
+    leaveGroup,
+    deleteGroup,
+  } = useStudyGroups();
 
   const handleCopyCode = () => {
     navigator.clipboard.writeText(myFriendCode);
@@ -198,7 +222,7 @@ export default function Friends() {
 
         {/* Main Tabs */}
         <Tabs defaultValue="friends" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="friends" className="flex items-center gap-1">
               <Users className="h-4 w-4" />
               <span className="hidden sm:inline">Friends</span>
@@ -214,6 +238,15 @@ export default function Friends() {
               {challenges.length > 0 && (
                 <Badge variant="secondary" className="ml-1 h-5 w-5 p-0 flex items-center justify-center text-xs">
                   {challenges.length}
+                </Badge>
+              )}
+            </TabsTrigger>
+            <TabsTrigger value="groups" className="flex items-center gap-1">
+              <BookOpen className="h-4 w-4" />
+              <span className="hidden sm:inline">Groups</span>
+              {groups.length > 0 && (
+                <Badge variant="secondary" className="ml-1 h-5 w-5 p-0 flex items-center justify-center text-xs">
+                  {groups.length}
                 </Badge>
               )}
             </TabsTrigger>
@@ -241,6 +274,67 @@ export default function Friends() {
             />
           </TabsContent>
 
+          <TabsContent value="groups" className="mt-4">
+            {currentGroup ? (
+              <GroupDetail
+                group={currentGroup}
+                members={members}
+                studyPlans={studyPlans}
+                currentSession={currentSession}
+                sessions={sessions}
+                discussions={discussions}
+                onBack={() => selectGroup('')}
+                onCreatePlan={createStudyPlan}
+                onCreateSession={createSession}
+                onCompleteSession={completeSession}
+                onPostDiscussion={postDiscussion}
+                onFetchDiscussions={fetchDiscussions}
+                onUpdateSettings={updateMemberSettings}
+                onLeave={leaveGroup}
+                onDelete={deleteGroup}
+              />
+            ) : (
+              <div className="space-y-4">
+                {/* Quick Actions */}
+                <div className="flex gap-2">
+                  <Button onClick={() => setCreateGroupDialogOpen(true)} className="flex-1">
+                    <Users className="h-4 w-4 mr-2" />
+                    Create Group
+                  </Button>
+                  <Button variant="outline" onClick={() => setJoinGroupDialogOpen(true)} className="flex-1">
+                    <UserPlus className="h-4 w-4 mr-2" />
+                    Join Group
+                  </Button>
+                </div>
+
+                {/* Groups List */}
+                {groupsLoading ? (
+                  <div className="space-y-3">
+                    {[1, 2].map((i) => (
+                      <Card key={i} className="animate-pulse">
+                        <CardContent className="p-4">
+                          <div className="h-12 bg-muted rounded" />
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                ) : groups.length === 0 ? (
+                  <Card className="border-dashed">
+                    <CardContent className="p-6 text-center">
+                      <BookOpen className="h-12 w-12 mx-auto text-muted-foreground mb-3" />
+                      <h3 className="font-semibold mb-1">No Groups Yet</h3>
+                      <p className="text-sm text-muted-foreground">
+                        Create or join a Bible study group to train together with family and friends.
+                      </p>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  <GroupsList groups={groups} onSelectGroup={selectGroup} />
+                )}
+              </div>
+            )}
+          </TabsContent>
+
           <TabsContent value="leaderboard" className="mt-4">
             <Leaderboard friends={friends} />
           </TabsContent>
@@ -250,6 +344,18 @@ export default function Friends() {
           open={challengeDialogOpen}
           onOpenChange={setChallengeDialogOpen}
           onSubmit={handleCreateChallenge}
+        />
+
+        <CreateGroupDialog
+          open={createGroupDialogOpen}
+          onOpenChange={setCreateGroupDialogOpen}
+          onSubmit={createGroup}
+        />
+
+        <JoinGroupDialog
+          open={joinGroupDialogOpen}
+          onOpenChange={setJoinGroupDialogOpen}
+          onSubmit={joinGroupByCode}
         />
       </div>
     </PageLayout>
