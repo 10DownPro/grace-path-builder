@@ -58,9 +58,9 @@ export function AuthForm({ onSuccess }: AuthFormProps) {
     <div className="min-h-screen gradient-dawn flex flex-col items-center justify-center px-4">
       {/* Logo */}
       <div className="mb-8 text-center">
-        <div className="w-20 h-20 mx-auto mb-4">
-          <img src={logo} alt="Faith Training" className="w-full h-full object-contain" />
-        </div>
+      <div className="w-32 h-32 mx-auto mb-4">
+        <img src={logo} alt="Faith Training" className="w-full h-full object-contain" />
+      </div>
         <h1 className="font-display text-3xl uppercase tracking-wider text-foreground">
           Faith Training
         </h1>
