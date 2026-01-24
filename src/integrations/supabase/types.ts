@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      bible_passages: {
+        Row: {
+          book: string
+          chapter: number
+          created_at: string | null
+          display_order: number | null
+          id: string
+          is_popular: boolean | null
+          passage_name: string
+          passage_theme: string | null
+          verse_end: number | null
+          verse_start: number | null
+        }
+        Insert: {
+          book: string
+          chapter: number
+          created_at?: string | null
+          display_order?: number | null
+          id?: string
+          is_popular?: boolean | null
+          passage_name: string
+          passage_theme?: string | null
+          verse_end?: number | null
+          verse_start?: number | null
+        }
+        Update: {
+          book?: string
+          chapter?: number
+          created_at?: string | null
+          display_order?: number | null
+          id?: string
+          is_popular?: boolean | null
+          passage_name?: string
+          passage_theme?: string | null
+          verse_end?: number | null
+          verse_start?: number | null
+        }
+        Relationships: []
+      }
       book_codes: {
         Row: {
           batch_number: number | null
@@ -699,6 +738,50 @@ export type Database = {
         }
         Relationships: []
       }
+      passage_levels: {
+        Row: {
+          activity_suggestion: string | null
+          created_at: string | null
+          discussion_questions: Json | null
+          id: string
+          key_verse: string | null
+          passage_id: string
+          prayer_prompt: string | null
+          reading_level: string
+          summary: string
+        }
+        Insert: {
+          activity_suggestion?: string | null
+          created_at?: string | null
+          discussion_questions?: Json | null
+          id?: string
+          key_verse?: string | null
+          passage_id: string
+          prayer_prompt?: string | null
+          reading_level: string
+          summary: string
+        }
+        Update: {
+          activity_suggestion?: string | null
+          created_at?: string | null
+          discussion_questions?: Json | null
+          id?: string
+          key_verse?: string | null
+          passage_id?: string
+          prayer_prompt?: string | null
+          reading_level?: string
+          summary?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "passage_levels_passage_id_fkey"
+            columns: ["passage_id"]
+            isOneToOne: false
+            referencedRelation: "bible_passages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       personal_challenges: {
         Row: {
           challenge_name: string
@@ -1048,6 +1131,38 @@ export type Database = {
         }
         Relationships: []
       }
+      streak_protection_log: {
+        Row: {
+          created_at: string
+          id: string
+          protected_date: string
+          user_id: string
+          user_reward_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          protected_date: string
+          user_id: string
+          user_reward_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          protected_date?: string
+          user_id?: string
+          user_reward_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "streak_protection_log_user_reward_id_fkey"
+            columns: ["user_reward_id"]
+            isOneToOne: false
+            referencedRelation: "user_rewards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       study_groups: {
         Row: {
           created_at: string
@@ -1234,25 +1349,34 @@ export type Database = {
       }
       user_rewards: {
         Row: {
+          activated_at: string | null
+          expires_at: string | null
           id: string
           is_equipped: boolean
           redeemed_at: string
           reward_id: string
           user_id: string
+          uses_remaining: number | null
         }
         Insert: {
+          activated_at?: string | null
+          expires_at?: string | null
           id?: string
           is_equipped?: boolean
           redeemed_at?: string
           reward_id: string
           user_id: string
+          uses_remaining?: number | null
         }
         Update: {
+          activated_at?: string | null
+          expires_at?: string | null
           id?: string
           is_equipped?: boolean
           redeemed_at?: string
           reward_id?: string
           user_id?: string
+          uses_remaining?: number | null
         }
         Relationships: [
           {
@@ -1384,6 +1508,18 @@ export type Database = {
       }
     }
     Functions: {
+      activate_reward: {
+        Args: { _user_reward_id: string }
+        Returns: {
+          expires_at: string
+          message: string
+          success: boolean
+        }[]
+      }
+      award_points: {
+        Args: { _points: number; _reason: string; _user_id: string }
+        Returns: number
+      }
       is_squad_member: {
         Args: { _squad_id: string; _user_id: string }
         Returns: boolean
@@ -1418,6 +1554,10 @@ export type Database = {
           reward_info: Json
           success: boolean
         }[]
+      }
+      use_streak_freeze: {
+        Args: { _date: string; _user_id: string }
+        Returns: boolean
       }
     }
     Enums: {

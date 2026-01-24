@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
+import { POINT_VALUES } from './usePoints';
+import { toast } from 'sonner';
 
 export interface Session {
   id: string;
@@ -131,6 +133,8 @@ export function useSessions() {
       updatedSession.prayer_completed && 
       updatedSession.reflection_completed;
 
+    const wasAlreadyComplete = session.completed_at !== null;
+
     // If completing all steps, set completed_at
     const finalUpdates = {
       ...updates,
@@ -153,6 +157,35 @@ export function useSessions() {
     const updated = data as Session;
     setTodaySession(updated);
     setSessions(sessions.map(s => s.id === updated.id ? updated : s));
+    
+    // Award points for session completion (only once)
+    if (allCompleted && !wasAlreadyComplete) {
+      try {
+        await supabase.rpc('award_points', {
+          _user_id: user.id,
+          _points: POINT_VALUES.SESSION_COMPLETE,
+          _reason: 'session_complete'
+        });
+        toast.success(`+${POINT_VALUES.SESSION_COMPLETE} points!`, { description: 'Session completed' });
+      } catch (err) {
+        console.error('Error awarding session points:', err);
+      }
+    }
+    
+    // Award points for verses read
+    if (updates.verses_read && updates.verses_read > 0) {
+      const versePoints = POINT_VALUES.VERSE_READ * updates.verses_read;
+      try {
+        await supabase.rpc('award_points', {
+          _user_id: user.id,
+          _points: versePoints,
+          _reason: 'verse_read'
+        });
+        // Don't show toast for every verse - it's handled in the session complete
+      } catch (err) {
+        console.error('Error awarding verse points:', err);
+      }
+    }
     
     return { data: updated, error: null };
   };

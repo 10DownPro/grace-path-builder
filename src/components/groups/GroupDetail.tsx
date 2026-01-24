@@ -14,7 +14,8 @@ import {
   Plus,
   CheckCircle2,
   Clock,
-  Flame
+  Flame,
+  BarChart3
 } from 'lucide-react';
 import { toast } from 'sonner';
 import {
@@ -23,6 +24,7 @@ import {
   StudyPlan,
   StudySession,
   Discussion,
+  MemberProgress,
   GROUP_TYPES,
   READING_LEVELS
 } from '@/hooks/useStudyGroups';
@@ -30,6 +32,7 @@ import { StudySessionCard } from './StudySessionCard';
 import { CreateStudyPlanDialog } from './CreateStudyPlanDialog';
 import { MemberSettingsDialog } from './MemberSettingsDialog';
 import { GroupSettingsDialog } from './GroupSettingsDialog';
+import { LeaderDashboard } from './LeaderDashboard';
 import { useAuth } from '@/hooks/useAuth';
 
 interface GroupDetailProps {
@@ -39,6 +42,7 @@ interface GroupDetailProps {
   currentSession: StudySession | null;
   sessions: StudySession[];
   discussions: Discussion[];
+  memberProgress?: MemberProgress[];
   onBack: () => void;
   onCreatePlan: (
     groupId: string,
@@ -79,6 +83,7 @@ interface GroupDetailProps {
   ) => Promise<{ error: Error | null }>;
   onLeave: (groupId: string) => Promise<{ error: Error | null }>;
   onDelete: (groupId: string) => Promise<{ error: Error | null }>;
+  onApproveSubmission?: (progressId: string) => Promise<void>;
 }
 
 export function GroupDetail({
@@ -88,6 +93,7 @@ export function GroupDetail({
   currentSession,
   sessions,
   discussions,
+  memberProgress = [],
   onBack,
   onCreatePlan,
   onCreateSession,
@@ -96,7 +102,8 @@ export function GroupDetail({
   onFetchDiscussions,
   onUpdateSettings,
   onLeave,
-  onDelete
+  onDelete,
+  onApproveSubmission
 }: GroupDetailProps) {
   const { user } = useAuth();
   const [createPlanOpen, setCreatePlanOpen] = useState(false);
@@ -160,7 +167,7 @@ export function GroupDetail({
 
       {/* Tabs */}
       <Tabs defaultValue="study" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className={`grid w-full ${group.is_leader ? 'grid-cols-4' : 'grid-cols-3'}`}>
           <TabsTrigger value="study" className="text-xs sm:text-sm">
             <BookOpen className="h-4 w-4 mr-1" />
             Study
@@ -173,6 +180,12 @@ export function GroupDetail({
             <MessageSquare className="h-4 w-4 mr-1" />
             Discuss
           </TabsTrigger>
+          {group.is_leader && (
+            <TabsTrigger value="leader" className="text-xs sm:text-sm">
+              <BarChart3 className="h-4 w-4 mr-1" />
+              Lead
+            </TabsTrigger>
+          )}
         </TabsList>
 
         {/* Study Tab */}
@@ -341,6 +354,19 @@ export function GroupDetail({
             </Card>
           )}
         </TabsContent>
+
+        {/* Leader Dashboard Tab */}
+        {group.is_leader && (
+          <TabsContent value="leader" className="mt-4">
+            <LeaderDashboard
+              groupId={group.id}
+              members={members}
+              sessions={sessions}
+              memberProgress={memberProgress}
+              onApproveSubmission={onApproveSubmission}
+            />
+          </TabsContent>
+        )}
       </Tabs>
 
       {/* Dialogs */}
