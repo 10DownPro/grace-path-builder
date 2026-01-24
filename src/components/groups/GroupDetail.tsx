@@ -15,7 +15,8 @@ import {
   CheckCircle2,
   Clock,
   Flame,
-  BarChart3
+  BarChart3,
+  Library
 } from 'lucide-react';
 import { toast } from 'sonner';
 import {
@@ -33,6 +34,7 @@ import { CreateStudyPlanDialog } from './CreateStudyPlanDialog';
 import { MemberSettingsDialog } from './MemberSettingsDialog';
 import { GroupSettingsDialog } from './GroupSettingsDialog';
 import { LeaderDashboard } from './LeaderDashboard';
+import { PassageLibrary } from './PassageLibrary';
 import { useAuth } from '@/hooks/useAuth';
 
 interface GroupDetailProps {
@@ -189,7 +191,7 @@ export function GroupDetail({
         </TabsList>
 
         {/* Study Tab */}
-        <TabsContent value="study" className="space-y-4 mt-4">
+        <TabsContent value="study" className="space-y-6 mt-4">
           {/* Current Session */}
           {currentSession ? (
             <StudySessionCard
@@ -208,8 +210,8 @@ export function GroupDetail({
                 <h3 className="font-semibold mb-2">No Active Study</h3>
                 <p className="text-sm text-muted-foreground mb-4">
                   {group.is_leader
-                    ? 'Create a study plan to get started'
-                    : 'Waiting for the leader to create a study session'}
+                    ? 'Create a study plan or pick a passage from the library below'
+                    : 'Waiting for the leader to create a study session. Browse the library below to self-study!'}
                 </p>
                 {group.is_leader && (
                   <Button onClick={() => setCreatePlanOpen(true)}>
@@ -248,9 +250,24 @@ export function GroupDetail({
             </div>
           )}
 
+          {/* Passage Library - Multi-Level Bible Content */}
+          <div className="pt-4 border-t">
+            <h3 className="font-display text-lg uppercase tracking-wider mb-4 flex items-center gap-2">
+              <Library className="h-5 w-5 text-primary" />
+              Family Bible Library
+            </h3>
+            <PassageLibrary
+              groupId={group.id}
+              userReadingLevel={currentMember?.reading_level || 'adult'}
+              isLeader={group.is_leader || false}
+              onCreateSession={group.is_leader ? onCreateSession : undefined}
+              completedPassageIds={[]}
+            />
+          </div>
+
           {/* Recent Sessions */}
           {sessions.length > 1 && (
-            <div className="space-y-3">
+            <div className="space-y-3 pt-4 border-t">
               <h3 className="font-semibold">Past Sessions</h3>
               {sessions.slice(1).map(session => (
                 <Card key={session.id} className="bg-muted/30">
