@@ -849,6 +849,60 @@ export type Database = {
         }
         Relationships: []
       }
+      rewards: {
+        Row: {
+          category: string
+          created_at: string
+          description: string | null
+          display_order: number
+          icon_emoji: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean
+          is_premium_only: boolean
+          name: string
+          point_cost: number
+          reward_data: Json | null
+          reward_type: string
+          stock_limit: number | null
+          times_redeemed: number
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          icon_emoji?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          is_premium_only?: boolean
+          name: string
+          point_cost: number
+          reward_data?: Json | null
+          reward_type?: string
+          stock_limit?: number | null
+          times_redeemed?: number
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          icon_emoji?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          is_premium_only?: boolean
+          name?: string
+          point_cost?: number
+          reward_data?: Json | null
+          reward_type?: string
+          stock_limit?: number | null
+          times_redeemed?: number
+        }
+        Relationships: []
+      }
       sessions: {
         Row: {
           completed_at: string | null
@@ -1147,6 +1201,7 @@ export type Database = {
           last_session_date: string | null
           longest_streak: number
           total_minutes: number
+          total_points: number
           total_sessions: number
           updated_at: string
           user_id: string
@@ -1158,6 +1213,7 @@ export type Database = {
           last_session_date?: string | null
           longest_streak?: number
           total_minutes?: number
+          total_points?: number
           total_sessions?: number
           updated_at?: string
           user_id: string
@@ -1169,11 +1225,44 @@ export type Database = {
           last_session_date?: string | null
           longest_streak?: number
           total_minutes?: number
+          total_points?: number
           total_sessions?: number
           updated_at?: string
           user_id?: string
         }
         Relationships: []
+      }
+      user_rewards: {
+        Row: {
+          id: string
+          is_equipped: boolean
+          redeemed_at: string
+          reward_id: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          is_equipped?: boolean
+          redeemed_at?: string
+          reward_id: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          is_equipped?: boolean
+          redeemed_at?: string
+          reward_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_rewards_reward_id_fkey"
+            columns: ["reward_id"]
+            isOneToOne: false
+            referencedRelation: "rewards"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_saved_verses: {
         Row: {
@@ -1319,6 +1408,14 @@ export type Database = {
         Returns: {
           code_info: Json
           message: string
+          success: boolean
+        }[]
+      }
+      redeem_reward: {
+        Args: { _reward_id: string }
+        Returns: {
+          message: string
+          reward_info: Json
           success: boolean
         }[]
       }
