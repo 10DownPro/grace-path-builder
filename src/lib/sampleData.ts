@@ -53,8 +53,8 @@ export const worshipPlaylist: WorshipVideo[] = [
   {
     id: '2',
     videoId: 'xcRFg57Dky0',
-    title: 'Bless God',
-    artist: 'Brooke Ligertwood',
+    title: 'We Want Revival',
+    artist: 'Red Worship / Lizzie Morgan / Jonathan Stamper',
     duration: '8:35',
     category: 'anthem',
     thumbnailUrl: 'https://img.youtube.com/vi/xcRFg57Dky0/mqdefault.jpg'
@@ -71,8 +71,8 @@ export const worshipPlaylist: WorshipVideo[] = [
   {
     id: '4',
     videoId: 'Bq8PzU2W8VI',
-    title: "That's Who I Praise",
-    artist: 'Brandon Lake',
+    title: 'Everlasting God',
+    artist: 'William Murphy ft. Bishop James Morton',
     duration: '5:00',
     category: 'anthem',
     thumbnailUrl: 'https://img.youtube.com/vi/Bq8PzU2W8VI/mqdefault.jpg'
@@ -80,10 +80,10 @@ export const worshipPlaylist: WorshipVideo[] = [
   {
     id: '5',
     videoId: 'kOfbomJQZQw',
-    title: 'The Artist',
-    artist: 'Life.Church Worship',
+    title: 'Greater Is Coming',
+    artist: 'Jekalyn Carr',
     duration: '5:30',
-    category: 'acoustic',
+    category: 'anthem',
     thumbnailUrl: 'https://img.youtube.com/vi/kOfbomJQZQw/mqdefault.jpg'
   },
   {
