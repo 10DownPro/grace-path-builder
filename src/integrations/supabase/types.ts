@@ -338,6 +338,280 @@ export type Database = {
         }
         Relationships: []
       }
+      group_discussions: {
+        Row: {
+          id: string
+          is_pinned: boolean | null
+          message_text: string
+          message_type: string | null
+          parent_message_id: string | null
+          posted_at: string
+          reactions: Json | null
+          session_id: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          is_pinned?: boolean | null
+          message_text: string
+          message_type?: string | null
+          parent_message_id?: string | null
+          posted_at?: string
+          reactions?: Json | null
+          session_id: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          is_pinned?: boolean | null
+          message_text?: string
+          message_type?: string | null
+          parent_message_id?: string | null
+          posted_at?: string
+          reactions?: Json | null
+          session_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_discussions_parent_message_id_fkey"
+            columns: ["parent_message_id"]
+            isOneToOne: false
+            referencedRelation: "group_discussions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "group_discussions_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "group_study_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      group_member_progress: {
+        Row: {
+          completed_at: string
+          discussion_notes: string | null
+          group_id: string
+          id: string
+          is_approved: boolean | null
+          leader_feedback: string | null
+          questions_for_group: string | null
+          reading_level: string
+          reflection_text: string | null
+          session_id: string
+          time_spent_minutes: number | null
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string
+          discussion_notes?: string | null
+          group_id: string
+          id?: string
+          is_approved?: boolean | null
+          leader_feedback?: string | null
+          questions_for_group?: string | null
+          reading_level: string
+          reflection_text?: string | null
+          session_id: string
+          time_spent_minutes?: number | null
+          user_id: string
+        }
+        Update: {
+          completed_at?: string
+          discussion_notes?: string | null
+          group_id?: string
+          id?: string
+          is_approved?: boolean | null
+          leader_feedback?: string | null
+          questions_for_group?: string | null
+          reading_level?: string
+          reflection_text?: string | null
+          session_id?: string
+          time_spent_minutes?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_member_progress_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "study_groups"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "group_member_progress_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "group_study_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      group_members: {
+        Row: {
+          age_group: string | null
+          display_name: string | null
+          group_id: string
+          id: string
+          is_active: boolean | null
+          joined_at: string
+          reading_level: string | null
+          role: string | null
+          user_id: string
+        }
+        Insert: {
+          age_group?: string | null
+          display_name?: string | null
+          group_id: string
+          id?: string
+          is_active?: boolean | null
+          joined_at?: string
+          reading_level?: string | null
+          role?: string | null
+          user_id: string
+        }
+        Update: {
+          age_group?: string | null
+          display_name?: string | null
+          group_id?: string
+          id?: string
+          is_active?: boolean | null
+          joined_at?: string
+          reading_level?: string | null
+          role?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_members_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "study_groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      group_study_plans: {
+        Row: {
+          book: string
+          chapter_end: number
+          chapter_start: number
+          created_at: string
+          current_chapter: number
+          end_date: string | null
+          frequency: string | null
+          group_id: string
+          id: string
+          is_active: boolean | null
+          plan_name: string
+          plan_type: string | null
+          start_date: string | null
+          study_day: string | null
+        }
+        Insert: {
+          book: string
+          chapter_end?: number
+          chapter_start?: number
+          created_at?: string
+          current_chapter?: number
+          end_date?: string | null
+          frequency?: string | null
+          group_id: string
+          id?: string
+          is_active?: boolean | null
+          plan_name: string
+          plan_type?: string | null
+          start_date?: string | null
+          study_day?: string | null
+        }
+        Update: {
+          book?: string
+          chapter_end?: number
+          chapter_start?: number
+          created_at?: string
+          current_chapter?: number
+          end_date?: string | null
+          frequency?: string | null
+          group_id?: string
+          id?: string
+          is_active?: boolean | null
+          plan_name?: string
+          plan_type?: string | null
+          start_date?: string | null
+          study_day?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_study_plans_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "study_groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      group_study_sessions: {
+        Row: {
+          book: string
+          chapter: number
+          completed_by: Json | null
+          created_at: string
+          discussed: boolean | null
+          discussion_time: string | null
+          group_id: string
+          id: string
+          leader_notes: string | null
+          plan_id: string | null
+          session_date: string | null
+          session_title: string | null
+        }
+        Insert: {
+          book: string
+          chapter: number
+          completed_by?: Json | null
+          created_at?: string
+          discussed?: boolean | null
+          discussion_time?: string | null
+          group_id: string
+          id?: string
+          leader_notes?: string | null
+          plan_id?: string | null
+          session_date?: string | null
+          session_title?: string | null
+        }
+        Update: {
+          book?: string
+          chapter?: number
+          completed_by?: Json | null
+          created_at?: string
+          discussed?: boolean | null
+          discussion_time?: string | null
+          group_id?: string
+          id?: string
+          leader_notes?: string | null
+          plan_id?: string | null
+          session_date?: string | null
+          session_title?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_study_sessions_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "study_groups"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "group_study_sessions_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "group_study_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       milestones: {
         Row: {
           created_at: string
@@ -720,6 +994,51 @@ export type Database = {
         }
         Relationships: []
       }
+      study_groups: {
+        Row: {
+          created_at: string
+          created_by: string
+          description: string | null
+          group_avatar_emoji: string | null
+          group_code: string | null
+          group_name: string
+          group_type: string
+          id: string
+          is_active: boolean | null
+          is_public: boolean | null
+          max_members: number | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          description?: string | null
+          group_avatar_emoji?: string | null
+          group_code?: string | null
+          group_name: string
+          group_type?: string
+          id?: string
+          is_active?: boolean | null
+          is_public?: boolean | null
+          max_members?: number | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          group_avatar_emoji?: string | null
+          group_code?: string | null
+          group_name?: string
+          group_type?: string
+          id?: string
+          is_active?: boolean | null
+          is_public?: boolean | null
+          max_members?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       support_messages: {
         Row: {
           category_id: string | null
@@ -978,6 +1297,14 @@ export type Database = {
     Functions: {
       is_squad_member: {
         Args: { _squad_id: string; _user_id: string }
+        Returns: boolean
+      }
+      is_study_group_leader: {
+        Args: { _group_id: string; _user_id: string }
+        Returns: boolean
+      }
+      is_study_group_member: {
+        Args: { _group_id: string; _user_id: string }
         Returns: boolean
       }
       lookup_friend_by_code: {
