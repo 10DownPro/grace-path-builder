@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
+import { POINT_VALUES } from './usePoints';
+import { toast } from 'sonner';
 
 export interface Prayer {
   id: string;
@@ -65,6 +67,19 @@ export function usePrayers() {
     }
     
     setPrayers([data as Prayer, ...prayers]);
+    
+    // Award points for prayer
+    try {
+      await supabase.rpc('award_points', {
+        _user_id: user.id,
+        _points: POINT_VALUES.PRAYER_LOGGED,
+        _reason: 'prayer_logged'
+      });
+      toast.success(`+${POINT_VALUES.PRAYER_LOGGED} points!`, { description: 'Prayer logged' });
+    } catch (err) {
+      console.error('Error awarding prayer points:', err);
+    }
+    
     return { data, error: null };
   };
 
