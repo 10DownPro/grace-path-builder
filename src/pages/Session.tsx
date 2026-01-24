@@ -174,6 +174,16 @@ export default function Session() {
             </div>
           </div>
 
+          {/* Instructions Banner */}
+          <div className="mb-4 p-3 rounded-lg bg-primary/10 border-2 border-primary/30">
+            <h2 className="font-display text-sm uppercase tracking-wide text-primary mb-1">
+              How This Works
+            </h2>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Complete 4 sets to finish your daily training: <strong className="text-foreground">Worship</strong> (listen & connect), <strong className="text-foreground">Scripture</strong> (read & meditate), <strong className="text-foreground">Prayer</strong> (talk to God), and <strong className="text-foreground">Reflection</strong> (journal your thoughts). Tap "Complete Set" after each one.
+            </p>
+          </div>
+
           {/* Phase Progress Bar */}
           <div className="space-y-3">
             <div className="flex items-center justify-between text-xs text-muted-foreground uppercase tracking-wider">
