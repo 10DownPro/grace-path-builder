@@ -5,6 +5,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
+import Landing from "./pages/Landing";
+import Auth from "./pages/Auth";
 import Index from "./pages/Index";
 import Session from "./pages/Session";
 import Scripture from "./pages/Scripture";
@@ -45,7 +47,13 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
+          {/* Public Routes */}
+          <Route path="/" element={<Landing />} />
+          <Route path="/login" element={<Auth />} />
+          <Route path="/signup" element={<Auth />} />
+          
+          {/* Protected Routes */}
+          <Route path="/home" element={<ProtectedRoute><Index /></ProtectedRoute>} />
           <Route path="/session" element={<ProtectedRoute><Session /></ProtectedRoute>} />
           <Route path="/scripture" element={<ProtectedRoute><Scripture /></ProtectedRoute>} />
           <Route path="/prayer" element={<ProtectedRoute><Prayer /></ProtectedRoute>} />

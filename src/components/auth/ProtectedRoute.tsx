@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
+import { Navigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
-import { AuthForm } from './AuthForm';
-import { Flame } from 'lucide-react';
+import logo from '@/assets/logo.png';
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -15,7 +15,7 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center space-y-4">
           <div className="w-16 h-16 rounded-2xl bg-primary/20 flex items-center justify-center mx-auto animate-pulse">
-            <Flame className="h-8 w-8 text-primary" />
+            <img src={logo} alt="Faith Training" className="w-10 h-10 object-contain" />
           </div>
           <p className="text-muted-foreground font-display uppercase tracking-wider">
             Loading...
@@ -26,7 +26,7 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
   }
 
   if (!isAuthenticated) {
-    return <AuthForm />;
+    return <Navigate to="/login" replace />;
   }
 
   return <>{children}</>;
