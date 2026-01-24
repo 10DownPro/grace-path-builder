@@ -34,7 +34,7 @@ export function JoinGroupDialog({ open, onOpenChange, onSubmit }: JoinGroupDialo
     if (error) {
       toast.error(error.message);
     } else {
-      toast.success('Successfully joined the group!');
+      toast.success('Successfully joined the squad!');
       setCode('');
       onOpenChange(false);
     }
@@ -47,16 +47,16 @@ export function JoinGroupDialog({ open, onOpenChange, onSubmit }: JoinGroupDialo
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Users className="h-5 w-5" />
-            Join Study Group
+            Join Training Squad
           </DialogTitle>
           <DialogDescription>
-            Enter the group code shared by the group leader.
+            Enter the squad code shared by the squad leader.
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
           <div className="space-y-2">
-            <Label htmlFor="code">Group Code</Label>
+            <Label htmlFor="code">Squad Code</Label>
             <Input
               id="code"
               value={code}
@@ -66,7 +66,7 @@ export function JoinGroupDialog({ open, onOpenChange, onSubmit }: JoinGroupDialo
               className="text-center text-lg font-mono tracking-wider uppercase"
             />
             <p className="text-xs text-muted-foreground text-center">
-              Ask your group leader for the invite code
+              Ask your squad leader for the invite code
             </p>
           </div>
         </div>
