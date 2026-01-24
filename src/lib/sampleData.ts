@@ -43,30 +43,75 @@ export interface WorshipVideo {
 export const worshipPlaylist: WorshipVideo[] = [
   {
     id: '1',
-    videoId: 'brnlnjYe52o',
-    title: 'Never Lost',
-    artist: 'TRIBL / Maverick City Music',
-    duration: '8:42',
+    videoId: '-mEjUReUuT8',
+    title: 'Worship!',
+    artist: 'TAYA',
+    duration: '4:20',
     category: 'anthem',
-    thumbnailUrl: 'https://img.youtube.com/vi/brnlnjYe52o/mqdefault.jpg'
+    thumbnailUrl: 'https://img.youtube.com/vi/-mEjUReUuT8/mqdefault.jpg'
   },
   {
     id: '2',
-    videoId: 'kKN7Tpe1p2s',
-    title: 'Holy',
-    artist: 'Lathan Warlick / SVRCINA',
-    duration: '4:18',
+    videoId: 'xcRFg57Dky0',
+    title: 'Bless God',
+    artist: 'Brooke Ligertwood',
+    duration: '8:35',
     category: 'anthem',
-    thumbnailUrl: 'https://img.youtube.com/vi/kKN7Tpe1p2s/mqdefault.jpg'
+    thumbnailUrl: 'https://img.youtube.com/vi/xcRFg57Dky0/mqdefault.jpg'
   },
   {
     id: '3',
+    videoId: 'BZT8jqsc8lQ',
+    title: 'Your Spirit',
+    artist: 'Tasha Cobbs Leonard ft. Kierra Sheard',
+    duration: '7:40',
+    category: 'anthem',
+    thumbnailUrl: 'https://img.youtube.com/vi/BZT8jqsc8lQ/mqdefault.jpg'
+  },
+  {
+    id: '4',
+    videoId: 'Bq8PzU2W8VI',
+    title: "That's Who I Praise",
+    artist: 'Brandon Lake',
+    duration: '5:00',
+    category: 'anthem',
+    thumbnailUrl: 'https://img.youtube.com/vi/Bq8PzU2W8VI/mqdefault.jpg'
+  },
+  {
+    id: '5',
+    videoId: 'kOfbomJQZQw',
+    title: 'The Artist',
+    artist: 'Life.Church Worship',
+    duration: '5:30',
+    category: 'acoustic',
+    thumbnailUrl: 'https://img.youtube.com/vi/kOfbomJQZQw/mqdefault.jpg'
+  },
+  {
+    id: '6',
     videoId: 'YbGFYaA0SbY',
-    title: 'We Want Revival',
-    artist: 'Red Worship / Lizzie Morgan / Jonathan Stamper',
-    duration: '6:15',
+    title: "God I'm Just Grateful",
+    artist: 'Elevation Worship & Chandler Moore',
+    duration: '4:50',
     category: 'anthem',
     thumbnailUrl: 'https://img.youtube.com/vi/YbGFYaA0SbY/mqdefault.jpg'
+  },
+  {
+    id: '7',
+    videoId: 'WS4qWFvGJN8',
+    title: 'The Kadosh',
+    artist: 'Joe Mettle ft. Nathaniel Bassey',
+    duration: '9:05',
+    category: 'anthem',
+    thumbnailUrl: 'https://img.youtube.com/vi/WS4qWFvGJN8/mqdefault.jpg'
+  },
+  {
+    id: '8',
+    videoId: 'uOP4s8fOEm0',
+    title: 'Firm Foundation (He Won\'t)',
+    artist: 'TRIBL / Maverick City Music ft. Chandler Moore & Cody Carnes',
+    duration: '8:35',
+    category: 'anthem',
+    thumbnailUrl: 'https://img.youtube.com/vi/uOP4s8fOEm0/mqdefault.jpg'
   },
 ];
 
