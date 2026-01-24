@@ -17,7 +17,7 @@ export function GroupsList({ groups, onSelectGroup }: GroupsListProps) {
     <div className="space-y-3">
       <h2 className="font-semibold text-lg flex items-center gap-2">
         <Users className="h-5 w-5 text-primary" />
-        My Groups ({groups.length})
+        Training Squads ({groups.length})
       </h2>
       
       {groups.map(group => {

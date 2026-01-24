@@ -141,21 +141,21 @@ export default function Friends() {
         <div className="text-center">
           <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-orange-400 bg-clip-text text-transparent flex items-center justify-center gap-2">
             <Users className="h-8 w-8 text-primary" />
-            Squad
+            Training Squad
           </h1>
           <p className="text-muted-foreground mt-1">
             Iron sharpens iron. Train together.
           </p>
         </div>
 
-        {/* Friend Code Card */}
+        {/* Training Partner Code Card */}
         <Card className="border-primary/20 bg-gradient-to-br from-card to-primary/5">
           <CardHeader className="pb-3">
             <CardTitle className="text-lg flex items-center gap-2">
               <Crown className="h-5 w-5 text-yellow-500" />
-              Your Friend Code
+              Your Squad Code
             </CardTitle>
-            <CardDescription>Share this code for others to add you</CardDescription>
+            <CardDescription>Share this code for training partners to join you</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center gap-2">
@@ -169,7 +169,7 @@ export default function Friends() {
             
             <div className="flex gap-2">
               <Input
-                placeholder="Enter friend's code"
+                placeholder="Enter partner's code"
                 value={friendCodeInput}
                 onChange={(e) => setFriendCodeInput(e.target.value.toUpperCase())}
                 className="font-mono tracking-wider uppercase"
@@ -194,7 +194,7 @@ export default function Friends() {
                 <Badge variant="secondary" className="bg-orange-500 text-white">
                   {pendingRequests.length}
                 </Badge>
-                Friend Requests
+                Training Partner Requests
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -221,32 +221,32 @@ export default function Friends() {
         )}
 
         {/* Main Tabs */}
-        <Tabs defaultValue="friends" className="w-full">
+        <Tabs defaultValue="partners" className="w-full">
           <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="friends" className="flex items-center gap-1">
+            <TabsTrigger value="partners" className="flex items-center gap-1">
               <Users className="h-4 w-4" />
-              <span className="hidden sm:inline">Friends</span>
+              <span className="hidden sm:inline">Partners</span>
               {friends.length > 0 && (
                 <Badge variant="secondary" className="ml-1 h-5 w-5 p-0 flex items-center justify-center text-xs">
                   {friends.length}
                 </Badge>
               )}
             </TabsTrigger>
-            <TabsTrigger value="challenges" className="flex items-center gap-1">
-              <Swords className="h-4 w-4" />
-              <span className="hidden sm:inline">Challenges</span>
-              {challenges.length > 0 && (
-                <Badge variant="secondary" className="ml-1 h-5 w-5 p-0 flex items-center justify-center text-xs">
-                  {challenges.length}
-                </Badge>
-              )}
-            </TabsTrigger>
-            <TabsTrigger value="groups" className="flex items-center gap-1">
+            <TabsTrigger value="squads" className="flex items-center gap-1">
               <BookOpen className="h-4 w-4" />
-              <span className="hidden sm:inline">Groups</span>
+              <span className="hidden sm:inline">Squads</span>
               {groups.length > 0 && (
                 <Badge variant="secondary" className="ml-1 h-5 w-5 p-0 flex items-center justify-center text-xs">
                   {groups.length}
+                </Badge>
+              )}
+            </TabsTrigger>
+            <TabsTrigger value="challenges" className="flex items-center gap-1">
+              <Swords className="h-4 w-4" />
+              <span className="hidden sm:inline">Battles</span>
+              {challenges.length > 0 && (
+                <Badge variant="secondary" className="ml-1 h-5 w-5 p-0 flex items-center justify-center text-xs">
+                  {challenges.length}
                 </Badge>
               )}
             </TabsTrigger>
@@ -256,7 +256,7 @@ export default function Friends() {
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="friends" className="mt-4">
+          <TabsContent value="partners" className="mt-4">
             <FriendsList 
               friends={friends}
               loading={loading}
@@ -265,16 +265,7 @@ export default function Friends() {
             />
           </TabsContent>
 
-          <TabsContent value="challenges" className="mt-4">
-            <ChallengesList 
-              challenges={challenges}
-              loading={loading}
-              onAccept={acceptChallenge}
-              onDecline={declineChallenge}
-            />
-          </TabsContent>
-
-          <TabsContent value="groups" className="mt-4">
+          <TabsContent value="squads" className="mt-4">
             {currentGroup ? (
               <GroupDetail
                 group={currentGroup}
@@ -299,15 +290,15 @@ export default function Friends() {
                 <div className="flex gap-2">
                   <Button onClick={() => setCreateGroupDialogOpen(true)} className="flex-1">
                     <Users className="h-4 w-4 mr-2" />
-                    Create Group
+                    Create Squad
                   </Button>
                   <Button variant="outline" onClick={() => setJoinGroupDialogOpen(true)} className="flex-1">
                     <UserPlus className="h-4 w-4 mr-2" />
-                    Join Group
+                    Join Squad
                   </Button>
                 </div>
 
-                {/* Groups List */}
+                {/* Training Squads List */}
                 {groupsLoading ? (
                   <div className="space-y-3">
                     {[1, 2].map((i) => (
@@ -322,9 +313,9 @@ export default function Friends() {
                   <Card className="border-dashed">
                     <CardContent className="p-6 text-center">
                       <BookOpen className="h-12 w-12 mx-auto text-muted-foreground mb-3" />
-                      <h3 className="font-semibold mb-1">No Groups Yet</h3>
+                      <h3 className="font-semibold mb-1">No Training Squads Yet</h3>
                       <p className="text-sm text-muted-foreground">
-                        Create or join a Bible study group to train together with family and friends.
+                        Create or join a training squad for Bible study, accountability, and prayer support.
                       </p>
                     </CardContent>
                   </Card>
@@ -333,6 +324,15 @@ export default function Friends() {
                 )}
               </div>
             )}
+          </TabsContent>
+
+          <TabsContent value="challenges" className="mt-4">
+            <ChallengesList 
+              challenges={challenges}
+              loading={loading}
+              onAccept={acceptChallenge}
+              onDecline={declineChallenge}
+            />
           </TabsContent>
 
           <TabsContent value="leaderboard" className="mt-4">

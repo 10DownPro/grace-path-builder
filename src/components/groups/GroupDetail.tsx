@@ -117,7 +117,7 @@ export function GroupDetail({
 
   const handleCopyCode = () => {
     navigator.clipboard.writeText(group.group_code);
-    toast.success('Group code copied!');
+    toast.success('Squad code copied!');
   };
 
   const completedCount = currentSession?.completed_by?.length || 0;
@@ -151,12 +151,12 @@ export function GroupDetail({
         )}
       </div>
 
-      {/* Group Code Card */}
+      {/* Squad Code Card */}
       <Card className="bg-primary/5 border-primary/20">
         <CardContent className="p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Invite Code</p>
+              <p className="text-sm text-muted-foreground">Squad Code</p>
               <p className="text-xl font-mono font-bold tracking-wider">{group.group_code}</p>
             </div>
             <Button variant="outline" size="sm" onClick={handleCopyCode}>

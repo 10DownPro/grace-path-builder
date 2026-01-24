@@ -36,7 +36,7 @@ export function CreateGroupDialog({ open, onOpenChange, onSubmit }: CreateGroupD
 
   const handleSubmit = async () => {
     if (!name.trim()) {
-      toast.error('Please enter a group name');
+      toast.error('Please enter a squad name');
       return;
     }
 
@@ -46,7 +46,7 @@ export function CreateGroupDialog({ open, onOpenChange, onSubmit }: CreateGroupD
     if (error) {
       toast.error(error.message);
     } else {
-      toast.success('Group created! Share your code with members.');
+      toast.success('Training Squad created! Share your code with members.');
       setName('');
       setDescription('');
       setGroupType('family');
@@ -60,16 +60,16 @@ export function CreateGroupDialog({ open, onOpenChange, onSubmit }: CreateGroupD
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Create Study Group</DialogTitle>
+          <DialogTitle>Create Training Squad</DialogTitle>
           <DialogDescription>
-            Start a Bible study group for family, friends, or community.
+            Start a training squad for family, friends, or community.
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
-          {/* Group Name */}
+          {/* Squad Name */}
           <div className="space-y-2">
-            <Label htmlFor="name">Group Name</Label>
+            <Label htmlFor="name">Squad Name</Label>
             <Input
               id="name"
               value={name}
@@ -79,9 +79,9 @@ export function CreateGroupDialog({ open, onOpenChange, onSubmit }: CreateGroupD
             />
           </div>
 
-          {/* Group Type */}
+          {/* Squad Type */}
           <div className="space-y-2">
-            <Label>Group Type</Label>
+            <Label>Squad Type</Label>
             <div className="grid grid-cols-2 gap-2">
               {GROUP_TYPES.map(type => (
                 <button
@@ -103,9 +103,9 @@ export function CreateGroupDialog({ open, onOpenChange, onSubmit }: CreateGroupD
             </div>
           </div>
 
-          {/* Group Icon */}
+          {/* Squad Icon */}
           <div className="space-y-2">
-            <Label>Group Icon</Label>
+            <Label>Squad Icon</Label>
             <div className="flex flex-wrap gap-2">
               {EMOJI_OPTIONS.map(e => (
                 <button
@@ -131,7 +131,7 @@ export function CreateGroupDialog({ open, onOpenChange, onSubmit }: CreateGroupD
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="What will your group study together?"
+              placeholder="What will your squad train together?"
               maxLength={500}
               rows={3}
             />
@@ -157,7 +157,7 @@ export function CreateGroupDialog({ open, onOpenChange, onSubmit }: CreateGroupD
                 Creating...
               </>
             ) : (
-              'Create Group'
+              'Create Squad'
             )}
           </Button>
         </div>
