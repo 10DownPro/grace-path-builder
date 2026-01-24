@@ -44,8 +44,8 @@ export const worshipPlaylist: WorshipVideo[] = [
   {
     id: '1',
     videoId: '-mEjUReUuT8',
-    title: 'Worship!',
-    artist: 'TAYA',
+    title: 'Spirit Breakout',
+    artist: 'William McDowell / Trinity Anderson',
     duration: '4:20',
     category: 'anthem',
     thumbnailUrl: 'https://img.youtube.com/vi/-mEjUReUuT8/mqdefault.jpg'
