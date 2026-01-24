@@ -43,138 +43,30 @@ export interface WorshipVideo {
 export const worshipPlaylist: WorshipVideo[] = [
   {
     id: '1',
-    videoId: 'Fo4RlXs-mGI',
-    title: 'Goodness of God',
-    artist: 'Bethel Music ft. Jenn Johnson',
-    duration: '5:24',
+    videoId: 'brnlnjYe52o',
+    title: 'Never Lost',
+    artist: 'TRIBL / Maverick City Music',
+    duration: '8:42',
     category: 'anthem',
-    thumbnailUrl: 'https://img.youtube.com/vi/Fo4RlXs-mGI/mqdefault.jpg'
+    thumbnailUrl: 'https://img.youtube.com/vi/brnlnjYe52o/mqdefault.jpg'
   },
   {
     id: '2',
-    videoId: 'EPhfbtNRfXE',
-    title: 'Way Maker (Live)',
-    artist: 'Leeland',
-    duration: '9:22',
+    videoId: 'kKN7Tpe1p2s',
+    title: 'Holy',
+    artist: 'Lathan Warlick / SVRCINA',
+    duration: '4:18',
     category: 'anthem',
-    thumbnailUrl: 'https://img.youtube.com/vi/EPhfbtNRfXE/mqdefault.jpg'
+    thumbnailUrl: 'https://img.youtube.com/vi/kKN7Tpe1p2s/mqdefault.jpg'
   },
   {
     id: '3',
-    videoId: 'tiCcvqeowIs',
-    title: 'Great Are You Lord',
-    artist: 'All Sons & Daughters',
-    duration: '5:45',
-    category: 'acoustic',
-    thumbnailUrl: 'https://img.youtube.com/vi/tiCcvqeowIs/mqdefault.jpg'
-  },
-  {
-    id: '4',
-    videoId: 'Sc6SSHuZvQE',
-    title: 'Reckless Love (Live)',
-    artist: 'Cory Asbury',
-    duration: '7:37',
+    videoId: 'YbGFYaA0SbY',
+    title: 'We Want Revival',
+    artist: 'Red Worship / Lizzie Morgan / Jonathan Stamper',
+    duration: '6:15',
     category: 'anthem',
-    thumbnailUrl: 'https://img.youtube.com/vi/Sc6SSHuZvQE/mqdefault.jpg'
-  },
-  {
-    id: '5',
-    videoId: 'nQWFzMvCfLE',
-    title: 'What A Beautiful Name',
-    artist: 'Hillsong Worship',
-    duration: '5:42',
-    category: 'anthem',
-    thumbnailUrl: 'https://img.youtube.com/vi/nQWFzMvCfLE/mqdefault.jpg'
-  },
-  {
-    id: '6',
-    videoId: 'dy9nwe9_xzw',
-    title: 'Oceans (Where Feet May Fail)',
-    artist: 'Hillsong UNITED',
-    duration: '8:56',
-    category: 'acoustic',
-    thumbnailUrl: 'https://img.youtube.com/vi/dy9nwe9_xzw/mqdefault.jpg'
-  },
-  {
-    id: '7',
-    videoId: 'CqybaIesbuA',
-    title: 'Good Good Father',
-    artist: 'Chris Tomlin',
-    duration: '4:56',
-    category: 'acoustic',
-    thumbnailUrl: 'https://img.youtube.com/vi/CqybaIesbuA/mqdefault.jpg'
-  },
-  {
-    id: '8',
-    videoId: 'ixCuGGm-r6g',
-    title: 'King of Kings',
-    artist: 'Hillsong Worship',
-    duration: '6:26',
-    category: 'anthem',
-    thumbnailUrl: 'https://img.youtube.com/vi/ixCuGGm-r6g/mqdefault.jpg'
-  },
-  {
-    id: '9',
-    videoId: 'OJ0T6e-Iu2Y',
-    title: 'Yes I Will',
-    artist: 'Vertical Worship',
-    duration: '5:08',
-    category: 'anthem',
-    thumbnailUrl: 'https://img.youtube.com/vi/OJ0T6e-Iu2Y/mqdefault.jpg'
-  },
-  {
-    id: '10',
-    videoId: 'Zp6aygmvzM4',
-    title: 'The Blessing',
-    artist: 'Elevation Worship',
-    duration: '6:22',
-    category: 'anthem',
-    thumbnailUrl: 'https://img.youtube.com/vi/Zp6aygmvzM4/mqdefault.jpg'
-  },
-  {
-    id: '11',
-    videoId: 'wMylGb-ZfVA',
-    title: 'Build My Life',
-    artist: 'Housefires',
-    duration: '5:54',
-    category: 'anthem',
-    thumbnailUrl: 'https://img.youtube.com/vi/wMylGb-ZfVA/mqdefault.jpg'
-  },
-  {
-    id: '12',
-    videoId: 'TiGTGV9BMVA',
-    title: 'Graves Into Gardens',
-    artist: 'Elevation Worship',
-    duration: '6:18',
-    category: 'anthem',
-    thumbnailUrl: 'https://img.youtube.com/vi/TiGTGV9BMVA/mqdefault.jpg'
-  },
-  {
-    id: '13',
-    videoId: 'dyV8cf3Vl_M',
-    title: 'Jireh',
-    artist: 'Elevation Worship & Maverick City',
-    duration: '5:22',
-    category: 'urban',
-    thumbnailUrl: 'https://img.youtube.com/vi/dyV8cf3Vl_M/mqdefault.jpg'
-  },
-  {
-    id: '14',
-    videoId: 'u9vq5CI-Q00',
-    title: 'Gratitude',
-    artist: 'Brandon Lake',
-    duration: '4:47',
-    category: 'urban',
-    thumbnailUrl: 'https://img.youtube.com/vi/u9vq5CI-Q00/mqdefault.jpg'
-  },
-  {
-    id: '15',
-    videoId: 'fNzGEYMm00w',
-    title: 'Peace Be Still',
-    artist: 'The Belonging Co',
-    duration: '7:12',
-    category: 'acoustic',
-    thumbnailUrl: 'https://img.youtube.com/vi/fNzGEYMm00w/mqdefault.jpg'
+    thumbnailUrl: 'https://img.youtube.com/vi/YbGFYaA0SbY/mqdefault.jpg'
   },
 ];
 
