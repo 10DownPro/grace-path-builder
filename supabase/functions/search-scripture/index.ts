@@ -66,17 +66,23 @@ serve(async (req) => {
     const verses = await Promise.all(
       references.map(async (ref) => {
         try {
-          const cleanRef = ref.trim().toLowerCase().replace(/\s+/g, '+');
+          // Use the reference directly - bible-api.com expects format like "John 3:16"
           const response = await fetch(
-            `https://bible-api.com/${encodeURIComponent(cleanRef)}?translation=${translation}`
+            `https://bible-api.com/${encodeURIComponent(ref)}?translation=${translation}`
           );
           
           if (!response.ok) {
-            console.error(`Failed to fetch ${ref}`);
+            console.error(`Failed to fetch ${ref}: ${response.status}`);
             return null;
           }
           
           const data = await response.json();
+          
+          if (!data.text) {
+            console.error(`No text returned for ${ref}`);
+            return null;
+          }
+          
           return {
             reference: data.reference || ref,
             text: data.text?.trim() || '',

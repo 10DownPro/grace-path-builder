@@ -243,25 +243,33 @@ export function FeedPost({ post, onReaction, onComment, onGetComments }: FeedPos
 
         {/* Reactions */}
         <div className="flex items-center justify-between pt-2 border-t border-border">
-          <div className="flex items-center gap-1">
-            {REACTIONS.map((reaction) => (
-              <button
-                key={reaction.type}
-                onClick={() => onReaction(post.id, reaction.type)}
-                className={cn(
-                  "flex items-center gap-1 px-2 py-1 rounded-full text-sm transition-all",
-                  "hover:bg-muted active:scale-95",
-                  post.user_reaction === reaction.type && "bg-primary/20"
-                )}
-              >
-                <span>{reaction.emoji}</span>
-              </button>
-            ))}
-            {post.reaction_count > 0 && (
-              <span className="text-xs text-muted-foreground ml-2">
-                {post.reaction_count}
-              </span>
-            )}
+          <div className="flex items-center gap-1 flex-wrap">
+            {REACTIONS.map((reaction) => {
+              const count = post.reaction_counts?.[reaction.type] || 0;
+              const isUserReaction = post.user_reaction === reaction.type;
+              
+              return (
+                <button
+                  key={reaction.type}
+                  onClick={() => onReaction(post.id, reaction.type)}
+                  className={cn(
+                    "flex items-center gap-1 px-2 py-1 rounded-full text-sm transition-all",
+                    "hover:bg-muted active:scale-95",
+                    isUserReaction && "bg-primary/20 border border-primary/40"
+                  )}
+                >
+                  <span>{reaction.emoji}</span>
+                  {count > 0 && (
+                    <span className={cn(
+                      "text-xs",
+                      isUserReaction ? "text-primary font-semibold" : "text-muted-foreground"
+                    )}>
+                      {count}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
           </div>
 
           <div className="flex items-center gap-2">
