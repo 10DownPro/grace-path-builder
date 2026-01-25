@@ -5,9 +5,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { MediaEmbed } from './MediaEmbed';
+import { FollowButton } from '@/components/social/FollowButton';
 import { cn } from '@/lib/utils';
 import { MessageCircle, Share2, MoreHorizontal, Send, Pencil, HandHeart } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
+import { useAuth } from '@/hooks/useAuth';
 
 interface FeedPostProps {
   post: FeedPostType;
@@ -34,12 +36,14 @@ const POST_TYPE_CONFIG: Record<string, { badge: string; emoji: string; color: st
 };
 
 export function FeedPost({ post, onReaction, onComment, onGetComments }: FeedPostProps) {
+  const { user } = useAuth();
   const [showComments, setShowComments] = useState(false);
   const [comments, setComments] = useState<FeedComment[]>([]);
   const [newComment, setNewComment] = useState('');
   const [loadingComments, setLoadingComments] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
+  const isOwnPost = user?.id === post.user_id;
   const config = POST_TYPE_CONFIG[post.post_type] || POST_TYPE_CONFIG.testimony;
   const contentData = post.content_data as Record<string, unknown>;
 
@@ -231,9 +235,15 @@ export function FeedPost({ post, onReaction, onComment, onGetComments }: FeedPos
             </p>
           </div>
 
-          <Button variant="ghost" size="icon" className="h-8 w-8">
-            <MoreHorizontal className="h-4 w-4" />
-          </Button>
+          <div className="flex items-center gap-2">
+            {/* Follow Button - only show if not own post */}
+            {!isOwnPost && (
+              <FollowButton userId={post.user_id} size="sm" />
+            )}
+            <Button variant="ghost" size="icon" className="h-8 w-8">
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
 
         {/* Content */}

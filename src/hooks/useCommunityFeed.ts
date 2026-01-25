@@ -66,6 +66,23 @@ export function useCommunityFeed() {
 
     setLoading(true);
 
+    // For 'following' filter, first get followed user IDs
+    let followedUserIds: string[] = [];
+    if (filter === 'following') {
+      const { data: follows } = await supabase
+        .from('user_follows')
+        .select('followed_user_id')
+        .eq('follower_user_id', user.id);
+      followedUserIds = follows?.map(f => f.followed_user_id) || [];
+      
+      if (followedUserIds.length === 0) {
+        setPosts([]);
+        setHasMore(false);
+        setLoading(false);
+        return;
+      }
+    }
+
     let query = supabase
       .from('community_feed_posts')
       .select('*')
@@ -78,8 +95,9 @@ export function useCommunityFeed() {
       query = query.eq('visibility', 'squad_only');
     } else if (filter === 'friends') {
       query = query.eq('visibility', 'friends_only');
+    } else if (filter === 'following' && followedUserIds.length > 0) {
+      query = query.in('user_id', followedUserIds);
     }
-    // 'following' filter would need a subquery for followed users - handled below
 
     const { data: postsData, error } = await query;
 
@@ -90,6 +108,7 @@ export function useCommunityFeed() {
     }
 
     if (!postsData || postsData.length === 0) {
+      if (offset === 0) setPosts([]);
       setHasMore(false);
       setLoading(false);
       return;
