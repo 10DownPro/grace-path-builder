@@ -18,7 +18,7 @@ import { usePrayers } from '@/hooks/usePrayers';
 import { useSessions } from '@/hooks/useSessions';
 import { useMilestoneChecker } from '@/hooks/useMilestoneChecker';
 import { useFreeChapter } from '@/hooks/useFreeChapter';
-import { Settings, Shield, Flame, Zap, Trophy, TrendingUp, Info, X } from 'lucide-react';
+import { User, Shield, Flame, Zap, Trophy, TrendingUp, Info, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
@@ -156,13 +156,13 @@ export default function Index() {
                   No days off. No excuses.
                 </p>
               </div>
-              <Link to="/settings">
+              <Link to="/profile">
                 <Button 
                   variant="ghost" 
                   size="icon" 
                   className="text-muted-foreground hover:text-primary hover:bg-primary/10"
                 >
-                  <Settings className="h-6 w-6" />
+                  <User className="h-6 w-6" />
                 </Button>
               </Link>
             </div>
@@ -250,27 +250,7 @@ export default function Index() {
           {/* Battle Verse */}
           <BattleVerse />
 
-          {/* Stats Row with Icons */}
-          <div className="grid grid-cols-3 gap-3">
-            <StatCard 
-              label="Sessions" 
-              value={totalSessions} 
-              icon={Zap}
-              color="text-primary"
-            />
-            <StatCard 
-              label="Minutes" 
-              value={totalMinutes}
-              icon={Flame}
-              color="text-warning"
-            />
-            <StatCard 
-              label="Best Streak" 
-              value={longestStreak}
-              icon={Trophy}
-              color="text-success"
-            />
-          </div>
+          {/* Stats moved to Squad/Profile page */}
 
           {/* Growth Card */}
           <div className="gym-card p-5 border-l-4 border-l-success">
