@@ -14,6 +14,8 @@ import { useSessions } from '@/hooks/useSessions';
 import { useMilestoneChecker } from '@/hooks/useMilestoneChecker';
 import { useSwipeGesture } from '@/hooks/useSwipeGesture';
 import { useHapticFeedback } from '@/hooks/useHapticFeedback';
+import { SpinWheelDialog } from '@/components/rewards/SpinWheelDialog';
+import { useMysteryRewards } from '@/hooks/useMysteryRewards';
 import {
   Select,
   SelectContent,
@@ -36,6 +38,7 @@ export default function Session() {
   const { todaySession, updateTodaySession, getOrCreateTodaySession, loading: sessionsLoading } = useSessions();
   const { checkAndAwardMilestones } = useMilestoneChecker();
   const { lightTap, successPattern, celebrationPattern } = useHapticFeedback();
+  const { canSpinToday } = useMysteryRewards();
   const [currentPhase, setCurrentPhase] = useState<SessionPhase>('worship');
   const [prayerText, setPrayerText] = useState('');
   const [reflectionText, setReflectionText] = useState('');
@@ -44,6 +47,7 @@ export default function Session() {
   const [saving, setSaving] = useState(false);
   const [showCompletionAnimation, setShowCompletionAnimation] = useState(false);
   const [swipeDirection, setSwipeDirection] = useState<'left' | 'right' | null>(null);
+  const [showSpinWheel, setShowSpinWheel] = useState(false);
 
   // Initialize session on mount
   useEffect(() => {
@@ -142,7 +146,12 @@ export default function Session() {
       setTimeout(async () => {
         setShowCompletionAnimation(false);
         await checkAndAwardMilestones();
-        navigate('/');
+        // Show spin wheel if eligible
+        if (canSpinToday) {
+          setShowSpinWheel(true);
+        } else {
+          navigate('/');
+        }
       }, 1500);
     }
   };
@@ -332,6 +341,13 @@ export default function Session() {
           </div>
         </div>
       </div>
+
+      {/* Spin Wheel Dialog */}
+      <SpinWheelDialog
+        open={showSpinWheel}
+        onOpenChange={setShowSpinWheel}
+        onComplete={() => navigate('/')}
+      />
     </PageLayout>
   );
 }

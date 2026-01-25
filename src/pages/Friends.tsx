@@ -18,6 +18,8 @@ import { GroupsList } from '@/components/groups/GroupsList';
 import { GroupDetail } from '@/components/groups/GroupDetail';
 import { CreateGroupDialog } from '@/components/groups/CreateGroupDialog';
 import { JoinGroupDialog } from '@/components/groups/JoinGroupDialog';
+import { LiveActivityTicker } from '@/components/squad/LiveActivityTicker';
+import { WhosTrainingNow } from '@/components/squad/WhosTrainingNow';
 import { Users, Trophy, Swords, Copy, UserPlus, Crown, BookOpen, Info, X } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
@@ -159,6 +161,12 @@ export default function Friends() {
             Iron sharpens iron. Train together.
           </p>
         </div>
+
+        {/* Live Activity Ticker */}
+        <LiveActivityTicker />
+
+        {/* Who's Training Now */}
+        <WhosTrainingNow />
 
         {/* How This Works - Dismissable Instructions Banner */}
         {showInstructions && (
