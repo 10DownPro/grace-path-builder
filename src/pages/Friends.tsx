@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { PageLayout } from '@/components/layout/PageLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -13,12 +13,15 @@ import { FriendsList } from '@/components/friends/FriendsList';
 import { ChallengesList } from '@/components/friends/ChallengesList';
 import { CreateChallengeDialog } from '@/components/friends/CreateChallengeDialog';
 import { Leaderboard } from '@/components/friends/Leaderboard';
+import { MyStatsCard } from '@/components/friends/MyStatsCard';
 import { GroupsList } from '@/components/groups/GroupsList';
 import { GroupDetail } from '@/components/groups/GroupDetail';
 import { CreateGroupDialog } from '@/components/groups/CreateGroupDialog';
 import { JoinGroupDialog } from '@/components/groups/JoinGroupDialog';
-import { Users, Trophy, Swords, Copy, UserPlus, Crown, BookOpen, Info, BarChart3 } from 'lucide-react';
+import { Users, Trophy, Swords, Copy, UserPlus, Crown, BookOpen, Info, X } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
+
+const INSTRUCTIONS_DISMISSED_KEY = 'squad-instructions-dismissed';
 
 export default function Friends() {
   const { 
@@ -42,7 +45,15 @@ export default function Friends() {
   const [selectedFriend, setSelectedFriend] = useState<{ id: string; name: string } | null>(null);
   const [createGroupDialogOpen, setCreateGroupDialogOpen] = useState(false);
   const [joinGroupDialogOpen, setJoinGroupDialogOpen] = useState(false);
+  const [showInstructions, setShowInstructions] = useState(() => {
+    return localStorage.getItem(INSTRUCTIONS_DISMISSED_KEY) !== 'true';
+  });
   const { unreadCount } = useEncouragements();
+
+  const dismissInstructions = () => {
+    setShowInstructions(false);
+    localStorage.setItem(INSTRUCTIONS_DISMISSED_KEY, 'true');
+  };
   
   const {
     groups,
@@ -149,40 +160,52 @@ export default function Friends() {
           </p>
         </div>
 
-        {/* How This Works - Instructions Banner */}
-        <Card className="border-primary/30 bg-gradient-to-br from-primary/5 to-primary/10">
-          <CardContent className="p-4">
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                <Info className="h-4 w-4 text-primary" />
-              </div>
-              <div className="space-y-2">
-                <h3 className="font-semibold text-sm text-primary uppercase tracking-wide">How This Works</h3>
-                <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground">
-                  <div className="flex items-center gap-1.5">
-                    <Users className="h-3.5 w-3.5 text-primary" />
-                    <span><strong>Partners:</strong> Add 1-on-1 friends</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <BookOpen className="h-3.5 w-3.5 text-primary" />
-                    <span><strong>Squads:</strong> Group Bible study</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <Swords className="h-3.5 w-3.5 text-primary" />
-                    <span><strong>Battles:</strong> Challenge friends</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <Trophy className="h-3.5 w-3.5 text-primary" />
-                    <span><strong>Ranks:</strong> Squad leaderboard</span>
-                  </div>
+        {/* How This Works - Dismissable Instructions Banner */}
+        {showInstructions && (
+          <Card className="border-primary/30 bg-gradient-to-br from-primary/5 to-primary/10">
+            <CardContent className="p-4">
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <Info className="h-4 w-4 text-primary" />
                 </div>
-                <p className="text-xs text-muted-foreground pt-1 border-t border-border/50">
-                  Share your <strong>Squad Code</strong> below to connect. Check <Link to="/progress" className="text-primary underline font-medium">Your Stats</Link> for personal progress.
-                </p>
+                <div className="flex-1 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-semibold text-sm text-primary uppercase tracking-wide">How This Works</h3>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-6 w-6 -mr-2 -mt-1"
+                      onClick={dismissInstructions}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground">
+                    <div className="flex items-center gap-1.5">
+                      <Users className="h-3.5 w-3.5 text-primary" />
+                      <span><strong>Partners:</strong> Add 1-on-1 friends</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <BookOpen className="h-3.5 w-3.5 text-primary" />
+                      <span><strong>Squads:</strong> Group Bible study</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <Swords className="h-3.5 w-3.5 text-primary" />
+                      <span><strong>Battles:</strong> Challenge friends</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <Trophy className="h-3.5 w-3.5 text-primary" />
+                      <span><strong>Ranks:</strong> Squad leaderboard</span>
+                    </div>
+                  </div>
+                  <p className="text-xs text-muted-foreground pt-1 border-t border-border/50">
+                    Share your <strong>Squad Code</strong> below to connect. Check <Link to="/progress" className="text-primary underline font-medium">Your Stats</Link> for personal progress.
+                  </p>
+                </div>
               </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Training Partner Code Card */}
         <Card className="border-primary/20 bg-gradient-to-br from-card to-primary/5">
@@ -372,6 +395,7 @@ export default function Friends() {
           </TabsContent>
 
           <TabsContent value="leaderboard" className="mt-4">
+            <MyStatsCard friends={friends} />
             <Leaderboard friends={friends} />
           </TabsContent>
         </Tabs>
