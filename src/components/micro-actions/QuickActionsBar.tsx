@@ -65,7 +65,7 @@ export function QuickActionsBar() {
         </div>
 
         {/* Action Buttons */}
-        <div className="grid grid-cols-5 gap-2">
+        <div className="grid grid-cols-5 gap-1.5 sm:gap-2">
           {actionButtons.map((action) => {
             const isComplete = action.stat.completed >= action.stat.goal;
             
@@ -74,22 +74,22 @@ export function QuickActionsBar() {
                 key={action.type}
                 onClick={() => setActiveDialog(action.type)}
                 className={cn(
-                  "flex flex-col items-center gap-1 p-2 rounded-lg border-2 transition-all",
+                  "flex flex-col items-center gap-0.5 p-2 sm:p-3 rounded-lg border-2 transition-all min-w-0",
                   "hover:bg-accent hover:scale-105 active:scale-95",
                   isComplete
                     ? "border-success bg-success/10"
                     : "border-border bg-background"
                 )}
               >
-                <span className="text-xl">{action.icon}</span>
-                <span className="text-[10px] font-medium text-muted-foreground truncate w-full text-center">
+                <span className="text-xl sm:text-2xl">{action.icon}</span>
+                <span className="text-[9px] sm:text-xs font-medium text-muted-foreground leading-tight text-center">
                   {action.label}
                 </span>
                 <div className="flex items-center gap-0.5">
                   {isComplete ? (
                     <CheckCircle className="h-3 w-3 text-success" />
                   ) : (
-                    <span className="text-[10px] text-muted-foreground">
+                    <span className="text-[9px] sm:text-[10px] text-muted-foreground">
                       {action.stat.completed}/{action.stat.goal}
                     </span>
                   )}

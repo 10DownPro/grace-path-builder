@@ -17,6 +17,7 @@ import Battles from "./pages/Battles";
 import Friends from "./pages/Friends";
 import NotFound from "./pages/NotFound";
 import Rewards from "./pages/Rewards";
+import Feed from "./pages/Feed";
 
 const queryClient = new QueryClient();
 
@@ -62,6 +63,7 @@ const App = () => (
           <Route path="/battles" element={<ProtectedRoute><Battles /></ProtectedRoute>} />
           <Route path="/friends" element={<ProtectedRoute><Friends /></ProtectedRoute>} />
           <Route path="/rewards" element={<ProtectedRoute><Rewards /></ProtectedRoute>} />
+          <Route path="/feed" element={<ProtectedRoute><Feed /></ProtectedRoute>} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
