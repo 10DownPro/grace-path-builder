@@ -213,6 +213,33 @@ export type Database = {
           },
         ]
       }
+      direct_messages: {
+        Row: {
+          created_at: string
+          id: string
+          is_read: boolean | null
+          message: string
+          receiver_id: string
+          sender_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_read?: boolean | null
+          message: string
+          receiver_id: string
+          sender_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_read?: boolean | null
+          message?: string
+          receiver_id?: string
+          sender_id?: string
+        }
+        Relationships: []
+      }
       encouragements: {
         Row: {
           created_at: string
@@ -1091,6 +1118,91 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "squad_members_squad_id_fkey"
+            columns: ["squad_id"]
+            isOneToOne: false
+            referencedRelation: "squads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      squad_messages: {
+        Row: {
+          created_at: string
+          id: string
+          message: string
+          message_type: string | null
+          squad_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message: string
+          message_type?: string | null
+          squad_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string
+          message_type?: string | null
+          squad_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "squad_messages_squad_id_fkey"
+            columns: ["squad_id"]
+            isOneToOne: false
+            referencedRelation: "squads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      squad_prayer_requests: {
+        Row: {
+          answered_at: string | null
+          answered_testimony: string | null
+          created_at: string
+          id: string
+          is_answered: boolean | null
+          is_private: boolean | null
+          prayed_by: Json | null
+          prayer_count: number | null
+          prayer_request: string
+          squad_id: string
+          user_id: string
+        }
+        Insert: {
+          answered_at?: string | null
+          answered_testimony?: string | null
+          created_at?: string
+          id?: string
+          is_answered?: boolean | null
+          is_private?: boolean | null
+          prayed_by?: Json | null
+          prayer_count?: number | null
+          prayer_request: string
+          squad_id: string
+          user_id: string
+        }
+        Update: {
+          answered_at?: string | null
+          answered_testimony?: string | null
+          created_at?: string
+          id?: string
+          is_answered?: boolean | null
+          is_private?: boolean | null
+          prayed_by?: Json | null
+          prayer_count?: number | null
+          prayer_request?: string
+          squad_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "squad_prayer_requests_squad_id_fkey"
             columns: ["squad_id"]
             isOneToOne: false
             referencedRelation: "squads"

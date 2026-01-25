@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useSquads, Squad, SquadMember, SquadActivity } from '@/hooks/useSquads';
 import { useFriends } from '@/hooks/useFriends';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Dialog, 
   DialogContent, 
@@ -23,6 +24,8 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { CreateSquadDialog } from './CreateSquadDialog';
+import { SquadChat } from './SquadChat';
+import { SquadPrayerWall } from './SquadPrayerWall';
 import { 
   Users, 
   Plus, 
@@ -32,7 +35,9 @@ import {
   UserPlus,
   LogOut,
   Trash2,
-  Crown
+  Crown,
+  MessageCircle,
+  Heart
 } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { formatDistanceToNow } from 'date-fns';
@@ -159,6 +164,15 @@ export function SquadsList() {
       f => !members.some(m => m.user_id === f.user_id)
     );
 
+    // Build member profiles map for chat and prayer wall
+    const memberProfiles = useMemo(() => {
+      const map: Record<string, string> = {};
+      members.forEach(m => {
+        map[m.user_id] = m.name || 'Squad Member';
+      });
+      return map;
+    }, [members]);
+
     return (
       <>
         <div className="space-y-4">
@@ -220,89 +234,113 @@ export function SquadsList() {
             </CardContent>
           </Card>
 
-          {/* Members */}
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg flex items-center gap-2">
-                <Users className="h-5 w-5" />
+          {/* Squad Tabs for different features */}
+          <Tabs defaultValue="members" className="w-full">
+            <TabsList className="grid w-full grid-cols-4">
+              <TabsTrigger value="members" className="text-xs">
+                <Users className="h-3.5 w-3.5 mr-1" />
                 Members
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                {members.map((member, i) => (
-                  <div 
-                    key={member.id}
-                    className="flex items-center justify-between p-3 rounded-lg bg-muted/50"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center font-bold">
-                        {i === 0 ? '👑' : member.name?.charAt(0) || '?'}
-                      </div>
-                      <div>
-                        <p className="font-medium text-sm flex items-center gap-1">
-                          {member.name}
-                          {member.role === 'admin' && (
-                            <Crown className="h-3 w-3 text-yellow-500" />
-                          )}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {member.total_sessions} sessions
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-1 text-orange-500">
-                      <Flame className="h-4 w-4" />
-                      <span className="font-bold">{member.current_streak}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+              </TabsTrigger>
+              <TabsTrigger value="chat" className="text-xs">
+                <MessageCircle className="h-3.5 w-3.5 mr-1" />
+                Chat
+              </TabsTrigger>
+              <TabsTrigger value="prayer" className="text-xs">
+                <Heart className="h-3.5 w-3.5 mr-1" />
+                Prayer
+              </TabsTrigger>
+              <TabsTrigger value="activity" className="text-xs">
+                <Trophy className="h-3.5 w-3.5 mr-1" />
+                Feed
+              </TabsTrigger>
+            </TabsList>
 
-          {/* Activity Feed */}
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg flex items-center gap-2">
-                <Trophy className="h-5 w-5" />
-                Activity Feed
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {activities.length === 0 ? (
-                <p className="text-center text-muted-foreground py-4">
-                  No activity yet. Start training!
-                </p>
-              ) : (
-                <ScrollArea className="h-[200px]">
+            <TabsContent value="members" className="mt-4">
+              <Card>
+                <CardContent className="p-4">
                   <div className="space-y-2">
-                    {activities.map((activity) => (
+                    {members.map((member, i) => (
                       <div 
-                        key={activity.id}
-                        className="flex items-start gap-2 p-2 text-sm"
+                        key={member.id}
+                        className="flex items-center justify-between p-3 rounded-lg bg-muted/50"
                       >
-                        <span>{getActivityIcon(activity.activity_type)}</span>
-                        <div>
-                          <p>
-                            <span className="font-medium">{activity.user_name}</span>
-                            {' '}
-                            {activity.activity_type === 'session_complete' && 'completed a session'}
-                            {activity.activity_type === 'streak_milestone' && 'hit a streak milestone'}
-                            {activity.activity_type === 'prayer' && 'logged a prayer'}
-                            {activity.activity_type === 'worship' && 'completed worship'}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {formatDistanceToNow(new Date(activity.created_at), { addSuffix: true })}
-                          </p>
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center font-bold">
+                            {i === 0 ? '👑' : member.name?.charAt(0) || '?'}
+                          </div>
+                          <div>
+                            <p className="font-medium text-sm flex items-center gap-1">
+                              {member.name}
+                              {member.role === 'admin' && (
+                                <Crown className="h-3 w-3 text-yellow-500" />
+                              )}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {member.total_sessions} sessions
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-1 text-orange-500">
+                          <Flame className="h-4 w-4" />
+                          <span className="font-bold">{member.current_streak}</span>
                         </div>
                       </div>
                     ))}
                   </div>
-                </ScrollArea>
-              )}
-            </CardContent>
-          </Card>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="chat" className="mt-4">
+              <SquadChat squadId={currentSquad.id} memberProfiles={memberProfiles} />
+            </TabsContent>
+
+            <TabsContent value="prayer" className="mt-4">
+              <SquadPrayerWall 
+                squadId={currentSquad.id} 
+                squadName={currentSquad.name}
+                memberProfiles={memberProfiles}
+              />
+            </TabsContent>
+
+            <TabsContent value="activity" className="mt-4">
+              <Card>
+                <CardContent className="p-4">
+                  {activities.length === 0 ? (
+                    <p className="text-center text-muted-foreground py-4">
+                      No activity yet. Start training!
+                    </p>
+                  ) : (
+                    <ScrollArea className="h-[200px]">
+                      <div className="space-y-2">
+                        {activities.map((activity) => (
+                          <div 
+                            key={activity.id}
+                            className="flex items-start gap-2 p-2 text-sm"
+                          >
+                            <span>{getActivityIcon(activity.activity_type)}</span>
+                            <div>
+                              <p>
+                                <span className="font-medium">{activity.user_name}</span>
+                                {' '}
+                                {activity.activity_type === 'session_complete' && 'completed a session'}
+                                {activity.activity_type === 'streak_milestone' && 'hit a streak milestone'}
+                                {activity.activity_type === 'prayer' && 'logged a prayer'}
+                                {activity.activity_type === 'worship' && 'completed worship'}
+                              </p>
+                              <p className="text-xs text-muted-foreground">
+                                {formatDistanceToNow(new Date(activity.created_at), { addSuffix: true })}
+                              </p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </ScrollArea>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
         </div>
 
         {/* Invite Dialog */}

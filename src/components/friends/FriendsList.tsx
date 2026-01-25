@@ -1,9 +1,11 @@
+import { useState } from 'react';
 import { Friend } from '@/hooks/useFriends';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Swords, Flame, Trophy, UserMinus, Users } from 'lucide-react';
+import { Swords, Flame, Trophy, UserMinus, Users, MessageCircle } from 'lucide-react';
+import { DirectMessageDialog } from './DirectMessageDialog';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -24,6 +26,13 @@ interface FriendsListProps {
 }
 
 export function FriendsList({ friends, loading, onChallenge, onRemove }: FriendsListProps) {
+  const [dmOpen, setDmOpen] = useState(false);
+  const [selectedDmFriend, setSelectedDmFriend] = useState<{ id: string; name: string } | null>(null);
+
+  const openDm = (friendId: string, friendName: string) => {
+    setSelectedDmFriend({ id: friendId, name: friendName });
+    setDmOpen(true);
+  };
   if (loading) {
     return (
       <div className="space-y-3">
@@ -94,14 +103,21 @@ export function FriendsList({ friends, loading, onChallenge, onRemove }: Friends
               </div>
 
               {/* Actions */}
-              <div className="flex gap-2">
+              <div className="flex gap-1">
+                <Button 
+                  size="sm" 
+                  variant="outline"
+                  onClick={() => openDm(friend.user_id, friend.name)}
+                >
+                  <MessageCircle className="h-4 w-4" />
+                </Button>
                 <Button 
                   size="sm" 
                   onClick={() => onChallenge(friend.user_id)}
                   className="bg-gradient-to-r from-primary to-orange-500"
                 >
                   <Swords className="h-4 w-4 mr-1" />
-                  Challenge
+                  <span className="hidden sm:inline">Challenge</span>
                 </Button>
                 
                 <AlertDialog>
@@ -133,6 +149,15 @@ export function FriendsList({ friends, loading, onChallenge, onRemove }: Friends
           </CardContent>
         </Card>
       ))}
+
+      {selectedDmFriend && (
+        <DirectMessageDialog
+          open={dmOpen}
+          onOpenChange={setDmOpen}
+          friendId={selectedDmFriend.id}
+          friendName={selectedDmFriend.name}
+        />
+      )}
     </div>
   );
 }
