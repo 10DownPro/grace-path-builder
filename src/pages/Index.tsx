@@ -14,7 +14,7 @@ import { usePrayers } from '@/hooks/usePrayers';
 import { useSessions } from '@/hooks/useSessions';
 import { useMilestoneChecker } from '@/hooks/useMilestoneChecker';
 import { useFreeChapter } from '@/hooks/useFreeChapter';
-import { Settings, Shield, Flame, Zap, Trophy, TrendingUp } from 'lucide-react';
+import { Settings, Shield, Flame, Zap, Trophy, TrendingUp, Info, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
@@ -39,7 +39,15 @@ export default function Index() {
   const { shouldShowUnlock, downloadChapter, closeDialog } = useFreeChapter();
   const [battleModeOpen, setBattleModeOpen] = useState(false);
   const [freeChapterOpen, setFreeChapterOpen] = useState(false);
+  const [showInstructions, setShowInstructions] = useState(() => {
+    return localStorage.getItem('home-instructions-dismissed') !== 'true';
+  });
   const formattedDate = getFormattedDate();
+
+  const dismissInstructions = () => {
+    setShowInstructions(false);
+    localStorage.setItem('home-instructions-dismissed', 'true');
+  };
 
   // Show free chapter unlock dialog when user hits 7-day streak
   useEffect(() => {
@@ -161,6 +169,35 @@ export default function Index() {
         </div>
 
         <div className="px-4 pb-28 space-y-5 -mt-2">
+          {/* Instructions Banner */}
+          {showInstructions && (
+            <div className="relative gym-card p-4 border-l-4 border-primary bg-primary/5">
+              <button
+                onClick={dismissInstructions}
+                className="absolute top-2 right-2 p-1 text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <X className="h-4 w-4" />
+              </button>
+              <div className="flex items-start gap-3 pr-6">
+                <Info className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                <div className="space-y-2">
+                  <h3 className="font-display text-sm uppercase tracking-wider text-foreground">
+                    Welcome to Your Training HQ
+                  </h3>
+                  <ul className="text-xs text-muted-foreground space-y-1">
+                    <li>🔥 <strong>Streak</strong> — Your consecutive training days</li>
+                    <li>💪 <strong>Today's Workout</strong> — Complete all 4 sets: Worship, Scripture, Prayer, Reflect</li>
+                    <li>⚔️ <strong>Battle Mode</strong> — Quick spiritual reset when you're struggling</li>
+                    <li>🎯 <strong>Daily Mission</strong> — Extra challenge to push your faith</li>
+                  </ul>
+                  <p className="text-xs text-muted-foreground">
+                    Tap <strong>Train</strong> below to start your daily workout!
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Streak Badge - Enhanced */}
           <StreakBadge streak={currentStreak} />
 

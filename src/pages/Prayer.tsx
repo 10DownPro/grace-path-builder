@@ -6,7 +6,7 @@ import { AddPrayerDialog } from '@/components/prayer/AddPrayerDialog';
 import { usePrayers, type Prayer } from '@/hooks/usePrayers';
 import { PrayerEntry } from '@/types/faith';
 import { cn } from '@/lib/utils';
-import { Filter, Sparkles, Target, BookOpen, Loader2 } from 'lucide-react';
+import { Filter, Sparkles, Target, BookOpen, Loader2, Info, X } from 'lucide-react';
 import { toast } from 'sonner';
 
 const filterOptions = [
@@ -82,9 +82,47 @@ export default function Prayer() {
     );
   }
 
+  const [showInstructions, setShowInstructions] = useState(() => {
+    return localStorage.getItem('prayer-instructions-dismissed') !== 'true';
+  });
+
+  const dismissInstructions = () => {
+    setShowInstructions(false);
+    localStorage.setItem('prayer-instructions-dismissed', 'true');
+  };
+
   return (
     <PageLayout>
       <div className="px-4 pt-8 pb-6 space-y-6">
+        {/* Instructions Banner */}
+        {showInstructions && (
+          <div className="relative gym-card p-4 border-l-4 border-primary bg-primary/5">
+            <button
+              onClick={dismissInstructions}
+              className="absolute top-2 right-2 p-1 text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <X className="h-4 w-4" />
+            </button>
+            <div className="flex items-start gap-3 pr-6">
+              <Info className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+              <div className="space-y-2">
+                <h3 className="font-display text-sm uppercase tracking-wider text-foreground">
+                  How Prayer Armory Works
+                </h3>
+                <ul className="text-xs text-muted-foreground space-y-1">
+                  <li><span className="text-orange-400 font-bold">A</span>doration — Praise God for who He is</li>
+                  <li><span className="text-purple-400 font-bold">C</span>onfession — Confess sins and ask forgiveness</li>
+                  <li><span className="text-emerald-400 font-bold">T</span>hanksgiving — Thank God for His blessings</li>
+                  <li><span className="text-blue-400 font-bold">S</span>upplication — Bring your requests to God</li>
+                </ul>
+                <p className="text-xs text-muted-foreground">
+                  Log prayers, track answers, and watch God work! Your recent prayers appear in Training sessions.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Hero Header */}
         <div className="relative overflow-hidden rounded-xl gym-card p-6">
           {/* Background pattern */}
