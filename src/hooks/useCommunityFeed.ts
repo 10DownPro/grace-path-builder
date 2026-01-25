@@ -19,6 +19,14 @@ export interface FeedPost {
   is_pinned: boolean;
   created_at: string;
   user_reaction?: string | null;
+  // Reaction counts by type
+  reaction_counts?: {
+    fire: number;
+    praying: number;
+    amen: number;
+    strong: number;
+    heart: number;
+  };
   // New fields for user-generated posts
   is_user_generated?: boolean;
   post_text?: string | null;
@@ -94,23 +102,42 @@ export function useCommunityFeed() {
       .select('user_id, name')
       .in('user_id', userIds);
 
-    // Fetch user's reactions
+    // Fetch user's reactions AND all reactions for counts
     const postIds = postsData.map(p => p.id);
-    const { data: reactions } = await supabase
+    const { data: userReactions } = await supabase
       .from('feed_reactions')
       .select('*')
       .in('post_id', postIds)
       .eq('user_id', user.id);
+    
+    // Fetch all reactions for each post to get counts by type
+    const { data: allReactions } = await supabase
+      .from('feed_reactions')
+      .select('post_id, reaction_type')
+      .in('post_id', postIds);
+
+    // Calculate reaction counts per post per type
+    const reactionCountsMap: Record<string, Record<string, number>> = {};
+    allReactions?.forEach(r => {
+      if (!reactionCountsMap[r.post_id]) {
+        reactionCountsMap[r.post_id] = { fire: 0, praying: 0, amen: 0, strong: 0, heart: 0 };
+      }
+      if (r.reaction_type in reactionCountsMap[r.post_id]) {
+        reactionCountsMap[r.post_id][r.reaction_type]++;
+      }
+    });
 
     // Map profiles and reactions to posts
     const enrichedPosts: FeedPost[] = postsData.map(post => {
       const profile = profiles?.find(p => p.user_id === post.user_id);
-      const userReaction = reactions?.find(r => r.post_id === post.id);
+      const userReaction = userReactions?.find(r => r.post_id === post.id);
+      const reactionCounts = reactionCountsMap[post.id] || { fire: 0, praying: 0, amen: 0, strong: 0, heart: 0 };
 
       return {
         ...post,
         user_name: profile?.name || 'Anonymous',
         user_reaction: userReaction?.reaction_type || null,
+        reaction_counts: reactionCounts as FeedPost['reaction_counts'],
         post_text: post.post_text,
         is_user_generated: post.is_user_generated,
         media_type: post.media_type,
@@ -178,7 +205,8 @@ export function useCommunityFeed() {
     if (!user) return { error: new Error('Not authenticated') };
 
     // Check if user already reacted
-    const existingReaction = posts.find(p => p.id === postId)?.user_reaction;
+    const post = posts.find(p => p.id === postId);
+    const existingReaction = post?.user_reaction as FeedReaction['reaction_type'] | null;
 
     if (existingReaction) {
       // Remove existing reaction
@@ -190,11 +218,19 @@ export function useCommunityFeed() {
 
       // If same reaction, just remove
       if (existingReaction === reactionType) {
-        setPosts(prev => prev.map(p =>
-          p.id === postId
-            ? { ...p, user_reaction: null, reaction_count: Math.max(0, p.reaction_count - 1) }
-            : p
-        ));
+        setPosts(prev => prev.map(p => {
+          if (p.id !== postId) return p;
+          const newCounts = { ...p.reaction_counts };
+          if (newCounts && existingReaction in newCounts) {
+            newCounts[existingReaction] = Math.max(0, (newCounts[existingReaction] || 0) - 1);
+          }
+          return { 
+            ...p, 
+            user_reaction: null, 
+            reaction_count: Math.max(0, p.reaction_count - 1),
+            reaction_counts: newCounts
+          };
+        }));
         return { error: null };
       }
     }
@@ -208,21 +244,25 @@ export function useCommunityFeed() {
       return { error };
     }
 
-    // Update engagement score
-    await supabase
-      .from('community_feed_posts')
-      .update({ engagement_score: supabase.rpc ? 5 : 5 })
-      .eq('id', postId);
-
-    setPosts(prev => prev.map(p =>
-      p.id === postId
-        ? {
-          ...p,
-          user_reaction: reactionType,
-          reaction_count: existingReaction ? p.reaction_count : p.reaction_count + 1
-        }
-        : p
-    ));
+    // Update local state with new reaction counts
+    setPosts(prev => prev.map(p => {
+      if (p.id !== postId) return p;
+      const newCounts = { ...p.reaction_counts };
+      // Decrement old reaction if exists
+      if (newCounts && existingReaction && existingReaction in newCounts) {
+        newCounts[existingReaction] = Math.max(0, (newCounts[existingReaction] || 0) - 1);
+      }
+      // Increment new reaction
+      if (newCounts && reactionType in newCounts) {
+        newCounts[reactionType] = (newCounts[reactionType] || 0) + 1;
+      }
+      return {
+        ...p,
+        user_reaction: reactionType,
+        reaction_count: existingReaction ? p.reaction_count : p.reaction_count + 1,
+        reaction_counts: newCounts
+      };
+    }));
 
     return { error: null };
   }, [user, posts]);
