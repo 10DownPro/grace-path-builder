@@ -427,6 +427,30 @@ export type Database = {
         }
         Relationships: []
       }
+      feature_gates: {
+        Row: {
+          created_at: string
+          description: string | null
+          feature_name: string
+          free_tier_limit: number | null
+          requires_premium: boolean
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          feature_name: string
+          free_tier_limit?: number | null
+          requires_premium?: boolean
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          feature_name?: string
+          free_tier_limit?: number | null
+          requires_premium?: boolean
+        }
+        Relationships: []
+      }
       feed_comments: {
         Row: {
           comment_text: string
@@ -2138,6 +2162,47 @@ export type Database = {
         }
         Relationships: []
       }
+      user_feature_usage: {
+        Row: {
+          created_at: string
+          feature_name: string
+          id: string
+          last_used_at: string | null
+          period_start: string | null
+          reset_period: string | null
+          usage_count: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          feature_name: string
+          id?: string
+          last_used_at?: string | null
+          period_start?: string | null
+          reset_period?: string | null
+          usage_count?: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          feature_name?: string
+          id?: string
+          last_used_at?: string | null
+          period_start?: string | null
+          reset_period?: string | null
+          usage_count?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_feature_usage_feature_name_fkey"
+            columns: ["feature_name"]
+            isOneToOne: false
+            referencedRelation: "feature_gates"
+            referencedColumns: ["feature_name"]
+          },
+        ]
+      }
       user_feed_settings: {
         Row: {
           created_at: string | null
@@ -2499,6 +2564,57 @@ export type Database = {
           },
         ]
       }
+      user_subscriptions: {
+        Row: {
+          auto_renew: boolean | null
+          book_code_used: string | null
+          created_at: string
+          expires_at: string | null
+          id: string
+          premium_source: string | null
+          started_at: string | null
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
+          subscription_status: string
+          subscription_type: string
+          trial_ends_at: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          auto_renew?: boolean | null
+          book_code_used?: string | null
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          premium_source?: string | null
+          started_at?: string | null
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          subscription_status?: string
+          subscription_type?: string
+          trial_ends_at?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          auto_renew?: boolean | null
+          book_code_used?: string | null
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          premium_source?: string | null
+          started_at?: string | null
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          subscription_status?: string
+          subscription_type?: string
+          trial_ends_at?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_verse_interactions: {
         Row: {
           category_id: string | null
@@ -2596,6 +2712,14 @@ export type Database = {
         Args: { _points: number; _reason: string; _user_id: string }
         Returns: number
       }
+      check_feature_access: {
+        Args: { p_feature_name: string; p_user_id: string }
+        Returns: Json
+      }
+      increment_feature_usage: {
+        Args: { p_feature_name: string; p_user_id: string }
+        Returns: undefined
+      }
       is_squad_member: {
         Args: { _squad_id: string; _user_id: string }
         Returns: boolean
@@ -2608,6 +2732,7 @@ export type Database = {
         Args: { _group_id: string; _user_id: string }
         Returns: boolean
       }
+      is_user_premium: { Args: { _user_id: string }; Returns: boolean }
       lookup_friend_by_code: {
         Args: { _friend_code: string }
         Returns: {

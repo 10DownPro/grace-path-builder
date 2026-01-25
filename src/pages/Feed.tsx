@@ -187,11 +187,23 @@ export default function Feed() {
               {posts.length === 0 && !loading ? (
                 <Card className="border-dashed">
                   <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-                    <Rss className="h-12 w-12 text-muted-foreground/50 mb-4" />
-                    <h3 className="font-semibold text-lg mb-1">No Posts Yet</h3>
-                    <p className="text-muted-foreground text-sm max-w-xs">
-                      Complete training sessions, earn milestones, and share your journey!
-                    </p>
+                    {activeFilter === 'following' ? (
+                      <>
+                        <UserCheck className="h-12 w-12 text-muted-foreground/50 mb-4" />
+                        <h3 className="font-semibold text-lg mb-1">No Posts From Followed Users</h3>
+                        <p className="text-muted-foreground text-sm max-w-xs">
+                          Follow training partners to see their posts here!
+                        </p>
+                      </>
+                    ) : (
+                      <>
+                        <Rss className="h-12 w-12 text-muted-foreground/50 mb-4" />
+                        <h3 className="font-semibold text-lg mb-1">No Posts Yet</h3>
+                        <p className="text-muted-foreground text-sm max-w-xs">
+                          Complete training sessions, earn milestones, and share your journey!
+                        </p>
+                      </>
+                    )}
                   </CardContent>
                 </Card>
               ) : (
