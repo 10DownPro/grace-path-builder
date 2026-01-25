@@ -4,13 +4,21 @@ import { CategoryGrid } from '@/components/feelings/CategoryGrid';
 import { CategoryDetail } from '@/components/feelings/CategoryDetail';
 import { useFeelings } from '@/hooks/useFeelings';
 import type { FeelingCategory } from '@/hooks/useFeelings';
-import { Shield, Swords } from 'lucide-react';
+import { Shield, Swords, Info, X } from 'lucide-react';
 
 export default function Battles() {
   const { fetchCategories, loading } = useFeelings();
   const [categories, setCategories] = useState<FeelingCategory[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<FeelingCategory | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [showInstructions, setShowInstructions] = useState(() => {
+    return localStorage.getItem('battles-instructions-dismissed') !== 'true';
+  });
+
+  const dismissInstructions = () => {
+    setShowInstructions(false);
+    localStorage.setItem('battles-instructions-dismissed', 'true');
+  };
 
   useEffect(() => {
     loadCategories();
@@ -41,7 +49,7 @@ export default function Battles() {
     );
   }
 
-  return (
+    return (
     <PageLayout>
       <div className="min-h-screen pb-24">
         {/* Header */}
@@ -81,8 +89,36 @@ export default function Battles() {
           <div className="h-1 bg-gradient-to-r from-primary via-warning to-primary" />
         </div>
 
-        {/* Category Grid */}
+        {/* Instructions Banner */}
         <div className="px-4 pt-6">
+          {showInstructions && (
+            <div className="relative gym-card p-4 border-l-4 border-warning bg-warning/5 mb-6">
+              <button
+                onClick={dismissInstructions}
+                className="absolute top-2 right-2 p-1 text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <X className="h-4 w-4" />
+              </button>
+              <div className="flex items-start gap-3 pr-6">
+                <Info className="h-5 w-5 text-warning mt-0.5 flex-shrink-0" />
+                <div className="space-y-2">
+                  <h3 className="font-display text-sm uppercase tracking-wider text-foreground">
+                    What is the Battleground?
+                  </h3>
+                  <p className="text-xs text-muted-foreground">
+                    This is your <strong>spiritual armory</strong> for when life gets hard. Whether you're battling anxiety, temptation, doubt, or grief — we've got targeted Scripture to help you fight back.
+                  </p>
+                  <ul className="text-xs text-muted-foreground space-y-1">
+                    <li>⚔️ <strong>Pick your battle</strong> — Select what you're struggling with</li>
+                    <li>📖 <strong>Get ammunition</strong> — Receive powerful verses for that exact struggle</li>
+                    <li>💾 <strong>Save to arsenal</strong> — Store verses for Battle Mode quick access</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Category Grid */}
           <CategoryGrid
             categories={categories}
             onSelect={handleSelectCategory}
