@@ -1280,6 +1280,111 @@ export type Database = {
           },
         ]
       }
+      prayer_comments: {
+        Row: {
+          comment_text: string
+          created_at: string | null
+          id: string
+          prayer_id: string
+          user_id: string
+        }
+        Insert: {
+          comment_text: string
+          created_at?: string | null
+          id?: string
+          prayer_id: string
+          user_id: string
+        }
+        Update: {
+          comment_text?: string
+          created_at?: string | null
+          id?: string
+          prayer_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "prayer_comments_prayer_id_fkey"
+            columns: ["prayer_id"]
+            isOneToOne: false
+            referencedRelation: "prayers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      prayer_reactions: {
+        Row: {
+          created_at: string | null
+          id: string
+          prayer_id: string
+          reaction_type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          prayer_id: string
+          reaction_type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          prayer_id?: string
+          reaction_type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "prayer_reactions_prayer_id_fkey"
+            columns: ["prayer_id"]
+            isOneToOne: false
+            referencedRelation: "prayers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      prayer_supporters: {
+        Row: {
+          added_to_my_list: boolean | null
+          created_at: string | null
+          id: string
+          last_prayed_at: string | null
+          prayed_today: boolean | null
+          prayer_id: string
+          total_times_prayed: number | null
+          user_id: string
+        }
+        Insert: {
+          added_to_my_list?: boolean | null
+          created_at?: string | null
+          id?: string
+          last_prayed_at?: string | null
+          prayed_today?: boolean | null
+          prayer_id: string
+          total_times_prayed?: number | null
+          user_id: string
+        }
+        Update: {
+          added_to_my_list?: boolean | null
+          created_at?: string | null
+          id?: string
+          last_prayed_at?: string | null
+          prayed_today?: boolean | null
+          prayer_id?: string
+          total_times_prayed?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "prayer_supporters_prayer_id_fkey"
+            columns: ["prayer_id"]
+            isOneToOne: false
+            referencedRelation: "prayers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       prayers: {
         Row: {
           answered: boolean
@@ -1288,6 +1393,8 @@ export type Database = {
           content: string
           created_at: string
           id: string
+          shared_at: string | null
+          shared_to_squad: boolean | null
           type: string
           updated_at: string
           user_id: string
@@ -1299,6 +1406,8 @@ export type Database = {
           content: string
           created_at?: string
           id?: string
+          shared_at?: string | null
+          shared_to_squad?: boolean | null
           type: string
           updated_at?: string
           user_id: string
@@ -1310,6 +1419,8 @@ export type Database = {
           content?: string
           created_at?: string
           id?: string
+          shared_at?: string | null
+          shared_to_squad?: boolean | null
           type?: string
           updated_at?: string
           user_id?: string
@@ -1847,6 +1958,155 @@ export type Database = {
             columns: ["category_id"]
             isOneToOne: false
             referencedRelation: "feeling_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      testimonies: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_featured: boolean | null
+          media_urls: Json | null
+          related_prayer_id: string | null
+          related_verse_reference: string | null
+          related_verse_text: string | null
+          testimony_text: string
+          testimony_type: string
+          title: string
+          updated_at: string | null
+          user_id: string
+          visibility: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_featured?: boolean | null
+          media_urls?: Json | null
+          related_prayer_id?: string | null
+          related_verse_reference?: string | null
+          related_verse_text?: string | null
+          testimony_text: string
+          testimony_type: string
+          title: string
+          updated_at?: string | null
+          user_id: string
+          visibility?: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_featured?: boolean | null
+          media_urls?: Json | null
+          related_prayer_id?: string | null
+          related_verse_reference?: string | null
+          related_verse_text?: string | null
+          testimony_text?: string
+          testimony_type?: string
+          title?: string
+          updated_at?: string | null
+          user_id?: string
+          visibility?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "testimonies_related_prayer_id_fkey"
+            columns: ["related_prayer_id"]
+            isOneToOne: false
+            referencedRelation: "prayers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      testimony_comments: {
+        Row: {
+          comment_text: string
+          created_at: string | null
+          id: string
+          testimony_id: string
+          user_id: string
+        }
+        Insert: {
+          comment_text: string
+          created_at?: string | null
+          id?: string
+          testimony_id: string
+          user_id: string
+        }
+        Update: {
+          comment_text?: string
+          created_at?: string | null
+          id?: string
+          testimony_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "testimony_comments_testimony_id_fkey"
+            columns: ["testimony_id"]
+            isOneToOne: false
+            referencedRelation: "testimonies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      testimony_reactions: {
+        Row: {
+          created_at: string | null
+          id: string
+          reaction_type: string
+          testimony_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          reaction_type: string
+          testimony_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          reaction_type?: string
+          testimony_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "testimony_reactions_testimony_id_fkey"
+            columns: ["testimony_id"]
+            isOneToOne: false
+            referencedRelation: "testimonies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      testimony_shares: {
+        Row: {
+          created_at: string | null
+          id: string
+          shared_by_user_id: string
+          testimony_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          shared_by_user_id: string
+          testimony_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          shared_by_user_id?: string
+          testimony_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "testimony_shares_testimony_id_fkey"
+            columns: ["testimony_id"]
+            isOneToOne: false
+            referencedRelation: "testimonies"
             referencedColumns: ["id"]
           },
         ]

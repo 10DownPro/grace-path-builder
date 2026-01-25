@@ -6,6 +6,7 @@ import { WeeklyGrind } from '@/components/home/WeeklyGrind';
 import { MissionCard } from '@/components/home/MissionCard';
 import { BattleVerse } from '@/components/home/BattleVerse';
 import { BattleVersesCard } from '@/components/home/BattleVersesCard';
+import { TestimonyOfTheWeekCard } from '@/components/home/TestimonyOfTheWeekCard';
 import { BattleMode } from '@/components/session/BattleMode';
 import { OnboardingFlow } from '@/components/onboarding/OnboardingFlow';
 import { FreeChapterUnlockedDialog } from '@/components/rewards/FreeChapterUnlockedDialog';
@@ -242,6 +243,9 @@ export default function Index() {
 
           {/* Daily Mission */}
           <MissionCard mission={todayMission} />
+
+          {/* Testimony of the Week */}
+          <TestimonyOfTheWeekCard />
 
           {/* Battle Verse */}
           <BattleVerse />
