@@ -40,6 +40,9 @@ export default function Prayer() {
   const { prayers, loading, addPrayer, markAnswered } = usePrayers();
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'answered'>('all');
   const [typeFilter, setTypeFilter] = useState<'all' | PrayerEntry['type']>('all');
+  const [showInstructions, setShowInstructions] = useState(() => {
+    return localStorage.getItem('prayer-instructions-dismissed') !== 'true';
+  });
 
   const prayerEntries = prayers.map(toPrayerEntry);
 
@@ -50,6 +53,11 @@ export default function Prayer() {
     const matchesType = typeFilter === 'all' || p.type === typeFilter;
     return matchesStatus && matchesType;
   });
+
+  const dismissInstructions = () => {
+    setShowInstructions(false);
+    localStorage.setItem('prayer-instructions-dismissed', 'true');
+  };
 
   const handleAddPrayer = async (newPrayer: Omit<PrayerEntry, 'id'>) => {
     const { error } = await addPrayer({
@@ -81,15 +89,6 @@ export default function Prayer() {
       </PageLayout>
     );
   }
-
-  const [showInstructions, setShowInstructions] = useState(() => {
-    return localStorage.getItem('prayer-instructions-dismissed') !== 'true';
-  });
-
-  const dismissInstructions = () => {
-    setShowInstructions(false);
-    localStorage.setItem('prayer-instructions-dismissed', 'true');
-  };
 
   return (
     <PageLayout>
