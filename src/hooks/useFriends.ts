@@ -101,10 +101,10 @@ export function useFriends() {
       return;
     }
 
-    // Get friend profiles and progress
+    // Get friend profiles using public_profiles view (bypasses RLS for friend data)
     const { data: profiles } = await supabase
-      .from('profiles')
-      .select('user_id, name, friend_code')
+      .from('public_profiles')
+      .select('user_id, name')
       .in('user_id', friendIds);
 
     const { data: progress } = await supabase
@@ -123,7 +123,7 @@ export function useFriends() {
         id: friendId,
         user_id: friendId,
         name: profile?.name || 'Unknown',
-        friend_code: profile?.friend_code || '',
+        friend_code: '', // Not needed for display
         current_streak: prog?.current_streak || 0,
         total_sessions: prog?.total_sessions || 0,
         friendship_id: friendship?.id || ''
@@ -153,9 +153,10 @@ export function useFriends() {
       return;
     }
 
+    // Use public_profiles view to get requester info
     const { data: profiles } = await supabase
-      .from('profiles')
-      .select('user_id, name, friend_code')
+      .from('public_profiles')
+      .select('user_id, name')
       .in('user_id', requesterIds);
 
     const pendingList: FriendRequest[] = requests.map(req => {
@@ -164,7 +165,7 @@ export function useFriends() {
         id: req.id,
         requester_id: req.requester_id,
         requester_name: profile?.name || 'Unknown',
-        requester_friend_code: profile?.friend_code || '',
+        requester_friend_code: '', // Not needed for pending requests
         created_at: req.created_at
       };
     });
@@ -190,8 +191,9 @@ export function useFriends() {
     // Get all participant IDs
     const participantIds = [...new Set(challengeData.flatMap(c => [c.challenger_id, c.challenged_id]))];
     
+    // Use public_profiles view
     const { data: profiles } = await supabase
-      .from('profiles')
+      .from('public_profiles')
       .select('user_id, name')
       .in('user_id', participantIds);
 
