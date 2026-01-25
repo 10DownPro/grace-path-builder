@@ -171,9 +171,16 @@ export type Database = {
           comment_count: number | null
           content_data: Json
           created_at: string | null
+          edited_at: string | null
           engagement_score: number | null
           id: string
+          is_deleted: boolean | null
           is_pinned: boolean | null
+          is_user_generated: boolean | null
+          link_preview_data: Json | null
+          media_type: string | null
+          media_url: string | null
+          post_text: string | null
           post_type: string
           reaction_count: number | null
           share_count: number | null
@@ -185,9 +192,16 @@ export type Database = {
           comment_count?: number | null
           content_data?: Json
           created_at?: string | null
+          edited_at?: string | null
           engagement_score?: number | null
           id?: string
+          is_deleted?: boolean | null
           is_pinned?: boolean | null
+          is_user_generated?: boolean | null
+          link_preview_data?: Json | null
+          media_type?: string | null
+          media_url?: string | null
+          post_text?: string | null
           post_type: string
           reaction_count?: number | null
           share_count?: number | null
@@ -199,9 +213,16 @@ export type Database = {
           comment_count?: number | null
           content_data?: Json
           created_at?: string | null
+          edited_at?: string | null
           engagement_score?: number | null
           id?: string
+          is_deleted?: boolean | null
           is_pinned?: boolean | null
+          is_user_generated?: boolean | null
+          link_preview_data?: Json | null
+          media_type?: string | null
+          media_url?: string | null
+          post_text?: string | null
           post_type?: string
           reaction_count?: number | null
           share_count?: number | null
@@ -1221,6 +1242,44 @@ export type Database = {
         }
         Relationships: []
       }
+      post_media: {
+        Row: {
+          created_at: string | null
+          id: string
+          media_type: string
+          media_url: string
+          post_id: string
+          thumbnail_url: string | null
+          upload_order: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          media_type: string
+          media_url: string
+          post_id: string
+          thumbnail_url?: string | null
+          upload_order?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          media_type?: string
+          media_url?: string
+          post_id?: string
+          thumbnail_url?: string | null
+          upload_order?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_media_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "community_feed_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       prayers: {
         Row: {
           answered: boolean
@@ -1313,6 +1372,50 @@ export type Database = {
           weekly_goal?: number
         }
         Relationships: []
+      }
+      reported_posts: {
+        Row: {
+          created_at: string | null
+          id: string
+          post_id: string
+          report_details: string | null
+          report_reason: string
+          reported_by_user_id: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          post_id: string
+          report_details?: string | null
+          report_reason: string
+          reported_by_user_id: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          post_id?: string
+          report_details?: string | null
+          report_reason?: string
+          reported_by_user_id?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reported_posts_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "community_feed_posts"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       rewards: {
         Row: {
@@ -1808,6 +1911,27 @@ export type Database = {
           show_squad_only?: boolean | null
           updated_at?: string | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      user_follows: {
+        Row: {
+          followed_at: string | null
+          followed_user_id: string
+          follower_user_id: string
+          id: string
+        }
+        Insert: {
+          followed_at?: string | null
+          followed_user_id: string
+          follower_user_id: string
+          id?: string
+        }
+        Update: {
+          followed_at?: string | null
+          followed_user_id?: string
+          follower_user_id?: string
+          id?: string
         }
         Relationships: []
       }
