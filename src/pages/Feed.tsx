@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { PageLayout } from '@/components/layout/PageLayout';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,11 +6,13 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useCommunityFeed } from '@/hooks/useCommunityFeed';
 import { FeedPost } from '@/components/feed/FeedPost';
+import { CreatePostDialog } from '@/components/feed/CreatePostDialog';
 import { LiveActivityTicker } from '@/components/squad/LiveActivityTicker';
 import { WhosTrainingNow } from '@/components/squad/WhosTrainingNow';
-import { RefreshCw, Rss, Users, Globe } from 'lucide-react';
+import { RefreshCw, Rss, Users, Globe, Plus, UserCheck } from 'lucide-react';
 
 export default function Feed() {
+  const [createPostOpen, setCreatePostOpen] = useState(false);
   const {
     posts,
     loading,
@@ -79,19 +81,23 @@ export default function Feed() {
         <WhosTrainingNow />
 
         {/* Filter Tabs */}
-        <Tabs value={filter} onValueChange={(v) => setFilter(v as 'all' | 'squad' | 'friends')}>
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="all" className="gap-1">
-              <Globe className="h-4 w-4" />
+        <Tabs value={filter} onValueChange={(v) => setFilter(v as 'all' | 'squad' | 'friends' | 'following')}>
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="all" className="gap-1 text-xs px-2">
+              <Globe className="h-3 w-3" />
               All
             </TabsTrigger>
-            <TabsTrigger value="squad" className="gap-1">
-              <Users className="h-4 w-4" />
+            <TabsTrigger value="squad" className="gap-1 text-xs px-2">
+              <Users className="h-3 w-3" />
               Squad
             </TabsTrigger>
-            <TabsTrigger value="friends" className="gap-1">
-              <Users className="h-4 w-4" />
+            <TabsTrigger value="friends" className="gap-1 text-xs px-2">
+              <Users className="h-3 w-3" />
               Friends
+            </TabsTrigger>
+            <TabsTrigger value="following" className="gap-1 text-xs px-2">
+              <UserCheck className="h-3 w-3" />
+              Following
             </TabsTrigger>
           </TabsList>
         </Tabs>
@@ -155,6 +161,21 @@ export default function Feed() {
           )}
         </div>
       </div>
+
+      {/* Floating Action Button */}
+      <Button
+        size="lg"
+        className="fixed bottom-24 right-4 z-40 w-14 h-14 rounded-full shadow-lg bg-primary hover:bg-primary/90"
+        onClick={() => setCreatePostOpen(true)}
+      >
+        <Plus className="h-6 w-6" />
+      </Button>
+
+      {/* Create Post Dialog */}
+      <CreatePostDialog 
+        open={createPostOpen} 
+        onOpenChange={setCreatePostOpen} 
+      />
     </PageLayout>
   );
 }

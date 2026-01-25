@@ -4,8 +4,9 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { MediaEmbed } from './MediaEmbed';
 import { cn } from '@/lib/utils';
-import { MessageCircle, Share2, MoreHorizontal, Send } from 'lucide-react';
+import { MessageCircle, Share2, MoreHorizontal, Send, Pencil, HandHeart } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 
 interface FeedPostProps {
@@ -25,10 +26,11 @@ const REACTIONS = [
 const POST_TYPE_CONFIG: Record<string, { badge: string; emoji: string; color: string }> = {
   milestone: { badge: 'Milestone', emoji: '🏆', color: 'bg-yellow-500/20 text-yellow-600' },
   answered_prayer: { badge: 'Prayer Answered', emoji: '✨', color: 'bg-purple-500/20 text-purple-500' },
-  testimony: { badge: 'Testimony', emoji: '📜', color: 'bg-blue-500/20 text-blue-500' },
+  testimony: { badge: 'Post', emoji: '✍️', color: 'bg-blue-500/20 text-blue-500' },
   streak: { badge: 'Streak', emoji: '🔥', color: 'bg-orange-500/20 text-orange-500' },
   challenge_complete: { badge: 'Challenge', emoji: '⚔️', color: 'bg-green-500/20 text-green-500' },
   micro_action_combo: { badge: 'Combo', emoji: '⚡', color: 'bg-primary/20 text-primary' },
+  user_post: { badge: 'Post', emoji: '✍️', color: 'bg-muted text-foreground' },
 };
 
 export function FeedPost({ post, onReaction, onComment, onGetComments }: FeedPostProps) {
@@ -71,6 +73,50 @@ export function FeedPost({ post, onReaction, onComment, onGetComments }: FeedPos
   };
 
   const renderPostContent = () => {
+    // Check if this is a user-generated post with text
+    const userText = post.post_text || (contentData.text as string);
+    const isPrayerRequest = contentData.is_prayer_request as boolean;
+    
+    // User-generated content with media
+    if (post.is_user_generated || userText) {
+      return (
+        <div className="space-y-3">
+          {/* Prayer request banner */}
+          {isPrayerRequest && (
+            <div className="flex items-center gap-2 text-primary">
+              <HandHeart className="h-4 w-4" />
+              <span className="text-sm font-medium">Prayer Request</span>
+            </div>
+          )}
+          
+          {/* Post text */}
+          {userText && (
+            <p className="text-foreground whitespace-pre-wrap">{userText}</p>
+          )}
+          
+          {/* Media embed */}
+          <MediaEmbed 
+            mediaType={post.media_type || undefined}
+            mediaUrl={post.media_url || undefined}
+            contentData={contentData}
+          />
+
+          {/* Prayer button for prayer requests */}
+          {isPrayerRequest && (
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="gap-2"
+              onClick={() => onReaction(post.id, 'praying')}
+            >
+              🙏 I'm Praying
+            </Button>
+          )}
+        </div>
+      );
+    }
+    
+    // System-generated posts (milestones, streaks, etc.)
     switch (post.post_type) {
       case 'milestone':
         return (
@@ -137,15 +183,20 @@ export function FeedPost({ post, onReaction, onComment, onGetComments }: FeedPos
               </p>
             )}
             <p className="text-muted-foreground">
-              {String(contentData.reflection_text || '')}
+              {String(contentData.reflection_text || contentData.text || '')}
             </p>
+            <MediaEmbed 
+              mediaType={post.media_type || undefined}
+              mediaUrl={post.media_url || undefined}
+              contentData={contentData}
+            />
           </div>
         );
 
       default:
         return (
           <p className="text-muted-foreground">
-            {JSON.stringify(contentData)}
+            {contentData.text ? String(contentData.text) : JSON.stringify(contentData)}
           </p>
         );
     }
@@ -163,9 +214,17 @@ export function FeedPost({ post, onReaction, onComment, onGetComments }: FeedPos
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
               <span className="font-semibold">{post.user_name || 'Anonymous'}</span>
-              <Badge className={cn("text-xs", config.color)}>
-                {config.emoji} {config.badge}
-              </Badge>
+              {post.is_user_generated && (
+                <Badge variant="outline" className="text-xs gap-1">
+                  <Pencil className="h-3 w-3" />
+                  Post
+                </Badge>
+              )}
+              {!post.is_user_generated && (
+                <Badge className={cn("text-xs", config.color)}>
+                  {config.emoji} {config.badge}
+                </Badge>
+              )}
             </div>
             <p className="text-xs text-muted-foreground">
               {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}

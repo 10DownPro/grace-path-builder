@@ -8,7 +8,7 @@ export interface FeedPost {
   user_id: string;
   user_name?: string;
   user_avatar?: string;
-  post_type: 'milestone' | 'answered_prayer' | 'testimony' | 'streak' | 'challenge_complete' | 'micro_action_combo';
+  post_type: 'milestone' | 'answered_prayer' | 'testimony' | 'streak' | 'challenge_complete' | 'micro_action_combo' | 'user_post';
   content_data: Record<string, unknown>;
   visibility: 'public' | 'squad_only' | 'friends_only';
   squad_id: string | null;
@@ -19,6 +19,12 @@ export interface FeedPost {
   is_pinned: boolean;
   created_at: string;
   user_reaction?: string | null;
+  // New fields for user-generated posts
+  is_user_generated?: boolean;
+  post_text?: string | null;
+  media_type?: string | null;
+  media_url?: string | null;
+  link_preview_data?: Record<string, unknown> | null;
 }
 
 export interface FeedReaction {
@@ -43,7 +49,7 @@ export function useCommunityFeed() {
   const [posts, setPosts] = useState<FeedPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [hasMore, setHasMore] = useState(true);
-  const [filter, setFilter] = useState<'all' | 'squad' | 'friends'>('all');
+  const [filter, setFilter] = useState<'all' | 'squad' | 'friends' | 'following'>('all');
 
   const PAGE_SIZE = 20;
 
@@ -52,11 +58,22 @@ export function useCommunityFeed() {
 
     setLoading(true);
 
-    const { data: postsData, error } = await supabase
+    let query = supabase
       .from('community_feed_posts')
       .select('*')
+      .eq('is_deleted', false)
       .order('created_at', { ascending: false })
       .range(offset, offset + PAGE_SIZE - 1);
+
+    // Apply visibility filter based on tab
+    if (filter === 'squad') {
+      query = query.eq('visibility', 'squad_only');
+    } else if (filter === 'friends') {
+      query = query.eq('visibility', 'friends_only');
+    }
+    // 'following' filter would need a subquery for followed users - handled below
+
+    const { data: postsData, error } = await query;
 
     if (error) {
       console.error('Error fetching posts:', error);
@@ -93,7 +110,12 @@ export function useCommunityFeed() {
       return {
         ...post,
         user_name: profile?.name || 'Anonymous',
-        user_reaction: userReaction?.reaction_type || null
+        user_reaction: userReaction?.reaction_type || null,
+        post_text: post.post_text,
+        is_user_generated: post.is_user_generated,
+        media_type: post.media_type,
+        media_url: post.media_url,
+        link_preview_data: post.link_preview_data
       } as FeedPost;
     });
 

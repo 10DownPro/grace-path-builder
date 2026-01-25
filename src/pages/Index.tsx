@@ -5,6 +5,7 @@ import { WorkoutCard } from '@/components/home/WorkoutCard';
 import { WeeklyGrind } from '@/components/home/WeeklyGrind';
 import { MissionCard } from '@/components/home/MissionCard';
 import { BattleVerse } from '@/components/home/BattleVerse';
+import { BattleVersesCard } from '@/components/home/BattleVersesCard';
 import { BattleMode } from '@/components/session/BattleMode';
 import { OnboardingFlow } from '@/components/onboarding/OnboardingFlow';
 import { FreeChapterUnlockedDialog } from '@/components/rewards/FreeChapterUnlockedDialog';
@@ -212,6 +213,9 @@ export default function Index() {
           {/* Quick Actions - Micro-Actions */}
           <QuickActionsBar />
 
+          {/* Battle Verses Card - Navigate to Battles page */}
+          <BattleVersesCard />
+
           {/* Battle Mode Button - Mobile Optimized */}
           <Button
             variant="destructive"
@@ -220,7 +224,7 @@ export default function Index() {
           >
             <Shield className="h-6 w-6 flex-shrink-0" />
             <span className="whitespace-normal text-center leading-tight">
-              Struggling today? Enter Battle Mode
+              Need a quick reset? Enter Battle Mode
             </span>
           </Button>
 
