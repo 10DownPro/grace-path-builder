@@ -166,6 +166,59 @@ export type Database = {
         }
         Relationships: []
       }
+      community_feed_posts: {
+        Row: {
+          comment_count: number | null
+          content_data: Json
+          created_at: string | null
+          engagement_score: number | null
+          id: string
+          is_pinned: boolean | null
+          post_type: string
+          reaction_count: number | null
+          share_count: number | null
+          squad_id: string | null
+          user_id: string
+          visibility: string | null
+        }
+        Insert: {
+          comment_count?: number | null
+          content_data?: Json
+          created_at?: string | null
+          engagement_score?: number | null
+          id?: string
+          is_pinned?: boolean | null
+          post_type: string
+          reaction_count?: number | null
+          share_count?: number | null
+          squad_id?: string | null
+          user_id: string
+          visibility?: string | null
+        }
+        Update: {
+          comment_count?: number | null
+          content_data?: Json
+          created_at?: string | null
+          engagement_score?: number | null
+          id?: string
+          is_pinned?: boolean | null
+          post_type?: string
+          reaction_count?: number | null
+          share_count?: number | null
+          squad_id?: string | null
+          user_id?: string
+          visibility?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_feed_posts_squad_id_fkey"
+            columns: ["squad_id"]
+            isOneToOne: false
+            referencedRelation: "squads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       crisis_resources: {
         Row: {
           category_id: string | null
@@ -209,6 +262,89 @@ export type Database = {
             columns: ["category_id"]
             isOneToOne: false
             referencedRelation: "feeling_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      daily_micro_goals: {
+        Row: {
+          bonus_claimed: boolean | null
+          completed_breath_prayers: number | null
+          completed_encouragements: number | null
+          completed_gratitude: number | null
+          completed_prayers: number | null
+          completed_verses: number | null
+          created_at: string | null
+          encouragements_goal: number | null
+          goal_date: string | null
+          id: string
+          quick_prayers_goal: number | null
+          user_id: string
+          verse_snacks_goal: number | null
+        }
+        Insert: {
+          bonus_claimed?: boolean | null
+          completed_breath_prayers?: number | null
+          completed_encouragements?: number | null
+          completed_gratitude?: number | null
+          completed_prayers?: number | null
+          completed_verses?: number | null
+          created_at?: string | null
+          encouragements_goal?: number | null
+          goal_date?: string | null
+          id?: string
+          quick_prayers_goal?: number | null
+          user_id: string
+          verse_snacks_goal?: number | null
+        }
+        Update: {
+          bonus_claimed?: boolean | null
+          completed_breath_prayers?: number | null
+          completed_encouragements?: number | null
+          completed_gratitude?: number | null
+          completed_prayers?: number | null
+          completed_verses?: number | null
+          created_at?: string | null
+          encouragements_goal?: number | null
+          goal_date?: string | null
+          id?: string
+          quick_prayers_goal?: number | null
+          user_id?: string
+          verse_snacks_goal?: number | null
+        }
+        Relationships: []
+      }
+      daily_spin_tracking: {
+        Row: {
+          has_spun_today: boolean | null
+          id: string
+          spin_date: string | null
+          spin_result_reward_id: string | null
+          spun_at: string | null
+          user_id: string
+        }
+        Insert: {
+          has_spun_today?: boolean | null
+          id?: string
+          spin_date?: string | null
+          spin_result_reward_id?: string | null
+          spun_at?: string | null
+          user_id: string
+        }
+        Update: {
+          has_spun_today?: boolean | null
+          id?: string
+          spin_date?: string | null
+          spin_result_reward_id?: string | null
+          spun_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "daily_spin_tracking_spin_result_reward_id_fkey"
+            columns: ["spin_result_reward_id"]
+            isOneToOne: false
+            referencedRelation: "mystery_rewards_catalog"
             referencedColumns: ["id"]
           },
         ]
@@ -269,6 +405,109 @@ export type Database = {
           to_user_id?: string
         }
         Relationships: []
+      }
+      feed_comments: {
+        Row: {
+          comment_text: string
+          created_at: string | null
+          id: string
+          post_id: string | null
+          user_id: string
+        }
+        Insert: {
+          comment_text: string
+          created_at?: string | null
+          id?: string
+          post_id?: string | null
+          user_id: string
+        }
+        Update: {
+          comment_text?: string
+          created_at?: string | null
+          id?: string
+          post_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feed_comments_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "community_feed_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      feed_reactions: {
+        Row: {
+          created_at: string | null
+          id: string
+          post_id: string | null
+          reaction_type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          post_id?: string | null
+          reaction_type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          post_id?: string | null
+          reaction_type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feed_reactions_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "community_feed_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      feed_shares: {
+        Row: {
+          created_at: string | null
+          id: string
+          post_id: string | null
+          shared_by_user_id: string
+          shared_to_squad_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          post_id?: string | null
+          shared_by_user_id: string
+          shared_to_squad_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          post_id?: string | null
+          shared_by_user_id?: string
+          shared_to_squad_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feed_shares_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "community_feed_posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "feed_shares_shared_to_squad_id_fkey"
+            columns: ["shared_to_squad_id"]
+            isOneToOne: false
+            referencedRelation: "squads"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       feeling_categories: {
         Row: {
@@ -678,6 +917,83 @@ export type Database = {
           },
         ]
       }
+      live_squad_activity: {
+        Row: {
+          activity_data: Json | null
+          activity_type: string
+          ended_at: string | null
+          id: string
+          is_active: boolean | null
+          squad_id: string | null
+          started_at: string | null
+          user_id: string
+        }
+        Insert: {
+          activity_data?: Json | null
+          activity_type: string
+          ended_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          squad_id?: string | null
+          started_at?: string | null
+          user_id: string
+        }
+        Update: {
+          activity_data?: Json | null
+          activity_type?: string
+          ended_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          squad_id?: string | null
+          started_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "live_squad_activity_squad_id_fkey"
+            columns: ["squad_id"]
+            isOneToOne: false
+            referencedRelation: "squads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      micro_actions: {
+        Row: {
+          action_type: string
+          created_at: string | null
+          description: string | null
+          duration_seconds: number
+          icon_emoji: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          points_reward: number
+        }
+        Insert: {
+          action_type: string
+          created_at?: string | null
+          description?: string | null
+          duration_seconds?: number
+          icon_emoji?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          points_reward?: number
+        }
+        Update: {
+          action_type?: string
+          created_at?: string | null
+          description?: string | null
+          duration_seconds?: number
+          icon_emoji?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          points_reward?: number
+        }
+        Relationships: []
+      }
       milestones: {
         Row: {
           created_at: string
@@ -726,6 +1042,45 @@ export type Database = {
           scripture_reference?: string | null
           scripture_text?: string | null
           tier?: string
+        }
+        Relationships: []
+      }
+      mystery_rewards_catalog: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          drop_rate_percentage: number
+          icon_emoji: string | null
+          id: string
+          is_active: boolean | null
+          rarity: string
+          reward_name: string
+          reward_type: string
+          reward_value: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          drop_rate_percentage: number
+          icon_emoji?: string | null
+          id?: string
+          is_active?: boolean | null
+          rarity: string
+          reward_name: string
+          reward_type: string
+          reward_value?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          drop_rate_percentage?: number
+          icon_emoji?: string | null
+          id?: string
+          is_active?: boolean | null
+          rarity?: string
+          reward_name?: string
+          reward_type?: string
+          reward_value?: number | null
         }
         Relationships: []
       }
@@ -1210,6 +1565,41 @@ export type Database = {
           },
         ]
       }
+      squad_presence: {
+        Row: {
+          current_activity: string | null
+          id: string
+          is_online: boolean | null
+          last_active_at: string | null
+          squad_id: string | null
+          user_id: string
+        }
+        Insert: {
+          current_activity?: string | null
+          id?: string
+          is_online?: boolean | null
+          last_active_at?: string | null
+          squad_id?: string | null
+          user_id: string
+        }
+        Update: {
+          current_activity?: string | null
+          id?: string
+          is_online?: boolean | null
+          last_active_at?: string | null
+          squad_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "squad_presence_squad_id_fkey"
+            columns: ["squad_id"]
+            isOneToOne: false
+            referencedRelation: "squads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       squads: {
         Row: {
           created_at: string
@@ -1385,6 +1775,83 @@ export type Database = {
         }
         Relationships: []
       }
+      user_feed_settings: {
+        Row: {
+          created_at: string | null
+          feed_algorithm_preference: string | null
+          id: string
+          muted_users: Json | null
+          show_friends_only: boolean | null
+          show_public_feed: boolean | null
+          show_squad_only: boolean | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          feed_algorithm_preference?: string | null
+          id?: string
+          muted_users?: Json | null
+          show_friends_only?: boolean | null
+          show_public_feed?: boolean | null
+          show_squad_only?: boolean | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          feed_algorithm_preference?: string | null
+          id?: string
+          muted_users?: Json | null
+          show_friends_only?: boolean | null
+          show_public_feed?: boolean | null
+          show_squad_only?: boolean | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_micro_actions: {
+        Row: {
+          action_type: string
+          completed_at: string | null
+          content_data: Json | null
+          id: string
+          micro_action_id: string | null
+          points_earned: number | null
+          session_date: string | null
+          user_id: string
+        }
+        Insert: {
+          action_type: string
+          completed_at?: string | null
+          content_data?: Json | null
+          id?: string
+          micro_action_id?: string | null
+          points_earned?: number | null
+          session_date?: string | null
+          user_id: string
+        }
+        Update: {
+          action_type?: string
+          completed_at?: string | null
+          content_data?: Json | null
+          id?: string
+          micro_action_id?: string | null
+          points_earned?: number | null
+          session_date?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_micro_actions_micro_action_id_fkey"
+            columns: ["micro_action_id"]
+            isOneToOne: false
+            referencedRelation: "micro_actions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_milestones: {
         Row: {
           achieved_at: string
@@ -1419,6 +1886,119 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_mystery_rewards: {
+        Row: {
+          claimed_at: string | null
+          id: string
+          is_claimed: boolean | null
+          reward_id: string | null
+          user_id: string
+          won_at: string | null
+        }
+        Insert: {
+          claimed_at?: string | null
+          id?: string
+          is_claimed?: boolean | null
+          reward_id?: string | null
+          user_id: string
+          won_at?: string | null
+        }
+        Update: {
+          claimed_at?: string | null
+          id?: string
+          is_claimed?: boolean | null
+          reward_id?: string | null
+          user_id?: string
+          won_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_mystery_rewards_reward_id_fkey"
+            columns: ["reward_id"]
+            isOneToOne: false
+            referencedRelation: "mystery_rewards_catalog"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_notification_settings: {
+        Row: {
+          aggressive_mode: boolean | null
+          created_at: string | null
+          dm_alerts: boolean | null
+          final_warning_time: string | null
+          id: string
+          micro_action_reminders: boolean | null
+          prayer_request_alerts: boolean | null
+          reminder_time_1: string | null
+          reminder_time_2: string | null
+          squad_activity_alerts: boolean | null
+          streak_reminders_enabled: boolean | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          aggressive_mode?: boolean | null
+          created_at?: string | null
+          dm_alerts?: boolean | null
+          final_warning_time?: string | null
+          id?: string
+          micro_action_reminders?: boolean | null
+          prayer_request_alerts?: boolean | null
+          reminder_time_1?: string | null
+          reminder_time_2?: string | null
+          squad_activity_alerts?: boolean | null
+          streak_reminders_enabled?: boolean | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          aggressive_mode?: boolean | null
+          created_at?: string | null
+          dm_alerts?: boolean | null
+          final_warning_time?: string | null
+          id?: string
+          micro_action_reminders?: boolean | null
+          prayer_request_alerts?: boolean | null
+          reminder_time_1?: string | null
+          reminder_time_2?: string | null
+          squad_activity_alerts?: boolean | null
+          streak_reminders_enabled?: boolean | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_onboarding_progress: {
+        Row: {
+          completed_at: string | null
+          current_step: number | null
+          id: string
+          started_at: string | null
+          steps_completed: Json | null
+          tour_completed: boolean | null
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          current_step?: number | null
+          id?: string
+          started_at?: string | null
+          steps_completed?: Json | null
+          tour_completed?: boolean | null
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          current_step?: number | null
+          id?: string
+          started_at?: string | null
+          steps_completed?: Json | null
+          tour_completed?: boolean | null
+          user_id?: string
+        }
+        Relationships: []
       }
       user_progress: {
         Row: {

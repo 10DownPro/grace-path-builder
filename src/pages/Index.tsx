@@ -8,6 +8,8 @@ import { BattleVerse } from '@/components/home/BattleVerse';
 import { BattleMode } from '@/components/session/BattleMode';
 import { OnboardingFlow } from '@/components/onboarding/OnboardingFlow';
 import { FreeChapterUnlockedDialog } from '@/components/rewards/FreeChapterUnlockedDialog';
+import { QuickActionsBar } from '@/components/micro-actions';
+import { OnboardingTour } from '@/components/onboarding/OnboardingTour';
 import { useProfile } from '@/hooks/useProfile';
 import { useUserProgress } from '@/hooks/useUserProgress';
 import { usePrayers } from '@/hooks/usePrayers';
@@ -206,6 +208,9 @@ export default function Index() {
             steps={todaySteps} 
             allCompleted={todaySteps.every(s => s.completed)} 
           />
+
+          {/* Quick Actions - Micro-Actions */}
+          <QuickActionsBar />
 
           {/* Battle Mode Button - Mobile Optimized */}
           <Button
