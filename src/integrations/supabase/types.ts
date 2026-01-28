@@ -53,6 +53,27 @@ export type Database = {
         }
         Relationships: []
       }
+      book_code_attempts: {
+        Row: {
+          attempted_at: string
+          id: string
+          user_id: string
+          was_successful: boolean
+        }
+        Insert: {
+          attempted_at?: string
+          id?: string
+          user_id: string
+          was_successful?: boolean
+        }
+        Update: {
+          attempted_at?: string
+          id?: string
+          user_id?: string
+          was_successful?: boolean
+        }
+        Relationships: []
+      }
       book_codes: {
         Row: {
           batch_number: number | null
@@ -2696,35 +2717,20 @@ export type Database = {
         Row: {
           commitment: string | null
           created_at: string | null
-          focus_areas: string[] | null
-          id: string | null
-          name: string | null
-          preferred_time: string | null
-          updated_at: string | null
+          display_name: string | null
           user_id: string | null
-          weekly_goal: number | null
         }
         Insert: {
           commitment?: string | null
           created_at?: string | null
-          focus_areas?: string[] | null
-          id?: string | null
-          name?: string | null
-          preferred_time?: string | null
-          updated_at?: string | null
+          display_name?: never
           user_id?: string | null
-          weekly_goal?: number | null
         }
         Update: {
           commitment?: string | null
           created_at?: string | null
-          focus_areas?: string[] | null
-          id?: string | null
-          name?: string | null
-          preferred_time?: string | null
-          updated_at?: string | null
+          display_name?: never
           user_id?: string | null
-          weekly_goal?: number | null
         }
         Relationships: []
       }
