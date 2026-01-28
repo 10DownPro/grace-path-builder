@@ -36,7 +36,7 @@ const dailyMissions = [
 
 export default function Index() {
   const { profile, loading: profileLoading, updateProfile } = useProfile();
-  const { progress, loading: progressLoading } = useUserProgress();
+  const { progress, loading: progressLoading, checkStreakStatus } = useUserProgress();
   const { prayers } = usePrayers();
   const { todaySession, loading: sessionsLoading, getWeeklyData, getWeeklyVersesRead } = useSessions();
   const { checkAndAwardMilestones } = useMilestoneChecker();
@@ -64,9 +64,10 @@ export default function Index() {
     }
   }, [shouldShowUnlock]);
 
-  // Check milestones on page load
+  // Check milestones and streak status on page load
   useEffect(() => {
     if (!profileLoading && !progressLoading && !sessionsLoading && profile) {
+      checkStreakStatus(); // Reset streak if user missed a day
       checkAndAwardMilestones();
     }
   }, [profileLoading, progressLoading, sessionsLoading, profile]);

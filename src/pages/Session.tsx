@@ -16,6 +16,10 @@ import { useSwipeGesture } from '@/hooks/useSwipeGesture';
 import { useHapticFeedback } from '@/hooks/useHapticFeedback';
 import { SpinWheelDialog } from '@/components/rewards/SpinWheelDialog';
 import { useMysteryRewards } from '@/hooks/useMysteryRewards';
+import { useUserProgress } from '@/hooks/useUserProgress';
+import { useAuth } from '@/hooks/useAuth';
+import { useSquads } from '@/hooks/useSquads';
+import { supabase } from '@/integrations/supabase/client';
 import {
   Select,
   SelectContent,
@@ -35,10 +39,13 @@ const phases: { id: SessionPhase; label: string; icon: React.ElementType; durati
 
 export default function Session() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const { todaySession, updateTodaySession, getOrCreateTodaySession, loading: sessionsLoading } = useSessions();
+  const { incrementStreak, progress: userProgress } = useUserProgress();
   const { checkAndAwardMilestones } = useMilestoneChecker();
   const { lightTap, successPattern, celebrationPattern } = useHapticFeedback();
   const { canSpinToday } = useMysteryRewards();
+  const { squads, postActivity } = useSquads();
   const [currentPhase, setCurrentPhase] = useState<SessionPhase>('worship');
   const [prayerText, setPrayerText] = useState('');
   const [reflectionText, setReflectionText] = useState('');
@@ -48,11 +55,70 @@ export default function Session() {
   const [showCompletionAnimation, setShowCompletionAnimation] = useState(false);
   const [swipeDirection, setSwipeDirection] = useState<'left' | 'right' | null>(null);
   const [showSpinWheel, setShowSpinWheel] = useState(false);
+  const [hasUpdatedPresence, setHasUpdatedPresence] = useState(false);
 
-  // Initialize session on mount
+  // Update squad presence when phase changes
+  const updateSquadPresence = async (activity: string) => {
+    if (!user) return;
+    
+    try {
+      // Update presence for all user's squads
+      for (const squad of squads) {
+        await supabase
+          .from('squad_presence')
+          .upsert({
+            user_id: user.id,
+            squad_id: squad.id,
+            current_activity: activity,
+            is_online: true,
+            last_active_at: new Date().toISOString()
+          }, { onConflict: 'user_id,squad_id' });
+      }
+    } catch (err) {
+      console.error('Error updating squad presence:', err);
+    }
+  };
+
+  // Post training activity to squad
+  const postTrainingActivity = async (activityType: 'training_started' | 'training_completed') => {
+    if (!user || squads.length === 0) return;
+    
+    try {
+      for (const squad of squads) {
+        await postActivity(squad.id, activityType, { 
+          timestamp: new Date().toISOString(),
+          phase: currentPhase 
+        });
+      }
+    } catch (err) {
+      console.error('Error posting squad activity:', err);
+    }
+  };
+
+  // Initialize session on mount and mark training started
   useEffect(() => {
     getOrCreateTodaySession();
   }, []);
+
+  // Update presence when phase changes
+  useEffect(() => {
+    if (user && squads.length > 0 && !hasUpdatedPresence) {
+      updateSquadPresence(currentPhase);
+      postTrainingActivity('training_started');
+      setHasUpdatedPresence(true);
+    } else if (user && squads.length > 0) {
+      updateSquadPresence(currentPhase);
+    }
+  }, [currentPhase, user, squads.length]);
+
+  // Cleanup: set presence to idle when leaving
+  useEffect(() => {
+    return () => {
+      if (user) {
+        updateSquadPresence('idle');
+      }
+    };
+  }, [user]);
 
   // Build completed phases from todaySession
   const completedPhases = new Set<SessionPhase>();
@@ -142,10 +208,26 @@ export default function Session() {
     } else {
       celebrationPattern();
       toast.success('Training session complete! 🏆 You showed up today!');
-      // Check and award any earned milestones
+      
+      // Training complete - update streak, squad presence, and check milestones
       setTimeout(async () => {
         setShowCompletionAnimation(false);
+        
+        // Increment streak for completing training
+        const streakResult = await incrementStreak();
+        if (!streakResult.error) {
+          toast.success(`🔥 Day ${(userProgress?.current_streak || 0) + 1} streak!`, {
+            description: 'Keep the grind going!'
+          });
+        }
+        
+        // Update squad presence to idle and post completion activity
+        await updateSquadPresence('idle');
+        await postTrainingActivity('training_completed');
+        
+        // Check and award any earned milestones
         await checkAndAwardMilestones();
+        
         // Show spin wheel if eligible
         if (canSpinToday) {
           setShowSpinWheel(true);
