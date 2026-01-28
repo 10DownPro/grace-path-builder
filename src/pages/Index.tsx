@@ -9,6 +9,7 @@ import { BattleVersesCard } from '@/components/home/BattleVersesCard';
 import { TestimonyOfTheWeekCard } from '@/components/home/TestimonyOfTheWeekCard';
 import { BattleMode } from '@/components/session/BattleMode';
 import { OnboardingFlow } from '@/components/onboarding/OnboardingFlow';
+import { Day1LaunchScreen } from '@/components/onboarding/Day1LaunchScreen';
 import { FreeChapterUnlockedDialog } from '@/components/rewards/FreeChapterUnlockedDialog';
 import { QuickActionsBar } from '@/components/micro-actions';
 import { OnboardingTour } from '@/components/onboarding/OnboardingTour';
@@ -43,6 +44,14 @@ export default function Index() {
   const { shouldShowUnlock, downloadChapter, closeDialog } = useFreeChapter();
   const [battleModeOpen, setBattleModeOpen] = useState(false);
   const [freeChapterOpen, setFreeChapterOpen] = useState(false);
+  const [showDay1Launch, setShowDay1Launch] = useState(false);
+  const [pendingOnboardingData, setPendingOnboardingData] = useState<{
+    name: string;
+    commitment: 'starter' | 'committed' | 'warrior';
+    preferredTime: 'morning' | 'afternoon' | 'evening' | 'flexible';
+    focusAreas: string[];
+    weeklyGoal: number;
+  } | null>(null);
   const [showInstructions, setShowInstructions] = useState(() => {
     return localStorage.getItem('home-instructions-dismissed') !== 'true';
   });
@@ -87,13 +96,23 @@ export default function Index() {
     focusAreas: string[];
     weeklyGoal: number;
   }) => {
-    await updateProfile({
-      name: data.name,
-      commitment: data.commitment,
-      preferred_time: data.preferredTime,
-      focus_areas: data.focusAreas,
-      weekly_goal: data.weeklyGoal
-    });
+    // Save onboarding data and show Day 1 launch screen
+    setPendingOnboardingData(data);
+    setShowDay1Launch(true);
+  };
+
+  const handleDay1LaunchComplete = async () => {
+    if (pendingOnboardingData) {
+      await updateProfile({
+        name: pendingOnboardingData.name,
+        commitment: pendingOnboardingData.commitment,
+        preferred_time: pendingOnboardingData.preferredTime,
+        focus_areas: pendingOnboardingData.focusAreas,
+        weekly_goal: pendingOnboardingData.weeklyGoal
+      });
+      setPendingOnboardingData(null);
+    }
+    setShowDay1Launch(false);
   };
 
   // Show loading state
@@ -104,6 +123,16 @@ export default function Index() {
           <Flame className="h-6 w-6 text-primary" />
         </div>
       </div>
+    );
+  }
+
+  // Show Day 1 launch screen after onboarding
+  if (showDay1Launch && pendingOnboardingData) {
+    return (
+      <Day1LaunchScreen 
+        userName={pendingOnboardingData.name} 
+        onComplete={handleDay1LaunchComplete} 
+      />
     );
   }
 
@@ -306,6 +335,9 @@ export default function Index() {
           toast.success('Chapter 1 unlocked! Check your downloads.', { icon: '📖' });
         }}
       />
+
+      {/* Onboarding Tour - Guided walkthrough for new users */}
+      <OnboardingTour />
     </PageLayout>
   );
 }

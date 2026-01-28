@@ -10,7 +10,7 @@ export function StreakBadge({ streak }: StreakBadgeProps) {
   const isOnFire = streak >= 30;
   
   return (
-    <div className="relative overflow-hidden rounded-xl border-2 border-primary/50 bg-gradient-to-r from-primary/20 via-card to-primary/10">
+    <div data-tour="streak-badge" className="relative overflow-hidden rounded-xl border-2 border-primary/50 bg-gradient-to-r from-primary/20 via-card to-primary/10">
       {/* Animated background glow */}
       <div className="absolute inset-0 bg-gradient-to-r from-primary/30 via-transparent to-primary/30 animate-pulse opacity-50" />
       

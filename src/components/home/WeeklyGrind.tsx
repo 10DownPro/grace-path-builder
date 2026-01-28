@@ -32,7 +32,7 @@ export function WeeklyGrind({ sessions, prayers, verses }: WeeklyGrindProps) {
   ];
 
   return (
-    <div className="gym-card p-5">
+    <div data-tour="weekly-grind" className="gym-card p-5">
       <div className="flex items-center gap-2 mb-5">
         <TrendingUp className="h-5 w-5 text-primary" />
         <h3 className="font-display text-lg text-primary uppercase tracking-wide">
