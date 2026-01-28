@@ -19,6 +19,7 @@ import NotFound from "./pages/NotFound";
 import Rewards from "./pages/Rewards";
 import Feed from "./pages/Feed";
 import Profile from "./pages/Profile";
+import Waitlist from "./pages/Waitlist";
 
 const queryClient = new QueryClient();
 
@@ -51,6 +52,7 @@ const App = () => (
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<Landing />} />
+          <Route path="/waitlist" element={<Waitlist />} />
           <Route path="/login" element={<Auth />} />
           <Route path="/signup" element={<Auth />} />
           
