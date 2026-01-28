@@ -50,7 +50,31 @@ export function useUserProgress() {
     if (!user || !progress) return { error: new Error('Not authenticated') };
 
     const today = new Date().toISOString().split('T')[0];
-    const newStreak = progress.current_streak + 1;
+    const lastSessionDate = progress.last_session_date;
+    
+    // Check if already completed today - don't double increment
+    if (lastSessionDate === today) {
+      return { data: progress, error: null };
+    }
+    
+    // Check if we missed a day - reset streak if not consecutive
+    let newStreak = 1; // Default to starting fresh
+    
+    if (lastSessionDate) {
+      const lastDate = new Date(lastSessionDate);
+      const todayDate = new Date(today);
+      const diffTime = todayDate.getTime() - lastDate.getTime();
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+      
+      if (diffDays === 1) {
+        // Consecutive day - increment streak
+        newStreak = progress.current_streak + 1;
+      } else if (diffDays === 0) {
+        // Same day - keep current streak
+        newStreak = progress.current_streak;
+      }
+      // If diffDays > 1, streak resets to 1 (already set above)
+    }
 
     const { data, error } = await supabase
       .from('user_progress')
@@ -71,6 +95,31 @@ export function useUserProgress() {
     
     setProgress(data as UserProgress);
     return { data, error: null };
+  };
+
+  // Check and reset streak if user missed a day (call on app load)
+  const checkStreakStatus = async () => {
+    if (!user || !progress || !progress.last_session_date) return;
+    
+    const today = new Date().toISOString().split('T')[0];
+    const lastDate = new Date(progress.last_session_date);
+    const todayDate = new Date(today);
+    const diffTime = todayDate.getTime() - lastDate.getTime();
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    
+    // If more than 1 day has passed and streak is > 0, reset it
+    if (diffDays > 1 && progress.current_streak > 0) {
+      const { data, error } = await supabase
+        .from('user_progress')
+        .update({ current_streak: 0 })
+        .eq('user_id', user.id)
+        .select()
+        .single();
+      
+      if (!error && data) {
+        setProgress(data as UserProgress);
+      }
+    }
   };
 
   const addMinutes = async (minutes: number) => {
@@ -98,6 +147,7 @@ export function useUserProgress() {
     progress,
     loading,
     incrementStreak,
+    checkStreakStatus,
     addMinutes,
     refetch: fetchProgress
   };

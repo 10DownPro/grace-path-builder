@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { ArrowLeft, BookOpen, PenLine, Swords } from 'lucide-react';
+import { ArrowLeft, BookOpen, PenLine, Swords, Crown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { CrisisBanner } from './CrisisBanner';
 import { VerseDisplay } from './VerseDisplay';
@@ -7,6 +7,7 @@ import { useFeelings } from '@/hooks/useFeelings';
 import type { FeelingCategory, FeelingVerse, SupportMessage, CrisisResource } from '@/hooks/useFeelings';
 import { toast } from 'sonner';
 import { Link } from 'react-router-dom';
+import { usePremium } from '@/hooks/usePremium';
 
 interface CategoryDetailProps {
   category: FeelingCategory;
@@ -15,13 +16,18 @@ interface CategoryDetailProps {
 
 export function CategoryDetail({ category, onBack }: CategoryDetailProps) {
   const { fetchCategoryVerses, saveVerse, unsaveVerse, getSavedVerses, loading } = useFeelings();
+  const { isPremium } = usePremium();
+  
+  const FREE_VERSE_LIMIT = 50;
   
   const [verses, setVerses] = useState<FeelingVerse[]>([]);
   const [supportMessage, setSupportMessage] = useState<SupportMessage | null>(null);
   const [crisisResources, setCrisisResources] = useState<CrisisResource[]>([]);
   const [savedVerseIds, setSavedVerseIds] = useState<Set<string>>(new Set());
+  const [savedVerseCount, setSavedVerseCount] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [showUpgradePrompt, setShowUpgradePrompt] = useState(false);
 
   const loadVerses = useCallback(async (refresh: boolean = false) => {
     setIsRefreshing(true);
@@ -42,6 +48,7 @@ export function CategoryDetail({ category, onBack }: CategoryDetailProps) {
   const loadSavedVerses = useCallback(async () => {
     const saved = await getSavedVerses();
     setSavedVerseIds(new Set(saved.map(s => s.verse.id)));
+    setSavedVerseCount(saved.length);
   }, [getSavedVerses]);
 
   useEffect(() => {
@@ -50,9 +57,19 @@ export function CategoryDetail({ category, onBack }: CategoryDetailProps) {
   }, [loadVerses, loadSavedVerses]);
 
   const handleSaveVerse = async (verseId: string) => {
+    // Check free tier limit
+    if (!isPremium && savedVerseCount >= FREE_VERSE_LIMIT) {
+      setShowUpgradePrompt(true);
+      toast.error(`Free limit reached (${FREE_VERSE_LIMIT} verses)`, {
+        description: 'Upgrade to Premium for unlimited saved verses'
+      });
+      return;
+    }
+    
     const success = await saveVerse(verseId, category.id);
     if (success) {
       setSavedVerseIds(prev => new Set([...prev, verseId]));
+      setSavedVerseCount(prev => prev + 1);
     }
   };
 
@@ -64,6 +81,7 @@ export function CategoryDetail({ category, onBack }: CategoryDetailProps) {
         newSet.delete(verseId);
         return newSet;
       });
+      setSavedVerseCount(prev => prev - 1);
     }
   };
 
@@ -75,10 +93,31 @@ export function CategoryDetail({ category, onBack }: CategoryDetailProps) {
 
   const handleSaveAll = async () => {
     const unsavedVerses = verses.filter(v => !savedVerseIds.has(v.id));
+    
+    // Check free tier limit
+    if (!isPremium && (savedVerseCount + unsavedVerses.length) > FREE_VERSE_LIMIT) {
+      const remaining = FREE_VERSE_LIMIT - savedVerseCount;
+      if (remaining <= 0) {
+        setShowUpgradePrompt(true);
+        toast.error(`Free limit reached (${FREE_VERSE_LIMIT} verses)`, {
+          description: 'Upgrade to Premium for unlimited saved verses'
+        });
+        return;
+      }
+      toast.warning(`Only saving ${remaining} verses (free limit)`);
+      for (let i = 0; i < remaining; i++) {
+        await saveVerse(unsavedVerses[i].id, category.id);
+      }
+      setSavedVerseCount(FREE_VERSE_LIMIT);
+      await loadSavedVerses();
+      return;
+    }
+    
     for (const verse of unsavedVerses) {
       await saveVerse(verse.id, category.id);
     }
     setSavedVerseIds(new Set(verses.map(v => v.id)));
+    setSavedVerseCount(prev => prev + unsavedVerses.length);
     toast.success(`Added ${unsavedVerses.length} verses to Battle Verses`);
   };
 

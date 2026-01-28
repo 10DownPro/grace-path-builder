@@ -4,9 +4,16 @@ import { toast } from 'sonner';
 
 // Point values for different actions
 export const POINT_VALUES = {
-  SESSION_COMPLETE: 50,
-  PRAYER_LOGGED: 10,
+  SESSION_COMPLETE: 50,  // Bonus for completing full session
+  WORSHIP_COMPLETE: 10,  // Individual phase
+  SCRIPTURE_COMPLETE: 10,
+  PRAYER_PHASE_COMPLETE: 10, // During session
+  REFLECTION_COMPLETE: 10,
+  PRAYER_LOGGED: 10,     // Prayer journal entry
   VERSE_READ: 5,
+  VERSE_SAVED: 5,
+  ENCOURAGEMENT_SENT: 5,
+  CHALLENGE_COMPLETED: 100,
 } as const;
 
 export function usePoints() {
