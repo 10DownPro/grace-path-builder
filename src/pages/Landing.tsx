@@ -99,7 +99,7 @@ const Landing = () => {
               </Link>
               <Link to="/signup">
                 <Button className="btn-gym">
-                  Get Started Free
+                  START TRAINING
                 </Button>
               </Link>
             </div>
@@ -129,7 +129,7 @@ const Landing = () => {
                 </Link>
                 <Link to="/signup">
                   <Button className="btn-gym w-full">
-                    Get Started Free
+                    START TRAINING
                   </Button>
                 </Link>
               </div>
@@ -189,7 +189,7 @@ const Landing = () => {
                 <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 mb-8">
                   <Link to="/signup">
                     <Button className="btn-gym text-lg px-8 py-6 group">
-                      Get Started Free
+                      START TRAINING
                       <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
                     </Button>
                   </Link>

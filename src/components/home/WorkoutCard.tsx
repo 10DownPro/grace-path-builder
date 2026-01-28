@@ -28,7 +28,7 @@ export function WorkoutCard({ steps, allCompleted }: WorkoutCardProps) {
   const totalDuration = steps.reduce((acc, s) => acc + parseInt(s.duration), 0);
 
   return (
-    <div className="rounded-xl border-2 border-border overflow-hidden bg-gradient-to-b from-card via-card to-background shadow-lg">
+    <div data-tour="workout-card" className="rounded-xl border-2 border-border overflow-hidden bg-gradient-to-b from-card via-card to-background shadow-lg">
       {/* Header with gradient */}
       <div className="relative bg-gradient-to-r from-secondary/40 via-secondary/20 to-secondary/40 px-5 py-4 border-b-2 border-border">
         {/* Decorative pattern */}
@@ -157,7 +157,7 @@ export function WorkoutCard({ steps, allCompleted }: WorkoutCardProps) {
 
         {/* CTA Button */}
         {!allCompleted && (
-          <Link to="/session" className="block">
+          <Link to="/session" className="block" data-tour="start-training">
             <button className="w-full py-4 px-6 rounded-xl font-display uppercase tracking-wider text-lg text-background bg-gradient-to-r from-primary via-primary to-warning border-b-4 border-primary/60 hover:scale-[1.02] active:scale-[0.98] active:border-b-2 transition-all shadow-lg shadow-primary/30 flex items-center justify-center gap-3">
               <Play className="h-6 w-6" />
               <span>Start Training</span>

@@ -7,14 +7,15 @@ interface NavItem {
   path: string;
   icon: LucideIcon;
   label: string;
+  tourId: string;
 }
 
 const navItems: NavItem[] = [
-  { path: '/home', icon: Home, label: 'Home' },
-  { path: '/session', icon: Dumbbell, label: 'Train' },
-  { path: '/feed', icon: Rss, label: 'Feed' },
-  { path: '/prayer', icon: Target, label: 'Prayer' },
-  { path: '/friends', icon: Users, label: 'Squad' },
+  { path: '/home', icon: Home, label: 'Home', tourId: 'nav-home' },
+  { path: '/session', icon: Dumbbell, label: 'Train', tourId: 'nav-train' },
+  { path: '/feed', icon: Rss, label: 'Feed', tourId: 'nav-feed' },
+  { path: '/prayer', icon: Target, label: 'Prayer', tourId: 'nav-prayer' },
+  { path: '/friends', icon: Users, label: 'Squad', tourId: 'nav-squad' },
 ];
 
 export function Navigation() {
@@ -24,12 +25,13 @@ export function Navigation() {
     <nav className="fixed bottom-0 left-0 right-0 z-50 border-t-2 border-border bg-card shadow-2xl shadow-black/50 safe-area-pb">
       <div className="mx-auto max-w-lg">
         <div className="flex items-center justify-around py-2 px-1">
-          {navItems.map(({ path, icon: Icon, label }) => {
+          {navItems.map(({ path, icon: Icon, label, tourId }) => {
             const isActive = location.pathname === path;
             return (
               <Link
                 key={path}
                 to={path}
+                data-tour={tourId}
                 className={cn(
                   "flex flex-col items-center gap-0.5 px-2 sm:px-4 py-2 rounded-lg transition-all duration-200 min-w-0",
                   isActive 
