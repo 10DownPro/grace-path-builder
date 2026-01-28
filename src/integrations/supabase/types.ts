@@ -2660,6 +2660,36 @@ export type Database = {
           },
         ]
       }
+      waitlist: {
+        Row: {
+          created_at: string | null
+          email: string
+          id: string
+          notified: boolean | null
+          referral_code: string | null
+          referred_by: string | null
+          source: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          id?: string
+          notified?: boolean | null
+          referral_code?: string | null
+          referred_by?: string | null
+          source?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          id?: string
+          notified?: boolean | null
+          referral_code?: string | null
+          referred_by?: string | null
+          source?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       public_profiles: {
