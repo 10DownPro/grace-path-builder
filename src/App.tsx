@@ -8,6 +8,7 @@ import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import Landing from "./pages/Landing";
 import Auth from "./pages/Auth";
 import Index from "./pages/Index";
+import Dashboard from "./pages/Dashboard";
 import Session from "./pages/Session";
 import Scripture from "./pages/Scripture";
 import Prayer from "./pages/Prayer";
@@ -58,6 +59,7 @@ const App = () => (
           
           {/* Protected Routes */}
           <Route path="/home" element={<ProtectedRoute><Index /></ProtectedRoute>} />
+          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/session" element={<ProtectedRoute><Session /></ProtectedRoute>} />
           <Route path="/scripture" element={<ProtectedRoute><Scripture /></ProtectedRoute>} />
           <Route path="/prayer" element={<ProtectedRoute><Prayer /></ProtectedRoute>} />
