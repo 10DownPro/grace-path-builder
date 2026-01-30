@@ -38,11 +38,11 @@ export function useFollows() {
     const followerUserIds = followersData?.map(f => f.follower_user_id) || [];
     const allUserIds = [...new Set([...followingUserIds, ...followerUserIds])];
 
-    let profiles: { user_id: string; name: string }[] = [];
+    let profiles: { user_id: string; display_name: string }[] = [];
     if (allUserIds.length > 0) {
       const { data } = await supabase
         .from('public_profiles')
-        .select('user_id, name')
+        .select('user_id, display_name')
         .in('user_id', allUserIds);
       profiles = data || [];
     }
@@ -50,14 +50,14 @@ export function useFollows() {
     // Map following data
     const followingUsers: FollowUser[] = (followingData || []).map(f => ({
       user_id: f.followed_user_id,
-      name: profiles.find(p => p.user_id === f.followed_user_id)?.name || 'User',
+      name: profiles.find(p => p.user_id === f.followed_user_id)?.display_name || 'User',
       followed_at: f.followed_at
     }));
 
     // Map followers data
     const followerUsers: FollowUser[] = (followersData || []).map(f => ({
       user_id: f.follower_user_id,
-      name: profiles.find(p => p.user_id === f.follower_user_id)?.name || 'User',
+      name: profiles.find(p => p.user_id === f.follower_user_id)?.display_name || 'User',
       followed_at: f.followed_at
     }));
 
@@ -112,6 +112,18 @@ export function useFollows() {
     // Update local state
     setFollowingIds(prev => new Set([...prev, targetUserId]));
     toast.success('Now following!');
+    
+    // Send notification to the followed user
+    await supabase.from('notifications').insert({
+      user_id: targetUserId,
+      actor_id: user.id,
+      notification_type: 'follow',
+      title: 'New Follower',
+      message: 'started following you',
+      reference_id: user.id,
+      reference_type: 'user'
+    });
+    
     await fetchFollows();
     
     return { error: null };

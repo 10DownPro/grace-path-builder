@@ -1,4 +1,4 @@
-import { Bell, User, Menu } from 'lucide-react';
+import { Bell, User } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { SidebarTrigger } from '@/components/ui/sidebar';
@@ -12,14 +12,22 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useAuth } from '@/hooks/useAuth';
 import { useProfile } from '@/hooks/useProfile';
+import { useFeedNotifications } from '@/hooks/useFeedNotifications';
+import { NotificationsList } from '@/components/notifications/NotificationsList';
 import { toast } from 'sonner';
 import logo from '@/assets/logo.png';
 
 export function DashboardHeader() {
   const { signOut } = useAuth();
   const { profile } = useProfile();
-  // Placeholder for unread count - could be implemented with a dedicated notifications table
-  const unreadCount = 0;
+  const {
+    notifications,
+    unreadCount,
+    markAsRead,
+    markAllAsRead,
+    deleteNotification,
+    clearAllNotifications
+  } = useFeedNotifications();
 
   const handleLogout = async () => {
     const { error } = await signOut();
@@ -56,25 +64,18 @@ export function DashboardHeader() {
             )}
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-80">
-          <DropdownMenuLabel>Notifications</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          {unreadCount === 0 ? (
-            <div className="p-4 text-center text-muted-foreground text-sm">
-              No new notifications
-            </div>
-          ) : (
-            <div className="max-h-80 overflow-y-auto">
-              <DropdownMenuItem>
-                <div className="flex flex-col gap-1">
-                  <span className="font-medium">Squad Activity</span>
-                  <span className="text-xs text-muted-foreground">
-                    Your squad mate just completed a training session!
-                  </span>
-                </div>
-              </DropdownMenuItem>
-            </div>
-          )}
+        <DropdownMenuContent align="end" className="w-80 p-0">
+          <DropdownMenuLabel className="px-4 py-3 border-b border-border">
+            Notifications
+          </DropdownMenuLabel>
+          <NotificationsList
+            notifications={notifications}
+            onMarkAsRead={markAsRead}
+            onMarkAllAsRead={markAllAsRead}
+            onDelete={deleteNotification}
+            onClearAll={clearAllNotifications}
+            unreadCount={unreadCount}
+          />
         </DropdownMenuContent>
       </DropdownMenu>
 
