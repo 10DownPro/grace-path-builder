@@ -76,6 +76,13 @@ export function usePrayers() {
         _reason: 'prayer_logged'
       });
       toast.success(`+${POINT_VALUES.PRAYER_LOGGED} points!`, { description: 'Prayer logged' });
+      
+      // Update prayer challenge progress
+      await supabase.rpc('update_challenge_progress', {
+        _user_id: user.id,
+        _challenge_type: 'prayer',
+        _increment: 1
+      });
     } catch (err) {
       console.error('Error awarding prayer points:', err);
     }

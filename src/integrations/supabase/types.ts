@@ -2831,6 +2831,10 @@ export type Database = {
           success: boolean
         }[]
       }
+      update_challenge_progress: {
+        Args: { _challenge_type: string; _increment?: number; _user_id: string }
+        Returns: undefined
+      }
       use_streak_freeze: {
         Args: { _date: string; _user_id: string }
         Returns: boolean

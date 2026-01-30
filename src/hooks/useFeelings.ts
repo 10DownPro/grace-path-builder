@@ -123,7 +123,18 @@ export function useFeelings() {
       const verses = versesData || [];
       const shuffled = shuffleWithBias(verses, count);
 
-      // Fire and forget view count update (not critical)
+      // Update battles challenge progress when user accesses Find By Feeling
+      if (user) {
+        try {
+          await supabase.rpc('update_challenge_progress', {
+            _user_id: user.id,
+            _challenge_type: 'battles',
+            _increment: 1
+          });
+        } catch (err) {
+          console.error('Error updating battles challenge:', err);
+        }
+      }
 
       // Fetch crisis resources if category is crisis
       let crisisResources: CrisisResource[] = [];
