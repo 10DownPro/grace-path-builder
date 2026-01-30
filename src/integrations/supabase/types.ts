@@ -189,65 +189,92 @@ export type Database = {
       }
       community_feed_posts: {
         Row: {
+          answered_at: string | null
+          answered_testimony: string | null
           comment_count: number | null
           content_data: Json
           created_at: string | null
           edited_at: string | null
           engagement_score: number | null
           id: string
+          is_answered: boolean | null
           is_deleted: boolean | null
           is_pinned: boolean | null
           is_user_generated: boolean | null
           link_preview_data: Json | null
           media_type: string | null
           media_url: string | null
+          mentioned_users: string[] | null
+          poll_data: Json | null
+          poll_expires_at: string | null
           post_text: string | null
           post_type: string
+          prayer_count: number | null
+          prayer_urgency: string | null
           reaction_count: number | null
           share_count: number | null
           squad_id: string | null
+          tags: string[] | null
           user_id: string
           visibility: string | null
         }
         Insert: {
+          answered_at?: string | null
+          answered_testimony?: string | null
           comment_count?: number | null
           content_data?: Json
           created_at?: string | null
           edited_at?: string | null
           engagement_score?: number | null
           id?: string
+          is_answered?: boolean | null
           is_deleted?: boolean | null
           is_pinned?: boolean | null
           is_user_generated?: boolean | null
           link_preview_data?: Json | null
           media_type?: string | null
           media_url?: string | null
+          mentioned_users?: string[] | null
+          poll_data?: Json | null
+          poll_expires_at?: string | null
           post_text?: string | null
           post_type: string
+          prayer_count?: number | null
+          prayer_urgency?: string | null
           reaction_count?: number | null
           share_count?: number | null
           squad_id?: string | null
+          tags?: string[] | null
           user_id: string
           visibility?: string | null
         }
         Update: {
+          answered_at?: string | null
+          answered_testimony?: string | null
           comment_count?: number | null
           content_data?: Json
           created_at?: string | null
           edited_at?: string | null
           engagement_score?: number | null
           id?: string
+          is_answered?: boolean | null
           is_deleted?: boolean | null
           is_pinned?: boolean | null
           is_user_generated?: boolean | null
           link_preview_data?: Json | null
           media_type?: string | null
           media_url?: string | null
+          mentioned_users?: string[] | null
+          poll_data?: Json | null
+          poll_expires_at?: string | null
           post_text?: string | null
           post_type?: string
+          prayer_count?: number | null
+          prayer_urgency?: string | null
           reaction_count?: number | null
           share_count?: number | null
           squad_id?: string | null
+          tags?: string[] | null
           user_id?: string
           visibility?: string | null
         }
@@ -1326,6 +1353,38 @@ export type Database = {
         }
         Relationships: []
       }
+      poll_votes: {
+        Row: {
+          id: string
+          option_index: number
+          post_id: string
+          user_id: string
+          voted_at: string | null
+        }
+        Insert: {
+          id?: string
+          option_index: number
+          post_id: string
+          user_id: string
+          voted_at?: string | null
+        }
+        Update: {
+          id?: string
+          option_index?: number
+          post_id?: string
+          user_id?: string
+          voted_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "poll_votes_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "community_feed_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       post_media: {
         Row: {
           created_at: string | null
@@ -1392,6 +1451,35 @@ export type Database = {
             columns: ["prayer_id"]
             isOneToOne: false
             referencedRelation: "prayers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      prayer_interactions: {
+        Row: {
+          id: string
+          post_id: string
+          prayed_at: string | null
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          post_id: string
+          prayed_at?: string | null
+          user_id: string
+        }
+        Update: {
+          id?: string
+          post_id?: string
+          prayed_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "prayer_interactions_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "community_feed_posts"
             referencedColumns: ["id"]
           },
         ]
