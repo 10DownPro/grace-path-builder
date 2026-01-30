@@ -167,12 +167,37 @@ export function useSessions() {
           _reason: 'session_complete'
         });
         toast.success(`+${POINT_VALUES.SESSION_COMPLETE} points!`, { description: 'Session completed' });
+        
+        // Update personal challenge progress for session/streak challenges
+        await supabase.rpc('update_challenge_progress', {
+          _user_id: user.id,
+          _challenge_type: 'streak',
+          _increment: 1
+        });
+        await supabase.rpc('update_challenge_progress', {
+          _user_id: user.id,
+          _challenge_type: 'complete',
+          _increment: 1
+        });
       } catch (err) {
         console.error('Error awarding session points:', err);
       }
     }
     
-    // Award points for verses read
+    // Update worship challenge progress
+    if (updates.worship_completed && !session.worship_completed) {
+      try {
+        await supabase.rpc('update_challenge_progress', {
+          _user_id: user.id,
+          _challenge_type: 'worship',
+          _increment: 1
+        });
+      } catch (err) {
+        console.error('Error updating worship challenge:', err);
+      }
+    }
+    
+    // Award points for verses read and update scripture challenges
     if (updates.verses_read && updates.verses_read > 0) {
       const versePoints = POINT_VALUES.VERSE_READ * updates.verses_read;
       try {
@@ -181,7 +206,13 @@ export function useSessions() {
           _points: versePoints,
           _reason: 'verse_read'
         });
-        // Don't show toast for every verse - it's handled in the session complete
+        
+        // Update scripture challenge progress
+        await supabase.rpc('update_challenge_progress', {
+          _user_id: user.id,
+          _challenge_type: 'scripture',
+          _increment: updates.verses_read
+        });
       } catch (err) {
         console.error('Error awarding verse points:', err);
       }
