@@ -21,6 +21,8 @@ import Rewards from "./pages/Rewards";
 import Feed from "./pages/Feed";
 import Profile from "./pages/Profile";
 import Waitlist from "./pages/Waitlist";
+import Privacy from "./pages/Privacy";
+import Terms from "./pages/Terms";
 
 const queryClient = new QueryClient();
 
@@ -56,6 +58,8 @@ const App = () => (
           <Route path="/waitlist" element={<Waitlist />} />
           <Route path="/login" element={<Auth />} />
           <Route path="/signup" element={<Auth />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/terms" element={<Terms />} />
           
           {/* Protected Routes */}
           <Route path="/home" element={<ProtectedRoute><Index /></ProtectedRoute>} />

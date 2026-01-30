@@ -422,9 +422,22 @@ export default function Settings() {
         </Button>
 
         {/* Footer */}
-        <p className="text-center text-sm text-muted-foreground">
-          Made with 💪 for believers putting in the work
-        </p>
+        <div className="text-center space-y-2 pt-2">
+          <p className="text-sm text-muted-foreground">
+            Made with 💪 for believers putting in the work
+          </p>
+          <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground">
+            <Link to="/privacy" className="hover:text-foreground transition-colors underline-offset-4 hover:underline">
+              Privacy Policy
+            </Link>
+            <Link to="/terms" className="hover:text-foreground transition-colors underline-offset-4 hover:underline">
+              Terms of Service
+            </Link>
+          </div>
+          <p className="text-xs text-muted-foreground/60">
+            Version 1.0.0
+          </p>
+        </div>
       </div>
 
       {/* Session Time Dialog */}

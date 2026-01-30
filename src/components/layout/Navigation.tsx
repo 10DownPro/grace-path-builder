@@ -22,7 +22,7 @@ export function Navigation() {
   const location = useLocation();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t-2 border-border bg-card shadow-2xl shadow-black/50 safe-area-pb">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t-2 border-border bg-card shadow-2xl shadow-black/50 safe-area-pb md:hidden">
       <div className="mx-auto max-w-lg">
         <div className="flex items-center justify-around py-2 px-1">
           {navItems.map(({ path, icon: Icon, label, tourId }) => {
