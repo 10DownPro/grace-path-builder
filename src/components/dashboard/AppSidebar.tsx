@@ -11,7 +11,8 @@ import {
   HelpCircle, 
   LogOut,
   Flame,
-  Sword
+  Sword,
+  MessageSquare
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
@@ -34,6 +35,7 @@ import {
 const mainNavItems = [
   { path: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
   { path: '/session', icon: Dumbbell, label: 'Training' },
+  { path: '/community', icon: MessageSquare, label: 'Trenches' },
   { path: '/feed', icon: Rss, label: 'Feed' },
   { path: '/prayer', icon: Target, label: 'Prayer' },
   { path: '/friends', icon: Users, label: 'Squad' },

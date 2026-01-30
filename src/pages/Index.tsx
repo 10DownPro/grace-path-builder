@@ -6,6 +6,7 @@ import { WeeklyGrind } from '@/components/home/WeeklyGrind';
 import { MissionCard } from '@/components/home/MissionCard';
 import { BattleVerse } from '@/components/home/BattleVerse';
 import { BattleVersesCard } from '@/components/home/BattleVersesCard';
+import { BattleVerseOfDayCard } from '@/components/home/BattleVerseOfDayCard';
 import { TestimonyOfTheWeekCard } from '@/components/home/TestimonyOfTheWeekCard';
 import { BattleMode } from '@/components/session/BattleMode';
 import { OnboardingFlow } from '@/components/onboarding/OnboardingFlow';
@@ -244,7 +245,10 @@ export default function Index() {
           {/* Quick Actions - Micro-Actions */}
           <QuickActionsBar />
 
-          {/* Battle Verses Card - Navigate to Battles page */}
+          {/* Battle Verse of the Day - NEW PROMINENT CARD */}
+          <BattleVerseOfDayCard />
+
+          {/* Battle Verses Card - Navigate to Find By Feeling */}
           <BattleVersesCard />
 
           {/* Battle Mode Button - Mobile Optimized */}

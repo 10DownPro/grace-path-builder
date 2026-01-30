@@ -1515,6 +1515,7 @@ export type Database = {
         Row: {
           book_code_used: string | null
           commitment: string
+          community_enabled: boolean | null
           created_at: string
           focus_areas: string[] | null
           friend_code: string | null
@@ -1526,6 +1527,7 @@ export type Database = {
           preferred_time: string
           premium_activated_at: string | null
           premium_source: string | null
+          show_sensitive_topics: boolean | null
           updated_at: string
           user_id: string
           weekly_goal: number
@@ -1533,6 +1535,7 @@ export type Database = {
         Insert: {
           book_code_used?: string | null
           commitment?: string
+          community_enabled?: boolean | null
           created_at?: string
           focus_areas?: string[] | null
           friend_code?: string | null
@@ -1544,6 +1547,7 @@ export type Database = {
           preferred_time?: string
           premium_activated_at?: string | null
           premium_source?: string | null
+          show_sensitive_topics?: boolean | null
           updated_at?: string
           user_id: string
           weekly_goal?: number
@@ -1551,6 +1555,7 @@ export type Database = {
         Update: {
           book_code_used?: string | null
           commitment?: string
+          community_enabled?: boolean | null
           created_at?: string
           focus_areas?: string[] | null
           friend_code?: string | null
@@ -1562,6 +1567,7 @@ export type Database = {
           preferred_time?: string
           premium_activated_at?: string | null
           premium_source?: string | null
+          show_sensitive_topics?: boolean | null
           updated_at?: string
           user_id?: string
           weekly_goal?: number
