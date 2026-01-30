@@ -11,9 +11,10 @@ import {
   SelectTrigger, 
   SelectValue 
 } from '@/components/ui/select';
-import { BookOpen, CheckCircle2, Loader2, ChevronDown, ChevronUp, Sparkles } from 'lucide-react';
+import { BookOpen, CheckCircle2, Loader2, ChevronDown, ChevronUp, Sparkles, Book } from 'lucide-react';
 import { toast } from 'sonner';
 import { useBiblePassages, READING_LEVEL_INFO, PassageLevel, BiblePassage } from '@/hooks/useBiblePassages';
+import { useGroupScripture } from '@/hooks/useGroupScripture';
 
 interface MultiLevelStudyCardProps {
   passage: BiblePassage;
@@ -34,15 +35,18 @@ export function MultiLevelStudyCard({
   onComplete
 }: MultiLevelStudyCardProps) {
   const { getPassageContent, getAvailableLevelsForPassage } = useBiblePassages();
+  const { fetchPassage: fetchScripture, loading: scriptureLoading } = useGroupScripture();
   
   const [expanded, setExpanded] = useState(!isCompleted);
   const [selectedLevel, setSelectedLevel] = useState(userReadingLevel);
   const [content, setContent] = useState<PassageLevel | null>(null);
+  const [scriptureText, setScriptureText] = useState<string | null>(null);
   const [availableLevels, setAvailableLevels] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [reflection, setReflection] = useState('');
   const [questions, setQuestions] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [showScripture, setShowScripture] = useState(false);
 
   useEffect(() => {
     loadContent();
@@ -59,6 +63,27 @@ export function MultiLevelStudyCard({
   const loadAvailableLevels = async () => {
     const levels = await getAvailableLevelsForPassage(passage.id);
     setAvailableLevels(levels);
+  };
+
+  const loadScripture = async () => {
+    if (scriptureText) {
+      setShowScripture(!showScripture);
+      return;
+    }
+    
+    const result = await fetchScripture(
+      passage.book,
+      passage.chapter,
+      passage.verse_start || undefined,
+      passage.verse_end || undefined
+    );
+    
+    if (result?.text) {
+      setScriptureText(result.text);
+      setShowScripture(true);
+    } else {
+      toast.error('Could not load scripture text');
+    }
   };
 
   const handleComplete = async () => {
@@ -160,15 +185,47 @@ export function MultiLevelStudyCard({
             ) : content ? (
               <>
                 {/* Level Badge */}
-                <div className="flex items-center gap-2">
-                  <Sparkles className="h-4 w-4 text-primary" />
-                  <span className="text-sm font-medium">
-                    {levelInfo?.emoji} {levelInfo?.label} Version
-                  </span>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="h-4 w-4 text-primary" />
+                    <span className="text-sm font-medium">
+                      {levelInfo?.emoji} {levelInfo?.label} Version
+                    </span>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={loadScripture}
+                    disabled={scriptureLoading}
+                  >
+                    {scriptureLoading ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <>
+                        <Book className="h-4 w-4 mr-1" />
+                        {showScripture ? 'Hide' : 'Read'} Scripture
+                      </>
+                    )}
+                  </Button>
                 </div>
+
+                {/* Scripture Text */}
+                {showScripture && scriptureText && (
+                  <div className="bg-card rounded-lg p-4 border-2 border-primary/20">
+                    <div className="text-xs font-medium text-primary mb-2 uppercase tracking-wide">
+                      {passage.book} {passage.chapter}
+                      {passage.verse_start && `:${passage.verse_start}`}
+                      {passage.verse_end && passage.verse_end !== passage.verse_start && `-${passage.verse_end}`}
+                    </div>
+                    <blockquote className="text-sm leading-relaxed text-foreground italic">
+                      "{scriptureText}"
+                    </blockquote>
+                  </div>
+                )}
 
                 {/* Summary Content */}
                 <div className="bg-muted/50 rounded-lg p-4">
+                  <div className="text-xs font-medium text-muted-foreground mb-2">Study Summary</div>
                   <p className="whitespace-pre-line text-sm leading-relaxed">{content.summary}</p>
                 </div>
 
