@@ -321,6 +321,17 @@
   .border-warning {
     border-color: hsl(var(--warning));
   }
+
+  /* Touch-friendly minimum sizes */
+  .touch-target {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  /* Container queries support */
+  .container-responsive {
+    container-type: inline-size;
+  }
 }
 
 /* Animations */

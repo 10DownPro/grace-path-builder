@@ -577,22 +577,32 @@ const Landing = () => {
       {/* Footer */}
       <footer className="py-12 border-t border-border">
         <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="flex items-center gap-2">
-              <img src={logo} alt="FaithFit" className="w-8 h-8 object-contain" />
-              <span className="font-display text-xl tracking-wider text-primary">FAITHFIT</span>
+          <div className="flex flex-col gap-8">
+            {/* Top Row */}
+            <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+              <div className="flex items-center gap-2">
+                <img src={logo} alt="FaithFit" className="w-8 h-8 object-contain" />
+                <span className="font-display text-xl tracking-wider text-primary">FAITHFIT</span>
+              </div>
+              
+              <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground">
+                <Link to="/waitlist" className="hover:text-foreground transition-colors">Join Waitlist</Link>
+                <button onClick={() => scrollToSection('features')} className="hover:text-foreground transition-colors">Features</button>
+                <button onClick={() => scrollToSection('testimonials')} className="hover:text-foreground transition-colors">Testimonials</button>
+                <Link to="/login" className="hover:text-foreground transition-colors">Login</Link>
+              </div>
             </div>
             
-            <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground">
-              <Link to="/waitlist" className="hover:text-foreground transition-colors">Join Waitlist</Link>
-              <button onClick={() => scrollToSection('features')} className="hover:text-foreground transition-colors">Features</button>
-              <button onClick={() => scrollToSection('testimonials')} className="hover:text-foreground transition-colors">Testimonials</button>
-              <Link to="/login" className="hover:text-foreground transition-colors">Login</Link>
+            {/* Bottom Row */}
+            <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-6 border-t border-border/50">
+              <p className="text-sm text-muted-foreground">
+                © 2026 FaithFit. All rights reserved.
+              </p>
+              <div className="flex items-center gap-6 text-sm text-muted-foreground">
+                <Link to="/privacy" className="hover:text-foreground transition-colors">Privacy Policy</Link>
+                <Link to="/terms" className="hover:text-foreground transition-colors">Terms of Service</Link>
+              </div>
             </div>
-            
-            <p className="text-sm text-muted-foreground">
-              © 2025 FaithFit. All rights reserved.
-            </p>
           </div>
         </div>
       </footer>
