@@ -52,12 +52,12 @@ export function LiveActivityTicker({ squadId }: { squadId?: string }) {
         const userIds = [...new Set(data.map(a => a.user_id))];
         const { data: profiles } = await supabase
           .from('public_profiles')
-          .select('user_id, name')
+          .select('user_id, display_name')
           .in('user_id', userIds);
 
         const enriched: LiveActivity[] = data.map(activity => ({
           ...activity,
-          user_name: profiles?.find(p => p.user_id === activity.user_id)?.name || 'Someone',
+          user_name: profiles?.find(p => p.user_id === activity.user_id)?.display_name || 'Someone',
           activity_data: activity.activity_data as Record<string, unknown>,
         }));
 
@@ -79,13 +79,13 @@ export function LiveActivityTicker({ squadId }: { squadId?: string }) {
           // Fetch user name
           const { data: profile } = await supabase
             .from('public_profiles')
-            .select('user_id, name')
+            .select('user_id, display_name')
             .eq('user_id', newActivity.user_id)
             .single();
 
           setActivities(prev => [{
             ...newActivity,
-            user_name: profile?.name || 'Someone',
+            user_name: profile?.display_name || 'Someone',
             activity_data: newActivity.activity_data as Record<string, unknown>,
           }, ...prev.slice(0, 19)]);
         }

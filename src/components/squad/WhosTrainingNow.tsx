@@ -53,12 +53,12 @@ export function WhosTrainingNow({ squadId }: { squadId?: string }) {
         const userIds = data.map(d => d.user_id);
         const { data: profiles } = await supabase
           .from('public_profiles')
-          .select('user_id, name')
+          .select('user_id, display_name')
           .in('user_id', userIds);
 
         const enriched: ActiveUser[] = data.map(presence => ({
           user_id: presence.user_id,
-          user_name: profiles?.find(p => p.user_id === presence.user_id)?.name || 'Anonymous',
+          user_name: profiles?.find(p => p.user_id === presence.user_id)?.display_name || 'Anonymous',
           current_activity: presence.current_activity || 'idle',
           is_online: presence.is_online || false,
           last_active_at: presence.last_active_at || '',

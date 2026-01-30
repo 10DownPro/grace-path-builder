@@ -104,7 +104,7 @@ export function useFriends() {
     // Get friend profiles using public_profiles view (bypasses RLS for friend data)
     const { data: profiles } = await supabase
       .from('public_profiles')
-      .select('user_id, name')
+      .select('user_id, display_name')
       .in('user_id', friendIds);
 
     const { data: progress } = await supabase
@@ -122,7 +122,7 @@ export function useFriends() {
       return {
         id: friendId,
         user_id: friendId,
-        name: profile?.name || 'Unknown',
+        name: profile?.display_name || 'Unknown',
         friend_code: '', // Not needed for display
         current_streak: prog?.current_streak || 0,
         total_sessions: prog?.total_sessions || 0,
@@ -156,7 +156,7 @@ export function useFriends() {
     // Use public_profiles view to get requester info
     const { data: profiles } = await supabase
       .from('public_profiles')
-      .select('user_id, name')
+      .select('user_id, display_name')
       .in('user_id', requesterIds);
 
     const pendingList: FriendRequest[] = requests.map(req => {
@@ -164,7 +164,7 @@ export function useFriends() {
       return {
         id: req.id,
         requester_id: req.requester_id,
-        requester_name: profile?.name || 'Unknown',
+        requester_name: profile?.display_name || 'Unknown',
         requester_friend_code: '', // Not needed for pending requests
         created_at: req.created_at
       };
@@ -194,7 +194,7 @@ export function useFriends() {
     // Use public_profiles view
     const { data: profiles } = await supabase
       .from('public_profiles')
-      .select('user_id, name')
+      .select('user_id, display_name')
       .in('user_id', participantIds);
 
     const { data: progressData } = await supabase
@@ -213,8 +213,8 @@ export function useFriends() {
         id: ch.id,
         challenger_id: ch.challenger_id,
         challenged_id: ch.challenged_id,
-        challenger_name: challengerProfile?.name,
-        challenged_name: challengedProfile?.name,
+        challenger_name: challengerProfile?.display_name,
+        challenged_name: challengedProfile?.display_name,
         challenge_type: ch.challenge_type,
         challenge_name: ch.challenge_name,
         description: ch.description,

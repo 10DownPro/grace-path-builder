@@ -3,6 +3,14 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
 import { toast } from 'sonner';
 
+const REACTION_LABELS: Record<string, string> = {
+  fire: '🔥',
+  praying: '🙏',
+  amen: '🙌',
+  strong: '💪',
+  heart: '❤️'
+};
+
 export interface FeedPost {
   id: string;
   user_id: string;
@@ -118,7 +126,7 @@ export function useCommunityFeed() {
     const userIds = [...new Set(postsData.map(p => p.user_id))];
     const { data: profiles } = await supabase
       .from('public_profiles')
-      .select('user_id, name')
+      .select('user_id, display_name')
       .in('user_id', userIds);
 
     // Fetch user's reactions AND all reactions for counts
@@ -154,7 +162,7 @@ export function useCommunityFeed() {
 
       return {
         ...post,
-        user_name: profile?.name || 'Anonymous',
+        user_name: profile?.display_name || 'Anonymous',
         user_reaction: userReaction?.reaction_type || null,
         reaction_counts: reactionCounts as FeedPost['reaction_counts'],
         post_text: post.post_text,
@@ -194,13 +202,13 @@ export function useCommunityFeed() {
           // Fetch the new post with user info
           const { data: profile } = await supabase
             .from('public_profiles')
-            .select('user_id, name')
+            .select('user_id, display_name')
             .eq('user_id', payload.new.user_id)
             .single();
 
           const newPost: FeedPost = {
             ...(payload.new as FeedPost),
-            user_name: profile?.name || 'Anonymous',
+            user_name: profile?.display_name || 'Anonymous',
             user_reaction: null
           };
 
@@ -283,6 +291,19 @@ export function useCommunityFeed() {
       };
     }));
 
+    // Send notification to post owner (if not self)
+    if (post && post.user_id !== user.id && !existingReaction) {
+      await supabase.from('notifications').insert({
+        user_id: post.user_id,
+        actor_id: user.id,
+        notification_type: 'reaction',
+        title: 'New Reaction',
+        message: `reacted ${REACTION_LABELS[reactionType] || reactionType} to your post`,
+        reference_id: postId,
+        reference_type: 'post'
+      });
+    }
+
     return { error: null };
   }, [user, posts]);
 
@@ -292,6 +313,8 @@ export function useCommunityFeed() {
     if (commentText.length > 280) {
       return { error: new Error('Comment too long') };
     }
+
+    const post = posts.find(p => p.id === postId);
 
     const { error } = await supabase
       .from('feed_comments')
@@ -308,9 +331,22 @@ export function useCommunityFeed() {
         : p
     ));
 
+    // Send notification to post owner (if not self)
+    if (post && post.user_id !== user.id) {
+      await supabase.from('notifications').insert({
+        user_id: post.user_id,
+        actor_id: user.id,
+        notification_type: 'comment',
+        title: 'New Comment',
+        message: `commented on your post`,
+        reference_id: postId,
+        reference_type: 'post'
+      });
+    }
+
     toast.success('Comment added!');
     return { error: null };
-  }, [user]);
+  }, [user, posts]);
 
   const getComments = useCallback(async (postId: string) => {
     const { data: comments, error } = await supabase
@@ -327,12 +363,12 @@ export function useCommunityFeed() {
     const userIds = [...new Set(comments.map(c => c.user_id))];
     const { data: profiles } = await supabase
       .from('public_profiles')
-      .select('user_id, name')
+      .select('user_id, display_name')
       .in('user_id', userIds);
 
     const enrichedComments: FeedComment[] = comments.map(comment => ({
       ...comment,
-      user_name: profiles?.find(p => p.user_id === comment.user_id)?.name || 'Anonymous'
+      user_name: profiles?.find(p => p.user_id === comment.user_id)?.display_name || 'Anonymous'
     }));
 
     return { data: enrichedComments, error: null };
