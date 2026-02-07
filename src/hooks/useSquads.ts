@@ -149,10 +149,10 @@ export function useSquads() {
     if (memberData) {
       const userIds = memberData.map(m => m.user_id);
       
-      // Get names and progress
+      // Use public_profiles view instead of profiles table (squad members may not be friends)
       const { data: profiles } = await supabase
-        .from('profiles')
-        .select('user_id, name')
+        .from('public_profiles')
+        .select('user_id, display_name')
         .in('user_id', userIds);
 
       const { data: progress } = await supabase
@@ -160,12 +160,12 @@ export function useSquads() {
         .select('user_id, current_streak, total_sessions')
         .in('user_id', userIds);
 
-      const profileMap = new Map(profiles?.map(p => [p.user_id, p.name]) || []);
+      const profileMap = new Map(profiles?.map(p => [p.user_id, p.display_name]) || []);
       const progressMap = new Map(progress?.map(p => [p.user_id, p]) || []);
 
       const enriched = memberData.map(m => ({
         ...m,
-        name: profileMap.get(m.user_id) || 'Unknown',
+        name: profileMap.get(m.user_id) || 'Soldier',
         current_streak: progressMap.get(m.user_id)?.current_streak || 0,
         total_sessions: progressMap.get(m.user_id)?.total_sessions || 0
       }));
@@ -183,16 +183,17 @@ export function useSquads() {
 
     if (activityData) {
       const userIds = [...new Set(activityData.map(a => a.user_id))];
+      // Use public_profiles view for activity names too
       const { data: profiles } = await supabase
-        .from('profiles')
-        .select('user_id, name')
+        .from('public_profiles')
+        .select('user_id, display_name')
         .in('user_id', userIds);
 
-      const profileMap = new Map(profiles?.map(p => [p.user_id, p.name]) || []);
+      const profileMap = new Map(profiles?.map(p => [p.user_id, p.display_name]) || []);
 
       const enriched = activityData.map(a => ({
         ...a,
-        user_name: profileMap.get(a.user_id) || 'Unknown'
+        user_name: profileMap.get(a.user_id) || 'Soldier'
       }));
 
       setActivities(enriched);
