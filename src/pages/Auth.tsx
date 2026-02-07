@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import { Mail, Lock, User, Loader2, ChevronRight, ArrowLeft } from 'lucide-react';
 import logo from '@/assets/logo.png';
 import { Link } from 'react-router-dom';
+import { PhoneMockup } from '@/components/ui/PhoneMockup';
 
 const Auth = () => {
   const location = useLocation();
@@ -22,12 +23,12 @@ const Auth = () => {
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Redirect if already authenticated
+  // Redirect if already authenticated (but only after loading is complete)
   useEffect(() => {
-    if (isAuthenticated) {
+    if (!authLoading && isAuthenticated) {
       navigate('/home');
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, authLoading, navigate]);
 
   // Update mode based on URL
   useEffect(() => {
@@ -84,28 +85,35 @@ const Auth = () => {
   }
 
   return (
-    <div className="min-h-screen gradient-dawn flex flex-col items-center justify-center px-4 relative">
+    <div className="min-h-screen gradient-dawn flex flex-col lg:flex-row items-center justify-center px-4 relative">
       {/* Back to Landing */}
       <Link 
         to="/" 
-        className="absolute top-6 left-6 flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+        className="absolute top-6 left-6 flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors z-20"
       >
         <ArrowLeft className="w-4 h-4" />
         <span className="text-sm font-body">Back</span>
       </Link>
 
-      {/* Logo */}
-      <div className="mb-8 text-center">
-        <div className="w-32 h-32 mx-auto mb-4">
-          <img src={logo} alt="Faith Training" className="w-full h-full object-contain" />
-        </div>
-        <h1 className="font-display text-3xl uppercase tracking-wider text-foreground">
-          Faith Training
-        </h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          {mode === 'signin' ? 'Welcome back, soldier' : 'Join the ranks'}
-        </p>
+      {/* Left Side - Phone Mockup (hidden on mobile) */}
+      <div className="hidden lg:flex flex-1 items-center justify-center p-8">
+        <PhoneMockup className="transform hover:scale-105 transition-transform duration-500" />
       </div>
+
+      {/* Right Side - Form */}
+      <div className="flex-1 flex flex-col items-center justify-center w-full max-w-md lg:pr-8">
+        {/* Logo */}
+        <div className="mb-8 text-center">
+          <div className="w-24 h-24 lg:w-32 lg:h-32 mx-auto mb-4">
+            <img src={logo} alt="Faith Training" className="w-full h-full object-contain" />
+          </div>
+          <h1 className="font-display text-2xl lg:text-3xl uppercase tracking-wider text-foreground">
+            Faith Training
+          </h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            {mode === 'signin' ? 'Welcome back, soldier' : 'Join the ranks'}
+          </p>
+        </div>
 
       {/* Form Card */}
       <div className="w-full max-w-sm gym-card p-6 space-y-6">
@@ -199,10 +207,11 @@ const Auth = () => {
         </div>
       </div>
 
-      {/* Footer */}
-      <p className="text-xs text-muted-foreground mt-8 text-center">
-        By continuing, you agree to build your faith daily 💪
-      </p>
+        {/* Footer */}
+        <p className="text-xs text-muted-foreground mt-8 text-center">
+          By continuing, you agree to build your faith daily 💪
+        </p>
+      </div>
     </div>
   );
 };

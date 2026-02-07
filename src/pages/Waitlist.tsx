@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import logo from "@/assets/logo.png";
 import { supabase } from "@/integrations/supabase/client";
+import { PhoneMockup } from "@/components/ui/PhoneMockup";
 import { toast } from "sonner";
 
 const Waitlist = () => {
@@ -126,22 +127,24 @@ const Waitlist = () => {
       {/* Hero Section */}
       <section className="relative z-10 pt-12 pb-20 md:pt-20 md:pb-32">
         <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center">
-            {/* Coming Soon Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-warning/10 border border-warning/30 mb-8 animate-pulse">
-              <Timer className="w-4 h-4 text-warning" />
-              <span className="text-sm font-body uppercase tracking-wide text-warning">Doors Opening Soon</span>
-            </div>
+          <div className="grid lg:grid-cols-2 gap-12 items-center max-w-6xl mx-auto">
+            {/* Left Content */}
+            <div className="text-center lg:text-left order-2 lg:order-1">
+              {/* Coming Soon Badge */}
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-warning/10 border border-warning/30 mb-8 animate-pulse">
+                <Timer className="w-4 h-4 text-warning" />
+                <span className="text-sm font-body uppercase tracking-wide text-warning">Doors Opening Soon</span>
+              </div>
 
-            <h1 className="font-display text-5xl md:text-7xl tracking-tight mb-6 leading-[0.9]">
-              STOP SCROLLING.
-              <span className="block text-primary">START TRAINING.</span>
-            </h1>
+              <h1 className="font-display text-5xl md:text-6xl lg:text-7xl tracking-tight mb-6 leading-[0.9]">
+                STOP SCROLLING.
+                <span className="block text-primary">START TRAINING.</span>
+              </h1>
 
-            <p className="text-lg md:text-xl text-muted-foreground font-body max-w-2xl mx-auto mb-10 leading-relaxed">
-              Your faith won't build itself. FaithFit turns your daily quiet time into a 
-              spiritual workout—structured, accountable, and built to get results.
-            </p>
+              <p className="text-lg md:text-xl text-muted-foreground font-body max-w-2xl mx-auto lg:mx-0 mb-10 leading-relaxed">
+                Your faith won't build itself. FaithFit turns your daily quiet time into a 
+                spiritual workout—structured, accountable, and built to get results.
+              </p>
 
             {/* Waitlist Count */}
             <div className="flex items-center justify-center gap-2 mb-8">
@@ -200,11 +203,17 @@ const Waitlist = () => {
               </div>
             )}
 
-            {/* Privacy Note */}
-            <p className="text-sm text-muted-foreground flex items-center justify-center gap-2">
-              <Shield className="w-4 h-4" />
-              We respect your privacy. No spam, ever.
-            </p>
+              {/* Privacy Note */}
+              <p className="text-sm text-muted-foreground flex items-center justify-center lg:justify-start gap-2">
+                <Shield className="w-4 h-4" />
+                We respect your privacy. No spam, ever.
+              </p>
+            </div>
+            
+            {/* Right - Phone Mockup */}
+            <div className="order-1 lg:order-2 flex justify-center">
+              <PhoneMockup className="transform hover:scale-105 transition-transform duration-500" />
+            </div>
           </div>
         </div>
       </section>
