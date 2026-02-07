@@ -226,7 +226,7 @@ export default function Session() {
           try {
             await supabase.rpc('update_challenge_progress', {
               _user_id: user.id,
-              _challenge_type: 'session',
+              _challenge_type: 'sessions',
               _increment: 1
             });
           } catch (err) {

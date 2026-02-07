@@ -19,6 +19,16 @@ export function useNotifications() {
   const [preferences, setPreferences] = useState<NotificationPreferences | null>(null);
   const [loading, setLoading] = useState(true);
   const [permissionStatus, setPermissionStatus] = useState<NotificationPermission | 'unsupported'>('default');
+  const [swRegistration, setSwRegistration] = useState<ServiceWorkerRegistration | null>(null);
+
+  // Register service worker
+  useEffect(() => {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.ready.then((registration) => {
+        setSwRegistration(registration);
+      });
+    }
+  }, []);
 
   useEffect(() => {
     if ('Notification' in window) {
@@ -157,6 +167,7 @@ export function useNotifications() {
     preferences,
     loading,
     permissionStatus,
+    swRegistration,
     requestPermission,
     updatePreferences,
     scheduleNotification,

@@ -332,33 +332,24 @@ export function useFriends() {
     const endDate = new Date();
     endDate.setDate(endDate.getDate() + durationDays);
 
-    const { data: challenge, error } = await supabase
-      .from('challenges')
-      .insert({
-        challenger_id: user.id,
-        challenged_id: friendId,
-        challenge_type: challengeType,
-        challenge_name: challengeName,
-        description,
-        target_value: targetValue,
-        end_date: endDate.toISOString().split('T')[0],
-        status: 'pending'
-      })
-      .select()
-      .single();
+    // Use SECURITY DEFINER RPC to create challenge with progress for both users
+    const { data: challengeId, error } = await supabase
+      .rpc('create_challenge_with_progress', {
+        _challenger_id: user.id,
+        _challenged_id: friendId,
+        _challenge_type: challengeType,
+        _challenge_name: challengeName,
+        _target_value: targetValue,
+        _end_date: endDate.toISOString().split('T')[0],
+        _description: description || null
+      });
 
     if (error) {
       return { error };
     }
 
-    // Create progress entries for both users
-    await supabase.from('challenge_progress').insert([
-      { challenge_id: challenge.id, user_id: user.id, current_value: 0 },
-      { challenge_id: challenge.id, user_id: friendId, current_value: 0 }
-    ]);
-
     await fetchChallenges();
-    return { data: challenge, error: null };
+    return { data: { id: challengeId }, error: null };
   };
 
   const acceptChallenge = async (challengeId: string) => {
