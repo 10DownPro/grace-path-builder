@@ -221,6 +221,19 @@ export default function Session() {
           });
         }
         
+        // Update challenge progress for session completion
+        if (user) {
+          try {
+            await supabase.rpc('update_challenge_progress', {
+              _user_id: user.id,
+              _challenge_type: 'session',
+              _increment: 1
+            });
+          } catch (err) {
+            console.error('Error updating challenge progress:', err);
+          }
+        }
+        
         // Update squad presence to idle and post completion activity
         await updateSquadPresence('idle');
         await postTrainingActivity('training_completed');

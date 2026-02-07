@@ -34,6 +34,7 @@ export interface FeedPost {
     amen: number;
     strong: number;
     heart: number;
+    lightbulb: number;
   };
   // New fields for user-generated posts
   is_user_generated?: boolean;
@@ -47,7 +48,7 @@ export interface FeedReaction {
   id: string;
   post_id: string;
   user_id: string;
-  reaction_type: 'fire' | 'praying' | 'amen' | 'strong' | 'heart';
+  reaction_type: 'fire' | 'praying' | 'amen' | 'strong' | 'heart' | 'lightbulb';
   created_at: string;
 }
 
@@ -147,7 +148,7 @@ export function useCommunityFeed() {
     const reactionCountsMap: Record<string, Record<string, number>> = {};
     allReactions?.forEach(r => {
       if (!reactionCountsMap[r.post_id]) {
-        reactionCountsMap[r.post_id] = { fire: 0, praying: 0, amen: 0, strong: 0, heart: 0 };
+        reactionCountsMap[r.post_id] = { fire: 0, praying: 0, amen: 0, strong: 0, heart: 0, lightbulb: 0 };
       }
       if (r.reaction_type in reactionCountsMap[r.post_id]) {
         reactionCountsMap[r.post_id][r.reaction_type]++;
@@ -158,7 +159,7 @@ export function useCommunityFeed() {
     const enrichedPosts: FeedPost[] = postsData.map(post => {
       const profile = profiles?.find(p => p.user_id === post.user_id);
       const userReaction = userReactions?.find(r => r.post_id === post.id);
-      const reactionCounts = reactionCountsMap[post.id] || { fire: 0, praying: 0, amen: 0, strong: 0, heart: 0 };
+      const reactionCounts = reactionCountsMap[post.id] || { fire: 0, praying: 0, amen: 0, strong: 0, heart: 0, lightbulb: 0 };
 
       return {
         ...post,
