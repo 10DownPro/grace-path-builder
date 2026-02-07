@@ -8,7 +8,8 @@ const REACTION_LABELS: Record<string, string> = {
   praying: '🙏',
   amen: '🙌',
   strong: '💪',
-  heart: '❤️'
+  heart: '❤️',
+  lightbulb: '💡'
 };
 
 export interface FeedPost {
