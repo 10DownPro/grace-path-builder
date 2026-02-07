@@ -24,6 +24,7 @@ import Waitlist from "./pages/Waitlist";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import Community from "./pages/Community";
+import Help from "./pages/Help";
 
 const queryClient = new QueryClient();
 
@@ -76,6 +77,7 @@ const App = () => (
           <Route path="/feed" element={<ProtectedRoute><Feed /></ProtectedRoute>} />
           <Route path="/community" element={<ProtectedRoute><Community /></ProtectedRoute>} />
           <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+          <Route path="/help" element={<ProtectedRoute><Help /></ProtectedRoute>} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
