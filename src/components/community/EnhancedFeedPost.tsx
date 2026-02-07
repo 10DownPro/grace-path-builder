@@ -246,11 +246,13 @@ export function EnhancedFeedPost({
       );
     }
 
-    // Regular post text + media
+    // Regular post text + media (check both post_text AND content_data.text)
+    const displayText = post.post_text || (contentData.text as string) || (contentData.reflection_text as string);
+    
     return (
       <>
-        {post.post_text && (
-          <p className="text-foreground whitespace-pre-wrap">{post.post_text}</p>
+        {displayText && (
+          <p className="text-foreground whitespace-pre-wrap">{displayText}</p>
         )}
         {renderAnsweredTestimony()}
         <MediaEmbed 
