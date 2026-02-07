@@ -13,7 +13,7 @@ import { useAuth } from '@/hooks/useAuth';
 
 interface FeedPostProps {
   post: FeedPostType;
-  onReaction: (postId: string, reactionType: 'fire' | 'praying' | 'amen' | 'strong' | 'heart') => Promise<{ error: Error | null }>;
+  onReaction: (postId: string, reactionType: 'fire' | 'praying' | 'amen' | 'strong' | 'heart' | 'lightbulb') => Promise<{ error: Error | null }>;
   onComment: (postId: string, text: string) => Promise<{ error: Error | null }>;
   onGetComments: (postId: string) => Promise<{ data: FeedComment[] | null; error: Error | null }>;
 }
@@ -23,6 +23,7 @@ const REACTIONS = [
   { type: 'praying' as const, emoji: '🙏', label: 'Praying' },
   { type: 'strong' as const, emoji: '💪', label: 'Strong' },
   { type: 'heart' as const, emoji: '❤️', label: 'Heart' },
+  { type: 'lightbulb' as const, emoji: '💡', label: 'Insightful' },
 ];
 
 const POST_TYPE_CONFIG: Record<string, { badge: string; emoji: string; color: string }> = {
@@ -80,6 +81,58 @@ export function FeedPost({ post, onReaction, onComment, onGetComments }: FeedPos
     // Check if this is a user-generated post with text
     const userText = post.post_text || (contentData.text as string);
     const isPrayerRequest = contentData.is_prayer_request as boolean;
+    
+    // Check for shared verse content
+    const hasVerseData = contentData.verse_reference && contentData.verse_text;
+    const hasPrayerData = contentData.prayer_content;
+    
+    // Render shared verse post
+    if (hasVerseData) {
+      return (
+        <div className="space-y-3">
+          {/* User's thoughts */}
+          {contentData.user_thoughts && (
+            <p className="text-foreground whitespace-pre-wrap">{String(contentData.user_thoughts)}</p>
+          )}
+          
+          {/* Verse card */}
+          <div className="p-4 rounded-lg bg-muted/50 border border-border">
+            <p className="text-xs text-primary uppercase tracking-wider mb-2 font-display">
+              {String(contentData.verse_reference)}
+            </p>
+            <p className="text-sm text-foreground italic leading-relaxed">
+              "{String(contentData.verse_text)}"
+            </p>
+          </div>
+        </div>
+      );
+    }
+    
+    // Render shared prayer post
+    if (hasPrayerData) {
+      return (
+        <div className="space-y-3">
+          {/* Additional context */}
+          {contentData.additional_context && (
+            <p className="text-foreground whitespace-pre-wrap">{String(contentData.additional_context)}</p>
+          )}
+          
+          {/* Prayer card */}
+          <div className="p-3 rounded-lg bg-muted/50 border border-border">
+            <div className="flex items-center gap-2 mb-2">
+              <HandHeart className="h-4 w-4 text-primary" />
+              <span className="text-xs text-primary font-medium uppercase">Prayer Request</span>
+            </div>
+            <p className="text-sm text-foreground">{String(contentData.prayer_content)}</p>
+            {contentData.is_answered && contentData.answered_note && (
+              <div className="mt-2 pt-2 border-t border-border">
+                <p className="text-xs text-green-500">✓ Answered: {String(contentData.answered_note)}</p>
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
     
     // User-generated content with media
     if (post.is_user_generated || userText) {

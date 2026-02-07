@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { Bookmark, BookmarkCheck, Share2, RefreshCw, ChevronRight, Sparkles, Users } from 'lucide-react';
+import { Bookmark, BookmarkCheck, Share2, RefreshCw, ChevronRight, Sparkles, Users, ImagePlus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import type { FeelingVerse, SupportMessage } from '@/hooks/useFeelings';
 import { ShareVerseToFeedDialog } from '@/components/feed/ShareVerseToFeedDialog';
+import { useVerseImage } from '@/hooks/useVerseImage';
 
 interface VerseDisplayProps {
   verses: FeelingVerse[];
@@ -32,6 +33,8 @@ export function VerseDisplay({
   const [expandedVerse, setExpandedVerse] = useState<string | null>(null);
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
   const [verseToShare, setVerseToShare] = useState<FeelingVerse | null>(null);
+  const [generatingImageFor, setGeneratingImageFor] = useState<string | null>(null);
+  const { generateImage, selectThemeFromVerse, getFallbackGradient, loading: imageLoading } = useVerseImage();
 
   const handleNativeShare = async (verse: FeelingVerse) => {
     const text = `"${verse.text_kjv}"\n\n— ${verse.reference}`;
@@ -54,6 +57,27 @@ export function VerseDisplay({
   const handleShareToFeed = (verse: FeelingVerse) => {
     setVerseToShare(verse);
     setShareDialogOpen(true);
+  };
+
+  const handleGenerateImage = async (verse: FeelingVerse) => {
+    setGeneratingImageFor(verse.id);
+    const theme = selectThemeFromVerse(verse.text_kjv || '');
+    const result = await generateImage(verse.text_kjv || '', verse.reference, theme);
+    setGeneratingImageFor(null);
+    
+    if (result) {
+      // Open the image in a new tab or show it in a modal
+      const link = document.createElement('a');
+      link.href = result.imageUrl;
+      link.download = `${verse.reference.replace(/[^a-zA-Z0-9]/g, '_')}_verse.png`;
+      link.target = '_blank';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      toast.success('Verse image created! 🖼️');
+    } else {
+      toast.error('Failed to generate image');
+    }
   };
 
   const copyToClipboard = (text: string) => {
@@ -189,6 +213,19 @@ export function VerseDisplay({
                   >
                     <Users className="h-4 w-4 mr-1" />
                     <span className="text-xs font-display uppercase">Feed</span>
+                  </Button>
+
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleGenerateImage(verse)}
+                    disabled={generatingImageFor === verse.id}
+                    className="h-8 px-3 text-muted-foreground hover:text-primary"
+                  >
+                    <ImagePlus className={cn("h-4 w-4 mr-1", generatingImageFor === verse.id && "animate-pulse")} />
+                    <span className="text-xs font-display uppercase">
+                      {generatingImageFor === verse.id ? 'Creating...' : 'Image'}
+                    </span>
                   </Button>
                 </div>
 

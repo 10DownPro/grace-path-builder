@@ -5,7 +5,9 @@ import { ChapterSelector } from '@/components/bible/ChapterSelector';
 import { ChapterReader } from '@/components/bible/ChapterReader';
 import { useGroupScripture } from '@/hooks/useGroupScripture';
 import { BIBLE_BOOKS, type BibleBook } from '@/lib/bibleBooks';
-import { BookOpen } from 'lucide-react';
+import { BookOpen, Users } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
 
 type ViewMode = 'book' | 'chapter' | 'reading';
 
@@ -86,6 +88,19 @@ export default function Bible() {
                     66 Books • Full Scripture Access
                   </p>
                 </div>
+              </div>
+              
+              {/* Group Study CTA */}
+              <div className="pt-4 mt-4 border-t border-border">
+                <Link to="/friends?tab=squads">
+                  <Button variant="outline" size="sm" className="w-full gap-2 border-primary/30 hover:bg-primary/10">
+                    <Users className="h-4 w-4 text-primary" />
+                    <span className="font-display text-xs uppercase">Study with Squad</span>
+                  </Button>
+                </Link>
+                <p className="text-xs text-muted-foreground text-center mt-2">
+                  Join or create a squad to study the Bible together
+                </p>
               </div>
             </div>
             

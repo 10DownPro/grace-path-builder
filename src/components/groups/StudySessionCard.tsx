@@ -5,9 +5,10 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { BookOpen, CheckCircle2, Users, Loader2, ChevronDown, ChevronUp } from 'lucide-react';
+import { BookOpen, CheckCircle2, Users, Loader2, ChevronDown, ChevronUp, ExternalLink } from 'lucide-react';
 import { toast } from 'sonner';
 import { StudySession, READING_LEVELS } from '@/hooks/useStudyGroups';
+import { Link } from 'react-router-dom';
 
 interface StudySessionCardProps {
   session: StudySession;
@@ -166,6 +167,14 @@ export function StudySessionCard({
 
         {expanded && (
           <div className="space-y-4 mt-4 pt-4 border-t">
+            {/* Open in Bible Reader */}
+            <Link to="/bible">
+              <Button variant="outline" size="sm" className="w-full gap-2 mb-2">
+                <ExternalLink className="h-4 w-4" />
+                Open {session.book} {session.chapter} in Bible
+              </Button>
+            </Link>
+            
             {/* Content at user's level */}
             <div className="bg-muted/50 rounded-lg p-4">
               <p className="whitespace-pre-line text-sm">{content.summary}</p>
