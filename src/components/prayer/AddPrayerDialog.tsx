@@ -46,7 +46,16 @@ export function AddPrayerDialog({ onAddPrayer }: AddPrayerDialogProps) {
   const [content, setContent] = useState('');
 
   const handleSubmit = () => {
-    if (!content.trim()) return;
+    if (!content.trim()) {
+      // Show visual feedback for empty content
+      const textarea = document.querySelector('textarea');
+      if (textarea) {
+        textarea.focus();
+        textarea.classList.add('border-destructive');
+        setTimeout(() => textarea.classList.remove('border-destructive'), 2000);
+      }
+      return;
+    }
     
     onAddPrayer({
       date: new Date().toISOString().split('T')[0],
