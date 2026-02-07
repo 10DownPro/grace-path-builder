@@ -55,7 +55,7 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           {/* Public Routes */}
-          <Route path="/" element={<Landing />} />
+          <Route path="/" element={<Waitlist />} />
           <Route path="/waitlist" element={<Waitlist />} />
           <Route path="/login" element={<Auth />} />
           <Route path="/signup" element={<Auth />} />
