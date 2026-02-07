@@ -115,15 +115,10 @@ const Waitlist = () => {
       <nav className="relative z-10 py-6">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between">
-            <Link to="/" className="flex items-center gap-2">
+            <div className="flex items-center gap-2">
               <img src={logo} alt="FaithFit" className="w-10 h-10 object-contain" />
               <span className="font-display text-xl tracking-wider text-primary">FAITHFIT</span>
-            </Link>
-            <Link to="/">
-              <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
-                Back to Home
-              </Button>
-            </Link>
+            </div>
           </div>
         </div>
       </nav>
