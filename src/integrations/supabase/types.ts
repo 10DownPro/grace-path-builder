@@ -2924,6 +2924,18 @@ export type Database = {
         Args: { p_feature_name: string; p_user_id: string }
         Returns: Json
       }
+      create_challenge_with_progress: {
+        Args: {
+          _challenge_name: string
+          _challenge_type: string
+          _challenged_id: string
+          _challenger_id: string
+          _description?: string
+          _end_date: string
+          _target_value: number
+        }
+        Returns: string
+      }
       increment_feature_usage: {
         Args: { p_feature_name: string; p_user_id: string }
         Returns: undefined
