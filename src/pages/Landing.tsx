@@ -589,6 +589,7 @@ const Landing = () => {
                 <Link to="/waitlist" className="hover:text-foreground transition-colors">Join Waitlist</Link>
                 <button onClick={() => scrollToSection('features')} className="hover:text-foreground transition-colors">Features</button>
                 <button onClick={() => scrollToSection('testimonials')} className="hover:text-foreground transition-colors">Testimonials</button>
+                <a href="mailto:support@faithfit.app" className="hover:text-foreground transition-colors">Contact</a>
                 <Link to="/login" className="hover:text-foreground transition-colors">Login</Link>
               </div>
             </div>
