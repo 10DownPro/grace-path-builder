@@ -69,26 +69,26 @@ const Waitlist = () => {
   const features = [
     {
       icon: Flame,
-      title: "Daily Training Sessions",
-      description: "Structured 30-minute sessions covering Worship, Scripture, Prayer & Reflection"
+      title: "4-Set Daily Workouts",
+      description: "Worship. Scripture. Prayer. Reflection. 30 minutes. No excuses. Build spiritual muscle."
     },
     {
       icon: Users,
       title: "Squad Accountability",
-      description: "Train with friends, compete on leaderboards, and stay motivated together"
+      description: "Lock in with your crew. Track each other's grind. Iron sharpens iron."
     },
     {
       icon: Shield,
-      title: "Battle Verses Library",
-      description: "600+ verses organized by struggle—anxiety, doubt, grief, and 25 more categories"
+      title: "Battle Verses Armory",
+      description: "600+ weapons for 25+ struggles. Anxiety, doubt, grief—find your verse, fight back."
     }
   ];
 
   const earlyAccessBenefits = [
-    "50% off Premium for life",
-    "Founding Member badge",
-    "Early access to new features",
-    "Direct input on app development"
+    "50% off Premium—forever",
+    "Founding Member status",
+    "First access to new gear",
+    "Shape the app with us"
   ];
 
   return (
@@ -130,18 +130,17 @@ const Waitlist = () => {
             {/* Coming Soon Badge */}
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-warning/10 border border-warning/30 mb-8 animate-pulse">
               <Timer className="w-4 h-4 text-warning" />
-              <span className="text-sm font-body uppercase tracking-wide text-warning">Launching Soon</span>
+              <span className="text-sm font-body uppercase tracking-wide text-warning">Doors Opening Soon</span>
             </div>
 
             <h1 className="font-display text-5xl md:text-7xl tracking-tight mb-6 leading-[0.9]">
-              BE THE FIRST TO
-              <span className="block text-primary">TRANSFORM YOUR</span>
-              <span className="block">FAITH</span>
+              STOP SCROLLING.
+              <span className="block text-primary">START TRAINING.</span>
             </h1>
 
             <p className="text-lg md:text-xl text-muted-foreground font-body max-w-2xl mx-auto mb-10 leading-relaxed">
-              FaithFit is launching soon. Join the waitlist to get exclusive early access, 
-              founding member benefits, and be part of building something special.
+              Your faith won't build itself. FaithFit turns your daily quiet time into a 
+              spiritual workout—structured, accountable, and built to get results.
             </p>
 
             {/* Waitlist Count */}
@@ -149,7 +148,7 @@ const Waitlist = () => {
               <Users className="w-5 h-5 text-primary" />
               <span className="text-lg font-body">
                 <span className="text-primary font-display text-2xl">{waitlistCount.toLocaleString()}</span>
-                {" "}believers already waiting
+                {" "}already in line
               </span>
             </div>
 
@@ -194,9 +193,9 @@ const Waitlist = () => {
                     <CheckCircle2 className="w-6 h-6 text-success" />
                   </div>
                 </div>
-                <h3 className="font-display text-2xl text-success mb-2">YOU'RE ON THE LIST!</h3>
+                <h3 className="font-display text-2xl text-success mb-2">YOU'RE LOCKED IN.</h3>
                 <p className="text-muted-foreground font-body">
-                  We'll email you as soon as FaithFit launches. Check your inbox for a confirmation.
+                  We'll hit your inbox the moment doors open. Get ready to train.
                 </p>
               </div>
             )}
@@ -216,10 +215,10 @@ const Waitlist = () => {
           <div className="text-center mb-12">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/30 mb-6">
               <Gift className="w-4 h-4 text-primary" />
-              <span className="text-sm font-body uppercase tracking-wide text-primary">Early Adopter Perks</span>
+              <span className="text-sm font-body uppercase tracking-wide text-primary">Founding Members Only</span>
             </div>
             <h2 className="font-display text-3xl md:text-4xl tracking-tight">
-              FIRST 500 SIGNUPS GET
+              FIRST 500 GET THE GOODS
             </h2>
           </div>
 
@@ -241,10 +240,10 @@ const Waitlist = () => {
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="font-display text-3xl md:text-5xl tracking-tight mb-4">
-              WHAT'S <span className="text-primary">COMING</span>
+              YOUR NEW <span className="text-primary">TRAINING REGIMEN</span>
             </h2>
             <p className="text-muted-foreground font-body max-w-xl mx-auto">
-              A sneak peek at the features that will transform your daily faith practice.
+              This isn't another devotional app. It's a system built to forge unshakeable faith.
             </p>
           </div>
 
@@ -275,18 +274,18 @@ const Waitlist = () => {
               <Bell className="w-8 h-8 text-primary" />
             </div>
             <h2 className="font-display text-3xl md:text-4xl tracking-tight mb-4">
-              DON'T MISS THE LAUNCH
+              THE GYM OPENS SOON
             </h2>
             <p className="text-muted-foreground font-body mb-8">
-              We're putting the finishing touches on FaithFit. Join the waitlist above 
-              to be the first to know when we go live.
+              We're loading the racks. Drop your email above and we'll 
+              let you know the second you can start training.
             </p>
             {!isSubmitted && (
-              <Button 
+              <Button
                 onClick={() => document.querySelector('input')?.focus()}
                 className="btn-gym"
               >
-                Join the Waitlist
+                Get In Line
                 <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
             )}
