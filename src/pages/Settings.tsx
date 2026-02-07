@@ -288,7 +288,7 @@ export default function Settings() {
           label: 'Help Center',
           description: 'FAQs and tutorials',
           type: 'link' as const,
-          onClick: () => toast.info('Help center coming soon!')
+          onClick: () => navigate('/help')
         },
         {
           icon: Heart,
