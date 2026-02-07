@@ -37,7 +37,7 @@ function toPrayerEntry(prayer: Prayer): PrayerEntry {
 }
 
 export default function Prayer() {
-  const { prayers, loading, addPrayer, markAnswered } = usePrayers();
+  const { prayers, loading, addPrayer, markAnswered, unmarkAnswered } = usePrayers();
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'answered'>('all');
   const [typeFilter, setTypeFilter] = useState<'all' | PrayerEntry['type']>('all');
   const [showInstructions, setShowInstructions] = useState(() => {
@@ -77,6 +77,15 @@ export default function Prayer() {
       toast.error('Failed to update prayer');
     } else {
       toast.success('Praise God! Prayer answered! 🎉');
+    }
+  };
+
+  const handleUnmarkAnswered = async (id: string) => {
+    const { error } = await unmarkAnswered(id);
+    if (error) {
+      toast.error('Failed to update prayer');
+    } else {
+      toast.success('Prayer status reverted');
     }
   };
 
@@ -228,6 +237,7 @@ export default function Prayer() {
               key={prayer.id} 
               prayer={prayer}
               onMarkAnswered={(note) => handleMarkAnswered(prayer.id, note)}
+              onUnmarkAnswered={() => handleUnmarkAnswered(prayer.id)}
             />
           ))}
           
