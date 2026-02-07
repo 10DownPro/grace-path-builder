@@ -212,31 +212,20 @@ export function useStudyGroups() {
   ) => {
     if (!user) return { error: new Error('Not authenticated') };
 
-    const { data, error } = await supabase
-      .from('study_groups')
-      .insert({
-        group_name: name,
-        group_type: groupType,
-        description,
-        group_avatar_emoji: emoji,
-        created_by: user.id
-      })
-      .select()
-      .single();
-
-    if (data && !error) {
-      // Add creator as leader
-      await supabase.from('group_members').insert({
-        group_id: data.id,
-        user_id: user.id,
-        role: 'leader',
-        age_group: 'adult',
-        reading_level: 'adult'
+    // Use the security definer function to create group and add creator as leader
+    const { data: groupId, error } = await supabase
+      .rpc('create_study_group', {
+        _group_name: name,
+        _group_type: groupType,
+        _description: description || null,
+        _group_avatar_emoji: emoji
       });
+
+    if (!error && groupId) {
       await fetchGroups();
     }
 
-    return { data, error };
+    return { data: groupId ? { id: groupId } : null, error };
   };
 
   const joinGroupByCode = async (code: string) => {

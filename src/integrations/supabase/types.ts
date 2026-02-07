@@ -2936,6 +2936,15 @@ export type Database = {
         }
         Returns: string
       }
+      create_study_group: {
+        Args: {
+          _description?: string
+          _group_avatar_emoji?: string
+          _group_name: string
+          _group_type: string
+        }
+        Returns: string
+      }
       increment_feature_usage: {
         Args: { p_feature_name: string; p_user_id: string }
         Returns: undefined
