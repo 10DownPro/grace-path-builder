@@ -73,10 +73,13 @@ export function useMicroActions() {
     if (!error && data) {
       setDailyGoals(data as DailyMicroGoals);
     } else if (!data) {
-      // Create today's goals if they don't exist
+      // Create today's goals if they don't exist - use upsert to avoid conflicts
       const { data: newGoals, error: createError } = await supabase
         .from('daily_micro_goals')
-        .insert({ user_id: user.id, goal_date: today })
+        .upsert(
+          { user_id: user.id, goal_date: today },
+          { onConflict: 'user_id,goal_date' }
+        )
         .select()
         .single();
 

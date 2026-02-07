@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      battle_verses_daily: {
+        Row: {
+          background_image_url: string | null
+          created_at: string
+          id: string
+          theme: string
+          verse_date: string
+          verse_reference: string
+          verse_text_esv: string | null
+          verse_text_kjv: string
+          verse_text_niv: string | null
+          verse_text_nlt: string | null
+        }
+        Insert: {
+          background_image_url?: string | null
+          created_at?: string
+          id?: string
+          theme?: string
+          verse_date: string
+          verse_reference: string
+          verse_text_esv?: string | null
+          verse_text_kjv: string
+          verse_text_niv?: string | null
+          verse_text_nlt?: string | null
+        }
+        Update: {
+          background_image_url?: string | null
+          created_at?: string
+          id?: string
+          theme?: string
+          verse_date?: string
+          verse_reference?: string
+          verse_text_esv?: string | null
+          verse_text_kjv?: string
+          verse_text_niv?: string | null
+          verse_text_nlt?: string | null
+        }
+        Relationships: []
+      }
       bible_passages: {
         Row: {
           book: string
