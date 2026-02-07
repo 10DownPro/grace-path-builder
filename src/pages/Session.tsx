@@ -245,7 +245,7 @@ export default function Session() {
         if (canSpinToday) {
           setShowSpinWheel(true);
         } else {
-          navigate('/');
+          navigate('/home');
         }
       }, 1500);
     }
@@ -441,7 +441,7 @@ export default function Session() {
       <SpinWheelDialog
         open={showSpinWheel}
         onOpenChange={setShowSpinWheel}
-        onComplete={() => navigate('/')}
+        onComplete={() => navigate('/home')}
       />
     </PageLayout>
   );
