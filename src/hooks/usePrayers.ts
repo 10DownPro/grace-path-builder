@@ -134,11 +134,36 @@ export function usePrayers() {
     return { error: null };
   };
 
+  const unmarkAnswered = async (id: string) => {
+    if (!user) return { error: new Error('Not authenticated') };
+
+    const { data, error } = await supabase
+      .from('prayers')
+      .update({
+        answered: false,
+        answered_date: null,
+        answered_note: null
+      })
+      .eq('id', id)
+      .eq('user_id', user.id)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error unmarking prayer:', error);
+      return { error };
+    }
+    
+    setPrayers(prayers.map(p => p.id === id ? data as Prayer : p));
+    return { data, error: null };
+  };
+
   return {
     prayers,
     loading,
     addPrayer,
     markAnswered,
+    unmarkAnswered,
     deletePrayer,
     refetch: fetchPrayers
   };

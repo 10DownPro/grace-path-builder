@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
-import { Bookmark, BookmarkCheck, Share2, RefreshCw, ChevronRight, Sparkles } from 'lucide-react';
+import { useState } from 'react';
+import { Bookmark, BookmarkCheck, Share2, RefreshCw, ChevronRight, Sparkles, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import type { FeelingVerse, SupportMessage } from '@/hooks/useFeelings';
+import { ShareVerseToFeedDialog } from '@/components/feed/ShareVerseToFeedDialog';
 
 interface VerseDisplayProps {
   verses: FeelingVerse[];
@@ -29,8 +30,10 @@ export function VerseDisplay({
   hasMore
 }: VerseDisplayProps) {
   const [expandedVerse, setExpandedVerse] = useState<string | null>(null);
+  const [shareDialogOpen, setShareDialogOpen] = useState(false);
+  const [verseToShare, setVerseToShare] = useState<FeelingVerse | null>(null);
 
-  const handleShare = async (verse: FeelingVerse) => {
+  const handleNativeShare = async (verse: FeelingVerse) => {
     const text = `"${verse.text_kjv}"\n\n— ${verse.reference}`;
     
     if (navigator.share) {
@@ -46,6 +49,11 @@ export function VerseDisplay({
     } else {
       copyToClipboard(text);
     }
+  };
+
+  const handleShareToFeed = (verse: FeelingVerse) => {
+    setVerseToShare(verse);
+    setShareDialogOpen(true);
   };
 
   const copyToClipboard = (text: string) => {
@@ -166,11 +174,21 @@ export function VerseDisplay({
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => handleShare(verse)}
+                    onClick={() => handleNativeShare(verse)}
                     className="h-8 px-3 text-muted-foreground hover:text-foreground"
                   >
                     <Share2 className="h-4 w-4 mr-1" />
-                    <span className="text-xs font-display uppercase">Share</span>
+                    <span className="text-xs font-display uppercase">Copy</span>
+                  </Button>
+
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleShareToFeed(verse)}
+                    className="h-8 px-3 text-muted-foreground hover:text-primary"
+                  >
+                    <Users className="h-4 w-4 mr-1" />
+                    <span className="text-xs font-display uppercase">Feed</span>
                   </Button>
                 </div>
 
@@ -212,6 +230,20 @@ export function VerseDisplay({
       <p className="text-center text-[10px] text-muted-foreground py-4 font-body">
         Scripture from the King James Version • Tap a verse to expand
       </p>
+
+      {/* Share to Feed Dialog */}
+      {verseToShare && (
+        <ShareVerseToFeedDialog
+          open={shareDialogOpen}
+          onOpenChange={setShareDialogOpen}
+          verse={{
+            reference: verseToShare.reference,
+            text: verseToShare.text_kjv || '',
+            book: verseToShare.book,
+            chapter: verseToShare.chapter,
+          }}
+        />
+      )}
     </div>
   );
 }

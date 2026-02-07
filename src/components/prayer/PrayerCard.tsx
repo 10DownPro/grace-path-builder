@@ -3,13 +3,14 @@ import { PrayerEntry } from '@/types/faith';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Check, Heart, MessageCircle, Flame, PartyPopper, X, ChevronDown, ChevronUp } from 'lucide-react';
+import { Check, Heart, MessageCircle, Flame, PartyPopper, X, ChevronDown, ChevronUp, Undo2, Share2 } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { SharePrayerToFeedDialog } from './SharePrayerToFeedDialog';
 
 const prayerTypeConfig = {
   adoration: {
@@ -53,12 +54,14 @@ const prayerTypeConfig = {
 interface PrayerCardProps {
   prayer: PrayerEntry;
   onMarkAnswered: (note: string) => void;
+  onUnmarkAnswered?: () => void;
 }
 
-export function PrayerCard({ prayer, onMarkAnswered }: PrayerCardProps) {
+export function PrayerCard({ prayer, onMarkAnswered, onUnmarkAnswered }: PrayerCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isAnswerDialogOpen, setIsAnswerDialogOpen] = useState(false);
   const [answerNote, setAnswerNote] = useState('');
+  const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
   
   const config = prayerTypeConfig[prayer.type];
   const Icon = config.icon;
@@ -147,23 +150,49 @@ export function PrayerCard({ prayer, onMarkAnswered }: PrayerCardProps) {
           {/* Answered badge */}
           {prayer.answered && (
             <div className="pt-2 border-t border-success/20">
-              <div className="flex items-start gap-2">
-                <div className="w-6 h-6 rounded-full bg-success/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <Heart className="h-3 w-3 text-success fill-current" />
-                </div>
-                <div className="space-y-1">
-                  <p className="text-sm text-success font-medium">
-                    God answered on {prayer.answeredDate}
-                  </p>
-                  {prayer.answeredNote && (
-                    <p className="text-sm text-muted-foreground italic">
-                      "{prayer.answeredNote}"
+              <div className="flex items-start justify-between gap-2">
+                <div className="flex items-start gap-2">
+                  <div className="w-6 h-6 rounded-full bg-success/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <Heart className="h-3 w-3 text-success fill-current" />
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-sm text-success font-medium">
+                      God answered on {prayer.answeredDate}
                     </p>
-                  )}
+                    {prayer.answeredNote && (
+                      <p className="text-sm text-muted-foreground italic">
+                        "{prayer.answeredNote}"
+                      </p>
+                    )}
+                  </div>
                 </div>
+                {onUnmarkAnswered && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={onUnmarkAnswered}
+                    className="text-muted-foreground hover:text-foreground text-xs"
+                  >
+                    <Undo2 className="h-3 w-3 mr-1" />
+                    Undo
+                  </Button>
+                )}
               </div>
             </div>
           )}
+
+          {/* Share to Feed button */}
+          <div className="pt-2 border-t border-border">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsShareDialogOpen(true)}
+              className="text-muted-foreground hover:text-primary text-xs"
+            >
+              <Share2 className="h-3 w-3 mr-1" />
+              Share to Feed
+            </Button>
+          </div>
         </div>
         
         {/* Rivets decoration */}
@@ -214,6 +243,13 @@ export function PrayerCard({ prayer, onMarkAnswered }: PrayerCardProps) {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Share to Feed Dialog */}
+      <SharePrayerToFeedDialog
+        open={isShareDialogOpen}
+        onOpenChange={setIsShareDialogOpen}
+        prayer={prayer}
+      />
     </>
   );
 }
