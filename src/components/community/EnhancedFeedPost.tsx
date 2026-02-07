@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
 import { MediaEmbed } from '@/components/feed/MediaEmbed';
 import { FollowButton } from '@/components/social/FollowButton';
+import { ShareDialog } from '@/components/ui/ShareDialog';
 import { useAuth } from '@/hooks/useAuth';
 import { CommunityPost } from '@/hooks/useCommunityPosts';
 import { cn } from '@/lib/utils';
@@ -19,8 +20,10 @@ import {
   CheckCircle2,
   Flame,
   AlertTriangle,
-  Clock
+  Clock,
+  BookOpen
 } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface EnhancedFeedPostProps {
   post: CommunityPost;
@@ -57,11 +60,19 @@ export function EnhancedFeedPost({
   const [showComments, setShowComments] = useState(false);
   const [newComment, setNewComment] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [showShareDialog, setShowShareDialog] = useState(false);
 
   const isOwnPost = user?.id === post.user_id;
-  const isPrayerRequest = post.post_type === 'prayer_request' || 
-    (post.content_data as Record<string, unknown>)?.is_prayer_request;
+  const contentData = post.content_data as Record<string, unknown>;
+  const isPrayerRequest = post.post_type === 'prayer_request' || contentData?.is_prayer_request;
   const isPoll = post.post_type === 'poll' && post.poll_data;
+  
+  // Check for shared content
+  const hasVerseData = contentData?.verse_reference && contentData?.verse_text;
+  const hasPrayerData = contentData?.prayer_content;
+
+  // Get display name - never show "Unknown"
+  const displayName = post.user_name && post.user_name !== 'Unknown' ? post.user_name : 'Soldier';
 
   const handleSubmitComment = async () => {
     if (!newComment.trim()) return;
@@ -73,9 +84,34 @@ export function EnhancedFeedPost({
     setSubmitting(false);
   };
 
+  const handleReaction = async (reactionType: string) => {
+    const { error } = await onReaction(post.id, reactionType);
+    if (error) {
+      toast.error('Failed to add reaction');
+    }
+  };
+
+  const handleShare = () => {
+    setShowShareDialog(true);
+  };
+
+  const getShareContent = () => {
+    let text = post.post_text || '';
+    if (hasVerseData) {
+      text = `${contentData.verse_reference}: "${contentData.verse_text}"`;
+    } else if (hasPrayerData) {
+      text = `🙏 ${contentData.prayer_content}`;
+    }
+    return {
+      title: 'Share from The Trenches',
+      text: text.slice(0, 200),
+      url: window.location.href
+    };
+  };
+
   const renderUrgencyBadge = () => {
     if (!isPrayerRequest) return null;
-    const config = URGENCY_CONFIG[post.prayer_urgency];
+    const config = URGENCY_CONFIG[post.prayer_urgency || 'routine'];
     
     if (post.is_answered) {
       return (
@@ -164,18 +200,81 @@ export function EnhancedFeedPost({
     );
   };
 
+  const renderPostContent = () => {
+    // Shared verse content
+    if (hasVerseData) {
+      return (
+        <div className="space-y-3">
+          {contentData.user_thoughts && (
+            <p className="text-foreground whitespace-pre-wrap">{String(contentData.user_thoughts)}</p>
+          )}
+          <div className="p-4 rounded-lg bg-muted/50 border border-border">
+            <div className="flex items-center gap-2 mb-2">
+              <BookOpen className="h-4 w-4 text-primary" />
+              <p className="text-xs text-primary uppercase tracking-wider font-display">
+                {String(contentData.verse_reference)}
+              </p>
+            </div>
+            <p className="text-sm text-foreground italic leading-relaxed">
+              "{String(contentData.verse_text)}"
+            </p>
+          </div>
+        </div>
+      );
+    }
+
+    // Shared prayer content
+    if (hasPrayerData) {
+      return (
+        <div className="space-y-3">
+          {contentData.additional_context && (
+            <p className="text-foreground whitespace-pre-wrap">{String(contentData.additional_context)}</p>
+          )}
+          <div className="p-3 rounded-lg bg-muted/50 border border-border">
+            <div className="flex items-center gap-2 mb-2">
+              <HandHeart className="h-4 w-4 text-primary" />
+              <span className="text-xs text-primary font-medium uppercase">Prayer Request</span>
+            </div>
+            <p className="text-sm text-foreground">{String(contentData.prayer_content)}</p>
+            {contentData.is_answered && contentData.answered_note && (
+              <div className="mt-2 pt-2 border-t border-border">
+                <p className="text-xs text-green-500">✓ Answered: {String(contentData.answered_note)}</p>
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    // Regular post text + media
+    return (
+      <>
+        {post.post_text && (
+          <p className="text-foreground whitespace-pre-wrap">{post.post_text}</p>
+        )}
+        {renderAnsweredTestimony()}
+        <MediaEmbed 
+          mediaType={post.media_type || undefined}
+          mediaUrl={post.media_url || undefined}
+          contentData={contentData}
+        />
+        {renderPollContent()}
+      </>
+    );
+  };
+
   return (
     <Card className="border-2 border-border hover:border-primary/20 transition-colors">
       <CardContent className="p-4 space-y-3">
         {/* Header */}
         <div className="flex items-start gap-3">
           <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/20 to-orange-500/20 flex items-center justify-center text-lg font-bold text-primary flex-shrink-0">
-            {(post.user_name || 'A').charAt(0).toUpperCase()}
+            {displayName.charAt(0).toUpperCase()}
           </div>
           
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="font-semibold">{post.user_name}</span>
+              <span className="font-semibold">{displayName}</span>
               {post.user_level && (
                 <Badge variant="outline" className="text-xs">
                   Level {post.user_level}
@@ -213,19 +312,7 @@ export function EnhancedFeedPost({
 
         {/* Content */}
         <div>
-          {post.post_text && (
-            <p className="text-foreground whitespace-pre-wrap">{post.post_text}</p>
-          )}
-          
-          {renderAnsweredTestimony()}
-          
-          <MediaEmbed 
-            mediaType={post.media_type || undefined}
-            mediaUrl={post.media_url || undefined}
-            contentData={post.content_data}
-          />
-          
-          {renderPollContent()}
+          {renderPostContent()}
         </div>
 
         {/* Prayer CTA */}
@@ -271,7 +358,7 @@ export function EnhancedFeedPost({
               return (
                 <button
                   key={reaction.type}
-                  onClick={() => onReaction(post.id, reaction.type)}
+                  onClick={() => handleReaction(reaction.type)}
                   className={cn(
                     "flex items-center gap-1 px-2 py-1 rounded-full text-sm transition-all",
                     "hover:bg-muted active:scale-95",
@@ -302,7 +389,12 @@ export function EnhancedFeedPost({
               <MessageCircle className="h-4 w-4" />
               {post.comment_count > 0 && post.comment_count}
             </Button>
-            <Button variant="ghost" size="sm" className="text-xs gap-1">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="text-xs gap-1"
+              onClick={handleShare}
+            >
               <Share2 className="h-4 w-4" />
             </Button>
           </div>
@@ -332,6 +424,14 @@ export function EnhancedFeedPost({
             </p>
           </div>
         )}
+
+        {/* Share Dialog */}
+        <ShareDialog
+          isOpen={showShareDialog}
+          onClose={() => setShowShareDialog(false)}
+          title={getShareContent().title}
+          text={getShareContent().text}
+        />
       </CardContent>
     </Card>
   );
