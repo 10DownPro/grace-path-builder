@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { PageLayout } from '@/components/layout/PageLayout';
 import { BookSelector } from '@/components/bible/BookSelector';
 import { ChapterSelector } from '@/components/bible/ChapterSelector';
@@ -12,6 +13,7 @@ import { Link } from 'react-router-dom';
 type ViewMode = 'book' | 'chapter' | 'reading';
 
 export default function Bible() {
+  const [searchParams] = useSearchParams();
   const [viewMode, setViewMode] = useState<ViewMode>('book');
   const [selectedBook, setSelectedBook] = useState<BibleBook | null>(null);
   const [selectedChapter, setSelectedChapter] = useState<number>(1);
@@ -22,8 +24,47 @@ export default function Bible() {
     verse: number;
     text: string;
   }>>([]);
+  const [initialLoadDone, setInitialLoadDone] = useState(false);
 
   const { fetchChapter, loading, error } = useGroupScripture();
+
+  // Handle URL parameters for deep linking (e.g., /bible?book=Psalm&chapter=23)
+  useEffect(() => {
+    if (initialLoadDone) return;
+    
+    const bookParam = searchParams.get('book');
+    const chapterParam = searchParams.get('chapter');
+    
+    if (bookParam && chapterParam) {
+      // Find the book by name (case-insensitive, handle variations)
+      const normalizedBookName = bookParam.toLowerCase().trim();
+      const foundBook = BIBLE_BOOKS.find(b => 
+        b.name.toLowerCase() === normalizedBookName ||
+        b.name.toLowerCase().startsWith(normalizedBookName) ||
+        // Handle "Psalms" vs "Psalm" variation
+        (normalizedBookName === 'psalm' && b.name.toLowerCase() === 'psalms') ||
+        (normalizedBookName === 'psalms' && b.name.toLowerCase() === 'psalms')
+      );
+      
+      if (foundBook) {
+        const chapter = parseInt(chapterParam, 10);
+        if (!isNaN(chapter) && chapter >= 1 && chapter <= foundBook.chapters) {
+          setSelectedBook(foundBook);
+          setSelectedChapter(chapter);
+          setViewMode('reading');
+          
+          // Fetch the chapter
+          fetchChapter(foundBook.name, chapter, 'kjv').then(result => {
+            if (result?.verses) {
+              setVerses(result.verses);
+            }
+          });
+        }
+      }
+    }
+    
+    setInitialLoadDone(true);
+  }, [searchParams, initialLoadDone, fetchChapter]);
 
   const handleSelectBook = (book: BibleBook) => {
     setSelectedBook(book);
