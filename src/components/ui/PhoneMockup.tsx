@@ -1,12 +1,11 @@
 import appPreview from '@/assets/app-preview-mobile.png';
-
 interface PhoneMockupProps {
   className?: string;
 }
-
-export function PhoneMockup({ className = "" }: PhoneMockupProps) {
-  return (
-    <div className={`relative ${className}`}>
+export function PhoneMockup({
+  className = ""
+}: PhoneMockupProps) {
+  return <div className={`relative ${className}`}>
       {/* Phone Frame */}
       <div className="relative mx-auto w-[260px] md:w-[300px]">
         {/* Phone outer shell */}
@@ -16,11 +15,7 @@ export function PhoneMockup({ className = "" }: PhoneMockupProps) {
           
           {/* Screen */}
           <div className="relative rounded-[2rem] overflow-hidden bg-background">
-            <img 
-              src={appPreview} 
-              alt="FaithFit App Preview" 
-              className="w-full aspect-[9/19.5] object-cover object-top"
-            />
+            <img alt="FaithFit App Preview" className="w-full aspect-[9/19.5] object-cover object-top" src="/lovable-uploads/82fa1793-4d6b-4f82-94e6-9e5df3dcaafa.png" />
             
             {/* Screen reflection */}
             <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-transparent pointer-events-none" />
@@ -37,6 +32,5 @@ export function PhoneMockup({ className = "" }: PhoneMockupProps) {
       <div className="absolute inset-0 -z-10 blur-3xl opacity-20">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/40 via-transparent to-warning/20 rounded-full" />
       </div>
-    </div>
-  );
+    </div>;
 }
