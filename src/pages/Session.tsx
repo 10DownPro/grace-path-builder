@@ -533,6 +533,7 @@ function WorshipContent({
 }
 
 function ScriptureContent() {
+  const navigate = useNavigate();
   const [translation, setTranslation] = useState<BibleTranslation>('kjv');
   const [scripture, setScripture] = useState<Scripture | null>(null);
   const { fetchDailyVerse, loading, error } = useScripture();
@@ -545,6 +546,33 @@ function ScriptureContent() {
     const verse = await fetchDailyVerse(translation);
     if (verse) {
       setScripture(verse);
+    }
+  };
+
+  // Parse reference to extract book and chapter for Bible navigation
+  const parseReference = (reference: string): { book: string; chapter: number } | null => {
+    // Match patterns like "Psalm 23:1-3", "Matthew 11:28-30", "John 3:16"
+    const match = reference.match(/^(.+?)\s+(\d+)(?::\d+)?/);
+    if (match) {
+      return {
+        book: match[1],
+        chapter: parseInt(match[2], 10)
+      };
+    }
+    return null;
+  };
+
+  const handleReadMore = () => {
+    if (!scripture) return;
+    
+    const parsed = parseReference(scripture.reference);
+    if (parsed) {
+      // Navigate to Bible page with book and chapter
+      navigate(`/bible?book=${encodeURIComponent(parsed.book)}&chapter=${parsed.chapter}`);
+      toast.success(`Opening ${parsed.book} ${parsed.chapter} in Bible`);
+    } else {
+      navigate('/bible');
+      toast.success('Opening Bible');
     }
   };
 
@@ -586,7 +614,18 @@ function ScriptureContent() {
           <blockquote className="text-xl leading-relaxed text-foreground font-bold">
             "{scripture.text}"
           </blockquote>
-          <p className="text-xs text-muted-foreground uppercase mt-3">{scripture.translation}</p>
+          <div className="flex items-center justify-between mt-4 pt-3 border-t border-border">
+            <p className="text-xs text-muted-foreground uppercase">{scripture.translation}</p>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={handleReadMore}
+              className="gap-2 border-primary/50 hover:border-primary text-primary"
+            >
+              <BookOpen className="h-4 w-4" />
+              Read More
+            </Button>
+          </div>
         </div>
       ) : null}
 
