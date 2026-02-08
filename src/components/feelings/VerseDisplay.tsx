@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import { Bookmark, BookmarkCheck, Share2, RefreshCw, ChevronRight, Sparkles, Users, ImagePlus } from 'lucide-react';
+import { Bookmark, BookmarkCheck, Share2, RefreshCw, ChevronRight, Sparkles, Users, ImagePlus, BookOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import type { FeelingVerse, SupportMessage } from '@/hooks/useFeelings';
 import { ShareVerseToFeedDialog } from '@/components/feed/ShareVerseToFeedDialog';
 import { useVerseImage } from '@/hooks/useVerseImage';
-
+import { useNavigate } from 'react-router-dom';
 interface VerseDisplayProps {
   verses: FeelingVerse[];
   supportMessage: SupportMessage | null;
@@ -30,6 +30,7 @@ export function VerseDisplay({
   loading,
   hasMore
 }: VerseDisplayProps) {
+  const navigate = useNavigate();
   const [expandedVerse, setExpandedVerse] = useState<string | null>(null);
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
   const [verseToShare, setVerseToShare] = useState<FeelingVerse | null>(null);
@@ -93,6 +94,12 @@ export function VerseDisplay({
       onSaveVerse(verse.id);
       toast.success('Added to Battle Verses 🗡️');
     }
+  };
+
+  const handleReadInBible = (verse: FeelingVerse) => {
+    // Navigate to Bible page - it will show book selector, user can find the chapter
+    navigate('/bible');
+    toast.success(`Opening Bible to read ${verse.book} ${verse.chapter}`);
   };
 
   return (
@@ -226,6 +233,16 @@ export function VerseDisplay({
                     <span className="text-xs font-display uppercase">
                       {generatingImageFor === verse.id ? 'Creating...' : 'Image'}
                     </span>
+                  </Button>
+
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleReadInBible(verse)}
+                    className="h-8 px-3 text-muted-foreground hover:text-primary"
+                  >
+                    <BookOpen className="h-4 w-4 mr-1" />
+                    <span className="text-xs font-display uppercase">Read More</span>
                   </Button>
                 </div>
 

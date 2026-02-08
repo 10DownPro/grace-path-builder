@@ -8,38 +8,34 @@ export function PhoneMockup({ className = "" }: PhoneMockupProps) {
   return (
     <div className={`relative ${className}`}>
       {/* Phone Frame */}
-      <div className="relative mx-auto w-[280px] md:w-[320px]">
+      <div className="relative mx-auto w-[260px] md:w-[300px]">
         {/* Phone outer shell */}
-        <div className="relative rounded-[3rem] bg-gradient-to-b from-zinc-700 to-zinc-900 p-3 shadow-2xl">
-          {/* Phone inner bezel */}
-          <div className="relative rounded-[2.5rem] bg-black overflow-hidden">
-            {/* Notch */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-28 h-7 bg-black rounded-b-2xl z-10" />
+        <div className="relative rounded-[2.5rem] bg-gradient-to-b from-muted to-muted/80 p-2 shadow-2xl ring-1 ring-border">
+          {/* Notch */}
+          <div className="absolute top-3 left-1/2 -translate-x-1/2 w-20 h-5 bg-background rounded-full z-10" />
+          
+          {/* Screen */}
+          <div className="relative rounded-[2rem] overflow-hidden bg-background">
+            <img 
+              src={appPreview} 
+              alt="FaithFit App Preview" 
+              className="w-full aspect-[9/19.5] object-cover object-top"
+            />
             
-            {/* Screen content */}
-            <div className="relative aspect-[9/19.5] overflow-hidden rounded-[2.3rem]">
-              <img 
-                src={appPreview} 
-                alt="FaithFit App Preview" 
-                className="w-full h-full object-cover object-top"
-              />
-              
-              {/* Screen reflection overlay */}
-              <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-transparent pointer-events-none" />
-            </div>
+            {/* Screen reflection */}
+            <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-transparent pointer-events-none" />
           </div>
         </div>
         
         {/* Side buttons */}
-        <div className="absolute left-0 top-24 w-1 h-8 bg-zinc-700 rounded-l-sm" />
-        <div className="absolute left-0 top-36 w-1 h-12 bg-zinc-700 rounded-l-sm" />
-        <div className="absolute left-0 top-52 w-1 h-12 bg-zinc-700 rounded-l-sm" />
-        <div className="absolute right-0 top-32 w-1 h-16 bg-zinc-700 rounded-r-sm" />
+        <div className="absolute left-0 top-20 w-1 h-6 bg-muted rounded-l-sm" />
+        <div className="absolute left-0 top-32 w-1 h-10 bg-muted rounded-l-sm" />
+        <div className="absolute right-0 top-28 w-1 h-12 bg-muted rounded-r-sm" />
       </div>
       
       {/* Glow effect */}
-      <div className="absolute inset-0 -z-10 blur-3xl opacity-30">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/50 via-transparent to-warning/30 rounded-full" />
+      <div className="absolute inset-0 -z-10 blur-3xl opacity-20">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/40 via-transparent to-warning/20 rounded-full" />
       </div>
     </div>
   );
