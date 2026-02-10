@@ -1,11 +1,11 @@
 {
-  "name": "Grace Training",
-  "short_name": "Grace",
-  "description": "Daily faith training app to strengthen your spiritual walk",
+  "name": "FaithFit - Train Your Faith Daily",
+  "short_name": "FaithFit",
+  "description": "Build spiritual discipline through daily faith training. Scripture, prayer, worship, and community accountability.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0c0c0c",
-  "theme_color": "#e6a740",
+  "theme_color": "#E87722",
   "orientation": "portrait-primary",
   "icons": [
     {
