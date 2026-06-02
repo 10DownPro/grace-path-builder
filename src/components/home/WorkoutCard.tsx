@@ -158,8 +158,8 @@ export function WorkoutCard({ steps, allCompleted }: WorkoutCardProps) {
         {/* CTA Button */}
         {!allCompleted && (
           <Link to="/session" className="block" data-tour="start-training">
-            <button className="w-full py-4 px-6 rounded-xl font-medium text-base text-primary-foreground bg-primary hover:scale-[1.01] active:scale-[0.99] transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-3">
-              <Play className="h-5 w-5" />
+            <button className="w-full py-5 px-6 rounded-xl font-semibold text-lg text-primary-foreground bg-primary hover:scale-[1.01] active:scale-[0.99] transition-all shadow-lg shadow-primary/25 flex items-center justify-center gap-3">
+              <Play className="h-6 w-6" />
               <span>Begin today's walk</span>
             </button>
           </Link>
