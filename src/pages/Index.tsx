@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { PageLayout } from '@/components/layout/PageLayout';
 import { GraceStreakBadge } from '@/components/home/GraceStreakBadge';
 import { WorkoutCard } from '@/components/home/WorkoutCard';
