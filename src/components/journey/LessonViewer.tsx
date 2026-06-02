@@ -115,8 +115,14 @@ export function LessonViewer({ journey, module, parentModule, nextRecommendation
         <Button variant="ghost" onClick={onExit} className="mb-3 text-muted-foreground -ml-2">
           <ChevronLeft className="h-4 w-4 mr-1" /> Exit lesson
         </Button>
-        <p className="text-xs uppercase tracking-[0.2em] text-primary mb-2 font-semibold">
-          {journey.title} · Lesson {moduleIndex + 1} of {journey.modules.length}
+        <p className="text-base uppercase tracking-[0.18em] text-primary mb-2 font-semibold">
+          {journey.title}
+          {parentModule && (
+            <> · {parentModule.title}{moduleLessons.length > 1 && <> · Lesson {lessonIndexInModule + 1} of {moduleLessons.length}</>}</>
+          )}
+          {!parentModule && allLessons.length > 0 && (
+            <> · Lesson {lessonIndexGlobal + 1} of {allLessons.length}</>
+          )}
         </p>
         <h1 className="font-display text-3xl sm:text-4xl leading-tight text-balance">{module.title}</h1>
         <p className="text-base text-muted-foreground mt-2">~{module.estimatedMinutes} min · {STEPS[stepIndex].label}</p>
