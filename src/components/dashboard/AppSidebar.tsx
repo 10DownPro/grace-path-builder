@@ -73,7 +73,7 @@ export function AppSidebar() {
   return (
     <Sidebar collapsible="icon" className="border-r border-border">
       <SidebarHeader className="p-4">
-        <Link to="/dashboard" className="flex items-center gap-3">
+        <Link to="/home" className="flex items-center gap-3">
           <div className="w-10 h-10 flex-shrink-0">
             <img src={logo} alt="FaithFit" className="w-full h-full object-contain" />
           </div>

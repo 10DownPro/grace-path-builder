@@ -12,8 +12,8 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { path: '/home', icon: Home, label: 'Home', tourId: 'nav-home' },
-  { path: '/tracks', icon: Footprints, label: 'Journey', tourId: 'nav-journey' },
-  { path: '/bible', icon: BookOpen, label: 'Scripture', tourId: 'nav-bible' },
+  { path: '/journey', icon: Footprints, label: 'Journey', tourId: 'nav-journey' },
+  { path: '/scripture', icon: BookOpen, label: 'Scripture', tourId: 'nav-bible' },
   { path: '/community', icon: MessageSquare, label: 'Community', tourId: 'nav-community' },
 ];
 

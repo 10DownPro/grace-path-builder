@@ -62,7 +62,7 @@ export default function Profile() {
       description: 'Your armory',
       color: 'text-secondary',
       bgColor: 'bg-secondary/10',
-      onClick: () => navigate('/battles')
+      onClick: () => navigate('/community')
     },
   ];
 
@@ -236,7 +236,7 @@ export default function Profile() {
                         variant="outline"
                         size="sm"
                         className="mt-3"
-                        onClick={() => navigate('/feed')}
+                        onClick={() => navigate('/community')}
                       >
                         Explore Feed
                       </Button>

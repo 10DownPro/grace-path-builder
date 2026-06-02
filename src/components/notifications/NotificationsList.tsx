@@ -40,7 +40,7 @@ export function NotificationsList({
     
     // Navigate based on reference type
     if (notification.reference_type === 'post' && notification.reference_id) {
-      navigate('/feed');
+      navigate('/community');
     } else if (notification.notification_type === 'follow') {
       navigate('/community');
     }

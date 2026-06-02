@@ -125,7 +125,7 @@ export const defaultChecklistItems: ChecklistItem[] = [
     title: 'Check out the rewards',
     description: 'See what you can unlock',
     completed: false,
-    link: '/rewards',
+    link: '/profile',
     icon: Trophy,
   },
   {
