@@ -27,6 +27,7 @@ import Community from "./pages/Community";
 import Help from "./pages/Help";
 import Bible from "./pages/Bible";
 import Install from "./pages/Install";
+import Tracks from "./pages/Tracks";
 
 const queryClient = new QueryClient();
 
@@ -82,6 +83,7 @@ const App = () => (
           <Route path="/help" element={<ProtectedRoute><Help /></ProtectedRoute>} />
           <Route path="/bible" element={<ProtectedRoute><Bible /></ProtectedRoute>} />
           <Route path="/install" element={<Install />} />
+          <Route path="/tracks" element={<ProtectedRoute><Tracks /></ProtectedRoute>} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
