@@ -134,7 +134,7 @@ export function LessonViewer({ journey, module, parentModule, nextRecommendation
         {step === 'intro' && (
           <section className="animate-fade-in space-y-5">
             <div className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-muted-foreground">
-              <Sparkles className="h-3.5 w-3.5" /> Introduction
+              <Sparkles className="h-3.5 w-3.5" /> Teaching
             </div>
             {module.introduction.map((p, i) => (
               <p key={i} className="text-lg leading-relaxed text-foreground">{p}</p>
