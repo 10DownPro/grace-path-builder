@@ -152,9 +152,12 @@ export function useMicroActions() {
     // Update daily goals
     const goalField = getGoalFieldForAction(actionType);
     if (goalField && dailyGoals) {
+      const updatePayload: Record<string, number> = {
+        [goalField]: (dailyGoals[goalField as keyof DailyMicroGoals] as number) + 1,
+      };
       await supabase
         .from('daily_micro_goals')
-        .update({ [goalField]: (dailyGoals[goalField as keyof DailyMicroGoals] as number) + 1 })
+        .update(updatePayload as any)
         .eq('id', dailyGoals.id);
     }
 
