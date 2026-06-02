@@ -1,18 +1,13 @@
 import { useLocation, Link } from 'react-router-dom';
 import { 
   LayoutDashboard, 
-  Dumbbell, 
-  Rss, 
-  Target, 
   Users, 
   Trophy, 
   BookOpen, 
   Settings, 
   HelpCircle, 
   LogOut,
-  Flame,
-  Sword,
-  MessageSquare
+  Footprints,
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
