@@ -41,11 +41,38 @@ export default function Community() {
 
   const [section, setSection] = useState<Section>('walking');
   const [showCreatePost, setShowCreatePost] = useState(false);
+  const [joinedCircles, setJoinedCircles] = useState<string[]>(() => {
+    try { return JSON.parse(localStorage.getItem('faithfit:joinedCircles') || '[]'); }
+    catch { return []; }
+  });
+  const [optedInPartners, setOptedInPartners] = useState<boolean>(() => localStorage.getItem('faithfit:partnersOptIn') === '1');
+
+  useEffect(() => {
+    localStorage.setItem('faithfit:joinedCircles', JSON.stringify(joinedCircles));
+  }, [joinedCircles]);
 
   const handleComment = async (_id: string, _t: string) => ({ error: null });
 
   const openPrayerComposer = () => setShowCreatePost(true);
   const openGeneralComposer = () => setShowCreatePost(true);
+
+  const toggleCircle = (id: string, title: string) => {
+    setJoinedCircles((prev) => {
+      if (prev.includes(id)) {
+        toast(`Left ${title}`);
+        return prev.filter((x) => x !== id);
+      }
+      toast.success(`Joined ${title}`, { description: 'We\'ll surface posts and prayer prompts from this circle.' });
+      return [...prev, id];
+    });
+  };
+
+  const handleOptInPartners = () => {
+    if (optedInPartners) return;
+    localStorage.setItem('faithfit:partnersOptIn', '1');
+    setOptedInPartners(true);
+    toast.success('You\'re on the list.', { description: 'We\'ll notify you as soon as a prayer partner is ready.' });
+  };
 
   // Switch feed filter when prayer tab is selected
   const visiblePosts = useMemo(() => posts, [posts]);
