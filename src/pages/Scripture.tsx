@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { PageLayout } from '@/components/layout/PageLayout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,6 +9,8 @@ import { Scripture } from '@/types/faith';
 import { useScripture, BibleTranslation, translationNames } from '@/hooks/useScripture';
 import { useVerseImage } from '@/hooks/useVerseImage';
 import { toast } from 'sonner';
+import { DailyBreadReader } from '@/components/scripture/DailyBreadReader';
+import { getTodaysBread } from '@/lib/dailyBread';
 import {
   Select,
   SelectContent,
