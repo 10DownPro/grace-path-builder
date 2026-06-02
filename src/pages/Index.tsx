@@ -173,17 +173,17 @@ export default function Index() {
           
           <div className="relative px-4 pt-6 pb-8">
             <div className="flex items-start justify-between">
-              <div className="space-y-2">
-                <p className="text-xs text-primary uppercase tracking-[0.3em]">
+              <div className="space-y-3">
+                <p className="text-sm text-primary uppercase tracking-[0.3em] font-semibold">
                   {formattedDate}
                 </p>
-                <h1 className="font-display text-4xl text-foreground leading-tight">
+                <h1 className="font-display text-5xl sm:text-6xl md:text-7xl text-foreground leading-[1.05] tracking-tight">
                   {isReturning ? 'Welcome back,' : 'Hello,'}
                   <br />
                   <span className="text-primary">{userName}.</span>
                 </h1>
-                <p className="text-sm text-muted-foreground">
-                  {isReturning ? "Let's continue — gently." : "One quiet step at a time."}
+                <p className="text-lg text-muted-foreground leading-relaxed max-w-md">
+                  {isReturning ? "Let's continue walking with God today." : "Let's walk with God today."}
                 </p>
               </div>
               <Link to="/profile">
