@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -21,11 +21,20 @@ import { cn } from '@/lib/utils';
 interface CreateCommunityPostDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  initialText?: string;
+  initialTab?: 'text' | 'prayer' | 'image' | 'music' | 'link' | 'poll';
+  initialTags?: string[];
 }
 
 type PostTab = 'text' | 'prayer' | 'image' | 'music' | 'link' | 'poll';
 
-export function CreateCommunityPostDialog({ open, onOpenChange }: CreateCommunityPostDialogProps) {
+export function CreateCommunityPostDialog({
+  open,
+  onOpenChange,
+  initialText,
+  initialTab,
+  initialTags,
+}: CreateCommunityPostDialogProps) {
   const { user } = useAuth();
   const { createPost, refetch } = useCommunityPosts();
   
@@ -36,6 +45,15 @@ export function CreateCommunityPostDialog({ open, onOpenChange }: CreateCommunit
   const [isUploading, setIsUploading] = useState(false);
   const [visibility, setVisibility] = useState<'public' | 'squad_only' | 'friends_only'>('public');
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Apply prefill values whenever the dialog opens
+  useEffect(() => {
+    if (!open) return;
+    if (initialText !== undefined) setPostText(initialText);
+    if (initialTab) setActiveTab(initialTab);
+    if (initialTags && initialTags.length > 0) setTags(initialTags.slice(0, 5));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
   
   // Prayer request specific
   const [prayerUrgency, setPrayerUrgency] = useState<PrayerUrgency>('routine');
