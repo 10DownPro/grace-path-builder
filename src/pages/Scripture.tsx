@@ -144,7 +144,7 @@ export default function ScripturePage() {
               <Library className="h-5 w-5 text-primary" />
             </div>
             <div>
-              <p className="font-display text-foreground">Open Full Bible</p>
+              <p className="font-display text-foreground">Open Full Holy Bible</p>
               <p className="text-sm text-muted-foreground">Browse books, chapters & translations</p>
             </div>
           </div>
