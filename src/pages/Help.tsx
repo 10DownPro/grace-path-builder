@@ -24,19 +24,19 @@ export default function Help() {
   const faqSections = [
     {
       icon: Dumbbell,
-      title: 'Training & Sessions',
+      title: 'Sessions & Daily Walk',
       faqs: [
         {
-          question: 'How do I start a training session?',
-          answer: 'Tap the "Train" button in the bottom navigation or go to the Session page. Choose your workout type and follow the guided prompts to complete your daily spiritual training.'
+          question: 'How do I start a session?',
+          answer: 'Tap "Continue Journey" on Home or open the Session page. Choose your focus and follow the guided prompts — worship, scripture, prayer, and reflection — at your pace.'
         },
         {
           question: 'What counts toward my streak?',
-          answer: 'Completing at least one training session per day maintains your streak. This includes full workouts, battle verse practice, or prayer sessions. Micro-actions like quick prayers also count!'
+          answer: 'Completing at least one session per day keeps your streak going. Full sessions count, and so do micro-actions like a quick prayer, gratitude note, or breath prayer.'
         },
         {
-          question: 'Can I customize my training schedule?',
-          answer: 'Yes! Go to Settings > Training Preferences to set your weekly goal, preferred training time, and focus areas like prayer, scripture memory, or worship.'
+          question: 'Can I customize my schedule?',
+          answer: 'Yes. Go to Settings > Preferences to set your weekly goal, preferred time of day, and focus areas like prayer, scripture, or worship.'
         }
       ]
     },
@@ -50,11 +50,11 @@ export default function Help() {
         },
         {
           question: 'Which Bible translations are available?',
-          answer: 'FaithFit supports KJV, NIV, ESV, and NLT translations. You can switch between them in Settings or while viewing any scripture passage.'
+          answer: 'FaithFit supports KJV, NLT, CSB, and AMP translations. You can switch between them while reading any passage.'
         },
         {
           question: 'How do I save verses for later?',
-          answer: 'Tap the bookmark icon on any verse to save it to your collection. Access saved verses from the Scripture page under "Saved Verses."'
+          answer: 'Tap the bookmark icon on any verse to save it. Access saved verses from the Scripture page under "Saved Verses."'
         }
       ]
     },
@@ -79,19 +79,19 @@ export default function Help() {
 
     {
       icon: Trophy,
-      title: 'Rewards & Progress',
+      title: 'Progress & Rewards',
       faqs: [
         {
           question: 'How do I earn points?',
-          answer: 'Complete training sessions, maintain streaks, send encouragements, pray for others, and participate in challenges. Points unlock rewards in the Rewards shop.'
+          answer: 'Complete sessions, keep a steady walk, encourage others, pray for someone, and join challenges. Points unlock items in the Rewards shop.'
         },
         {
           question: 'What is the Daily Spin?',
-          answer: 'Each day you can spin the mystery wheel for bonus rewards. Complete your daily training to unlock your spin. Prizes include bonus points, streak shields, and exclusive content.'
+          answer: 'Each day you can spin the mystery wheel for a small bonus. Complete your daily session to unlock your spin.'
         },
         {
           question: 'Do my streaks reset if I miss a day?',
-          answer: 'Yes, missing a day resets your streak to zero. However, you can earn Streak Shields through rewards that protect your streak for one missed day.'
+          answer: 'Streaks are gentle here. Missing a day pauses your streak, but Streak Freezes from the Rewards shop can protect a day off.'
         }
       ]
     },
@@ -101,15 +101,15 @@ export default function Help() {
       faqs: [
         {
           question: 'How do I redeem my book code?',
-          answer: 'If you have the Faith Training Guide book, go to Settings > Redeem Book Code and enter the unique code from inside the book. This unlocks premium features.'
+          answer: 'If you have the FaithFit companion book, go to Settings > Redeem Book Code and enter the unique code from inside the book. This unlocks premium features.'
         },
         {
           question: 'Is my prayer journal private?',
-          answer: 'Yes, your personal prayers are completely private by default. You can choose to share specific prayers with your squad, but nothing is shared without your explicit action.'
+          answer: 'Yes. Your personal prayers are private by default. You can choose to share specific prayers with your Faith Circle, but nothing is shared without your explicit action.'
         },
         {
           question: 'How do I delete my account?',
-          answer: 'Go to Settings > Account > Delete Account. This permanently removes all your data including prayers, progress, and squad memberships. This action cannot be undone.'
+          answer: 'Go to Settings > Account > Delete Account. This permanently removes all your data including prayers, progress, and circle memberships. This action cannot be undone.'
         }
       ]
     },
@@ -123,11 +123,11 @@ export default function Help() {
         },
         {
           question: 'My streak disappeared',
-          answer: 'Streaks are tracked in your timezone. If you completed training close to midnight, it may have registered for the next day. Contact support if you believe this is an error.'
+          answer: 'Streaks are tracked in your timezone. If you finished close to midnight, it may have registered for the next day. Contact support if you believe this is an error.'
         },
         {
-          question: 'I can\'t see my squad\'s posts',
-          answer: 'Make sure you\'re logged in and have accepted any pending squad invitations. Check that you\'re viewing the correct squad if you\'re a member of multiple groups.'
+          question: 'I can\'t see my circle\'s posts',
+          answer: 'Make sure you\'re signed in and have accepted any pending circle invitations. If you belong to several circles, check that you\'re viewing the right one.'
         }
       ]
     }
