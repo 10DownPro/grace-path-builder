@@ -11,7 +11,7 @@ import {
   ArrowLeft, 
   HelpCircle, 
   BookOpen, 
-  Dumbbell, 
+  Sparkles, 
   Users, 
   Trophy, 
   Shield, 
@@ -23,7 +23,7 @@ import { Link } from 'react-router-dom';
 export default function Help() {
   const faqSections = [
     {
-      icon: Dumbbell,
+      icon: Sparkles,
       title: 'Sessions & Daily Walk',
       faqs: [
         {

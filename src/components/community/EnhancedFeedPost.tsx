@@ -44,8 +44,8 @@ const REACTIONS = [
 
 const URGENCY_CONFIG = {
   routine: { color: 'bg-muted text-foreground', label: 'Prayer Request' },
-  urgent: { color: 'bg-orange-500/20 text-orange-500', label: 'Urgent Prayer' },
-  crisis: { color: 'bg-red-500/20 text-red-500', label: 'Crisis Prayer' }
+  urgent: { color: 'bg-accent-warm/20 text-accent-warm', label: 'Urgent Prayer' },
+  crisis: { color: 'bg-destructive/20 text-destructive', label: 'Crisis Prayer' }
 };
 
 export function EnhancedFeedPost({ 
@@ -115,7 +115,7 @@ export function EnhancedFeedPost({
     
     if (post.is_answered) {
       return (
-        <Badge className="bg-green-500/20 text-green-500 gap-1">
+        <Badge className="bg-success/20 text-success gap-1">
           <CheckCircle2 className="h-3 w-3" />
           Answered Prayer
         </Badge>
@@ -193,8 +193,8 @@ export function EnhancedFeedPost({
     if (!post.is_answered || !post.answered_testimony) return null;
     
     return (
-      <div className="mt-3 p-3 rounded-lg bg-green-500/10 border border-green-500/20">
-        <p className="text-sm font-medium text-green-500 mb-1">🙌 UPDATE:</p>
+      <div className="mt-3 p-3 rounded-lg bg-success/10 border border-success/20">
+        <p className="text-sm font-medium text-success mb-1">🙌 UPDATE:</p>
         <p className="text-sm">{post.answered_testimony}</p>
       </div>
     );
@@ -238,7 +238,7 @@ export function EnhancedFeedPost({
             <p className="text-sm text-foreground">{String(contentData.prayer_content)}</p>
             {contentData.is_answered && contentData.answered_note && (
               <div className="mt-2 pt-2 border-t border-border">
-                <p className="text-xs text-green-500">✓ Answered: {String(contentData.answered_note)}</p>
+                <p className="text-sm text-success">✓ Answered: {String(contentData.answered_note)}</p>
               </div>
             )}
           </div>
@@ -283,7 +283,7 @@ export function EnhancedFeedPost({
                 </Badge>
               )}
               {post.user_streak && post.user_streak > 0 && (
-                <Badge variant="outline" className="text-xs gap-1 text-orange-500 border-orange-500/30">
+                <Badge variant="outline" className="text-xs gap-1 text-accent-warm border-accent-warm/30">
                   <Flame className="h-3 w-3" />
                   {post.user_streak}
                 </Badge>
@@ -337,7 +337,7 @@ export function EnhancedFeedPost({
           <Button
             variant="outline"
             size="sm"
-            className="gap-2 text-green-500 border-green-500/30 hover:bg-green-500/10"
+            className="gap-2 text-success border-success/30 hover:bg-success/10"
             onClick={() => {
               const testimony = prompt("Share how God answered this prayer:");
               if (testimony) {

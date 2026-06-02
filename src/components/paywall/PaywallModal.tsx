@@ -76,19 +76,19 @@ export function PaywallModal({
           {/* Benefits */}
           <div className="bg-muted/50 rounded-lg p-4 space-y-2">
             <div className="flex items-center gap-2 text-sm">
-              <Check className="h-4 w-4 text-green-500" />
+              <Check className="h-4 w-4 text-success" />
               <span>{FEATURE_BENEFITS[feature] || 'Unlimited access to this feature'}</span>
             </div>
             <div className="flex items-center gap-2 text-sm">
-              <Check className="h-4 w-4 text-green-500" />
+              <Check className="h-4 w-4 text-success" />
               <span>Ad-free experience</span>
             </div>
             <div className="flex items-center gap-2 text-sm">
-              <Check className="h-4 w-4 text-green-500" />
+              <Check className="h-4 w-4 text-success" />
               <span>All premium features unlocked</span>
             </div>
             <div className="flex items-center gap-2 text-sm">
-              <Check className="h-4 w-4 text-green-500" />
+              <Check className="h-4 w-4 text-success" />
               <span>Priority support</span>
             </div>
           </div>
@@ -131,14 +131,14 @@ export function PaywallModal({
             {showBookOption && (
               <button
                 onClick={handleBookOption}
-                className="w-full p-4 rounded-lg border-2 border-green-600 bg-green-600/10 text-left transition-all hover:bg-green-600/20"
+                className="w-full p-4 rounded-lg border-2 border-success bg-success/10 text-left transition-all hover:bg-success/20"
               >
                 <div className="flex items-center gap-3">
-                  <BookOpen className="h-6 w-6 text-green-500" />
+                  <BookOpen className="h-6 w-6 text-success" />
                   <div className="flex-1">
-                    <div className="text-sm font-bold text-green-500 uppercase">Lifetime Premium</div>
+                    <div className="text-sm font-bold text-success uppercase">Lifetime Premium</div>
                     <div className="text-foreground font-bold">Have the Book? Redeem Code</div>
-                    <div className="text-xs text-muted-foreground">Unlock forever with your book code</div>
+                    <div className="text-sm text-muted-foreground">Unlock forever with your book code</div>
                   </div>
                 </div>
               </button>

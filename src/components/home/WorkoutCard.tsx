@@ -1,4 +1,4 @@
-import { Play, CheckCircle2, Music, BookOpen, Target, PenLine, Clock, Dumbbell } from 'lucide-react';
+import { Play, CheckCircle2, Music, BookOpen, Heart, PenLine, Clock, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import type { LucideIcon } from 'lucide-react';
@@ -18,7 +18,7 @@ interface WorkoutCardProps {
 const iconMap: Record<string, LucideIcon> = {
   '🎵': Music,
   '📖': BookOpen,
-  '🙏': Target,
+  '🙏': Heart,
   '✍️': PenLine,
 };
 
@@ -42,7 +42,7 @@ export function WorkoutCard({ steps, allCompleted }: WorkoutCardProps) {
         <div className="relative flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-primary/15 flex items-center justify-center">
-              <Dumbbell className="h-5 w-5 text-primary" />
+              <Sparkles className="h-5 w-5 text-primary" />
             </div>
             <div>
               <h2 className="font-display text-2xl sm:text-3xl text-foreground leading-tight">
@@ -92,7 +92,7 @@ export function WorkoutCard({ steps, allCompleted }: WorkoutCardProps) {
       <div className="p-5 space-y-4">
         <div className="grid grid-cols-2 gap-3">
           {steps.map((step, index) => {
-            const IconComponent = iconMap[step.icon] || Target;
+            const IconComponent = iconMap[step.icon] || Heart;
             return (
               <div 
                 key={step.name}

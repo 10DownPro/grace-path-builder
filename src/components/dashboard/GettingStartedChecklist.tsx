@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { Check, ChevronRight, X, Dumbbell, Target, Users, Trophy, BookOpen } from 'lucide-react';
+import { Check, ChevronRight, X, Sparkles, Heart, Users, Trophy, BookOpen } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 
@@ -12,7 +12,7 @@ interface ChecklistItem {
   description: string;
   completed: boolean;
   link: string;
-  icon: typeof Dumbbell;
+  icon: typeof Sparkles;
 }
 
 interface GettingStartedChecklistProps {
@@ -102,7 +102,7 @@ export const defaultChecklistItems: ChecklistItem[] = [
     description: 'A guided 15-minute walk with God',
     completed: false,
     link: '/session',
-    icon: Dumbbell,
+    icon: Sparkles,
   },
   {
     id: 'first-prayer',
@@ -110,7 +110,7 @@ export const defaultChecklistItems: ChecklistItem[] = [
     description: 'Create a prayer request',
     completed: false,
     link: '/prayer',
-    icon: Target,
+    icon: Heart,
   },
   {
     id: 'join-squad',
