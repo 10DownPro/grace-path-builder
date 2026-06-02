@@ -12,10 +12,10 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { path: '/home', icon: Home, label: 'Home', tourId: 'nav-home' },
-  { path: '/session', icon: Footprints, label: 'Walk', tourId: 'nav-train' },
-  { path: '/bible', icon: BookOpen, label: 'Bible', tourId: 'nav-bible' },
+  { path: '/tracks', icon: Footprints, label: 'Journey', tourId: 'nav-journey' },
+  { path: '/bible', icon: BookOpen, label: 'Scripture', tourId: 'nav-bible' },
   { path: '/community', icon: MessageSquare, label: 'Community', tourId: 'nav-community' },
-  { path: '/friends', icon: Users, label: 'Friends', tourId: 'nav-squad' },
+  { path: '/friends', icon: Users, label: 'Circles', tourId: 'nav-circles' },
 ];
 
 export function Navigation() {

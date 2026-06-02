@@ -1,128 +1,148 @@
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PageLayout } from '@/components/layout/PageLayout';
-import { tracks, getRecommendedTrack, type GuidedTrack, type TrackLesson, type JourneyStage } from '@/lib/tracks';
+import { useJourney } from '@/hooks/useJourney';
+import type { Journey, JourneyModule } from '@/lib/journeys';
 import { Button } from '@/components/ui/button';
-import { Compass, HandHeart, ChevronLeft, ChevronRight, Check, BookOpen } from 'lucide-react';
+import { Progress } from '@/components/ui/progress';
+import { ChevronLeft, ChevronRight, Check, Lock } from 'lucide-react';
 import { cn } from '@/lib/utils';
-
-const PROGRESS_KEY = 'faithfit-track-progress-v1';
-const JOURNEY_KEY = 'faithfit-journey';
-
-function getProgress(): Record<string, string[]> {
-  try { return JSON.parse(localStorage.getItem(PROGRESS_KEY) || '{}'); } catch { return {}; }
-}
-function saveProgress(p: Record<string, string[]>) {
-  localStorage.setItem(PROGRESS_KEY, JSON.stringify(p));
-}
 
 export default function Tracks() {
   const navigate = useNavigate();
-  const [progress, setProgress] = useState<Record<string, string[]>>(getProgress());
-  const [activeTrack, setActiveTrack] = useState<GuidedTrack | null>(null);
-  const [activeLesson, setActiveLesson] = useState<TrackLesson | null>(null);
+  const { journeys, active, activeId, setActive, progress, markModuleComplete } = useJourney();
+  const [viewing, setViewing] = useState<Journey | null>(null);
+  const [openModule, setOpenModule] = useState<JourneyModule | null>(null);
 
-  const journey = (localStorage.getItem(JOURNEY_KEY) as JourneyStage) || 'new';
-  const recommended = useMemo(() => getRecommendedTrack(journey), [journey]);
+  const journey = viewing || active;
+  const completed = journey ? progress[journey.id] || [] : [];
 
-  const markComplete = (trackId: string, lessonId: string) => {
-    const next = { ...progress, [trackId]: Array.from(new Set([...(progress[trackId] || []), lessonId])) };
-    setProgress(next);
-    saveProgress(next);
-  };
+  const nextIndex = useMemo(() => {
+    if (!journey) return 0;
+    const i = journey.modules.findIndex((m) => !completed.includes(m.id));
+    return i === -1 ? journey.modules.length : i;
+  }, [journey, completed]);
 
-  // Lesson view
-  if (activeTrack && activeLesson) {
-    const idx = activeTrack.lessons.findIndex((l) => l.id === activeLesson.id);
-    const done = (progress[activeTrack.id] || []).includes(activeLesson.id);
+  // Module view
+  if (journey && openModule) {
+    const idx = journey.modules.findIndex((m) => m.id === openModule.id);
+    const done = completed.includes(openModule.id);
     return (
       <PageLayout>
         <div className="max-w-2xl mx-auto pb-12">
-          <Button variant="ghost" onClick={() => setActiveLesson(null)} className="mb-4 text-muted-foreground">
-            <ChevronLeft className="h-4 w-4 mr-1" /> Back to track
+          <Button variant="ghost" onClick={() => setOpenModule(null)} className="mb-4 text-muted-foreground">
+            <ChevronLeft className="h-4 w-4 mr-1" /> Back
           </Button>
 
           <p className="text-xs uppercase tracking-[0.2em] text-primary mb-2">
-            {activeTrack.name} · Lesson {idx + 1} of {activeTrack.lessons.length}
+            {journey.title} · Module {idx + 1} of {journey.modules.length}
           </p>
-          <h1 className="font-display text-4xl mb-6 text-balance">{activeLesson.title}</h1>
+          <h1 className="font-display text-4xl mb-3 text-balance">{openModule.title}</h1>
+          <p className="text-lg text-muted-foreground leading-relaxed mb-8">{openModule.summary}</p>
 
-          <p className="text-lg text-muted-foreground leading-relaxed mb-8">{activeLesson.intro}</p>
-
-          <div className="gym-card p-6 mb-8 border-l-2 border-l-primary">
+          <div className="rounded-xl border border-border bg-card p-6 mb-6 border-l-2 border-l-primary">
             <p className="text-xs uppercase tracking-[0.2em] text-primary mb-2">Scripture</p>
-            <p className="font-display text-xl leading-relaxed text-foreground mb-3">"{activeLesson.scripture.text}"</p>
-            <p className="text-sm text-muted-foreground">— {activeLesson.scripture.reference}</p>
+            <p className="font-display text-xl leading-relaxed text-foreground mb-3">
+              "{openModule.scripture.text}"
+            </p>
+            <p className="text-sm text-muted-foreground">— {openModule.scripture.reference}</p>
           </div>
 
-          <div className="gym-card p-6 mb-8 border-l-2 border-l-secondary">
+          <div className="rounded-xl border border-border bg-card p-6 mb-6 border-l-2 border-l-secondary">
             <p className="text-xs uppercase tracking-[0.2em] text-secondary mb-2">Reflection</p>
-            <p className="text-foreground leading-relaxed">{activeLesson.reflection}</p>
+            <p className="text-foreground leading-relaxed">{openModule.reflection}</p>
           </div>
 
-          <div className="flex items-center gap-3">
-            <Button
-              onClick={() => {
-                markComplete(activeTrack.id, activeLesson.id);
-                const next = activeTrack.lessons[idx + 1];
-                if (next) setActiveLesson(next);
-                else setActiveLesson(null);
-              }}
-              className="btn-gym flex-1"
-            >
-              {done ? 'Continue' : 'Mark complete'}
-              <ChevronRight className="h-4 w-4 ml-2" />
-            </Button>
+          <div className="rounded-xl border border-border bg-card p-6 mb-8 border-l-2 border-l-accent-warm">
+            <p className="text-xs uppercase tracking-[0.2em] text-accent-warm mb-2">Prayer</p>
+            <p className="text-foreground leading-relaxed italic">{openModule.prayer}</p>
           </div>
+
+          <Button
+            onClick={() => {
+              markModuleComplete(journey.id, openModule.id);
+              const next = journey.modules[idx + 1];
+              if (next) setOpenModule(next);
+              else setOpenModule(null);
+            }}
+            className="w-full"
+            size="lg"
+          >
+            {done ? 'Continue' : 'Mark complete'}
+            <ChevronRight className="h-4 w-4 ml-2" />
+          </Button>
         </div>
       </PageLayout>
     );
   }
 
-  // Track detail
-  if (activeTrack) {
-    const completed = progress[activeTrack.id] || [];
-    const TrackIcon = activeTrack.id === 'coming-back' ? HandHeart : Compass;
+  // Journey detail view
+  if (journey && viewing) {
+    const pct = Math.round((completed.length / journey.modules.length) * 100);
     return (
       <PageLayout>
         <div className="max-w-2xl mx-auto pb-12">
-          <Button variant="ghost" onClick={() => setActiveTrack(null)} className="mb-4 text-muted-foreground">
-            <ChevronLeft className="h-4 w-4 mr-1" /> All tracks
+          <Button variant="ghost" onClick={() => setViewing(null)} className="mb-4 text-muted-foreground">
+            <ChevronLeft className="h-4 w-4 mr-1" /> All journeys
           </Button>
-          <div className="flex items-center gap-4 mb-2">
-            <div className="w-12 h-12 rounded-xl bg-secondary/15 flex items-center justify-center">
-              <TrackIcon className="h-6 w-6 text-secondary" />
+          <div className="flex items-center gap-4 mb-3">
+            <div className="w-14 h-14 rounded-xl bg-primary/15 flex items-center justify-center text-3xl">
+              {journey.emoji}
             </div>
             <div>
-              <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Guided Track</p>
-              <h1 className="font-display text-3xl">{activeTrack.name}</h1>
+              <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Journey</p>
+              <h1 className="font-display text-3xl">{journey.title}</h1>
             </div>
           </div>
-          <p className="text-muted-foreground mb-8">{activeTrack.tagline}</p>
+          <p className="text-muted-foreground mb-4">{journey.tagline}</p>
+
+          <div className="mb-6">
+            <div className="flex items-center justify-between text-sm mb-1.5">
+              <span className="text-muted-foreground">{completed.length} of {journey.modules.length} complete</span>
+              <span className="text-foreground font-semibold">{pct}%</span>
+            </div>
+            <Progress value={pct} className="h-2" />
+          </div>
+
+          {activeId !== journey.id && (
+            <Button onClick={() => setActive(journey.id)} variant="outline" className="w-full mb-6">
+              Make this my active journey
+            </Button>
+          )}
 
           <div className="space-y-3">
-            {activeTrack.lessons.map((lesson, i) => {
-              const isDone = completed.includes(lesson.id);
+            {journey.modules.map((m, i) => {
+              const isDone = completed.includes(m.id);
+              const isLocked = i > nextIndex;
               return (
                 <button
-                  key={lesson.id}
-                  onClick={() => setActiveLesson(lesson)}
+                  key={m.id}
+                  onClick={() => !isLocked && setOpenModule(m)}
+                  disabled={isLocked}
                   className={cn(
-                    "w-full p-5 rounded-xl border text-left flex items-center gap-4 transition-all",
-                    isDone ? "border-secondary/40 bg-secondary/5" : "border-border hover:border-primary/40"
+                    'w-full p-5 rounded-xl border text-left flex items-center gap-4 transition-all',
+                    isDone && 'border-secondary/40 bg-secondary/5',
+                    !isDone && !isLocked && 'border-border hover:border-primary/40',
+                    isLocked && 'border-border opacity-50 cursor-not-allowed'
                   )}
                 >
-                  <div className={cn(
-                    "w-10 h-10 rounded-full flex items-center justify-center shrink-0",
-                    isDone ? "bg-secondary/20 text-secondary" : "bg-muted text-muted-foreground"
-                  )}>
-                    {isDone ? <Check className="h-5 w-5" /> : <span className="font-display">{i + 1}</span>}
+                  <div
+                    className={cn(
+                      'w-10 h-10 rounded-full flex items-center justify-center shrink-0',
+                      isDone && 'bg-secondary/20 text-secondary',
+                      !isDone && !isLocked && 'bg-primary/15 text-primary',
+                      isLocked && 'bg-muted text-muted-foreground'
+                    )}
+                  >
+                    {isDone ? <Check className="h-5 w-5" /> : isLocked ? <Lock className="h-4 w-4" /> : <span className="font-display">{i + 1}</span>}
                   </div>
-                  <div className="flex-1">
-                    <p className="font-medium text-foreground">{lesson.title}</p>
-                    <p className="text-sm text-muted-foreground line-clamp-1">{lesson.intro}</p>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium text-foreground">{m.title}</p>
+                    <p className="text-sm text-muted-foreground line-clamp-1">
+                      {isLocked ? `Complete "${journey.modules[i - 1].title}" to open.` : m.summary}
+                    </p>
                   </div>
-                  <ChevronRight className="h-5 w-5 text-muted-foreground" />
+                  {!isLocked && <ChevronRight className="h-5 w-5 text-muted-foreground" />}
                 </button>
               );
             })}
@@ -132,51 +152,49 @@ export default function Tracks() {
     );
   }
 
-  // Track list
+  // Journey list
   return (
     <PageLayout>
       <div className="max-w-2xl mx-auto pb-12">
         <div className="mb-8">
-          <p className="text-xs uppercase tracking-[0.2em] text-primary mb-2">Guided Tracks</p>
-          <h1 className="font-display text-4xl mb-2">Start where you are.</h1>
-          <p className="text-muted-foreground">Short, gentle paths designed for the start — or the return.</p>
+          <p className="text-xs uppercase tracking-[0.2em] text-primary mb-2 font-semibold">Journeys</p>
+          <h1 className="font-display text-4xl mb-2">Pick your path.</h1>
+          <p className="text-muted-foreground">Gentle, guided pathways — go at your own pace.</p>
         </div>
 
         <div className="space-y-4">
-          {tracks.map((t) => {
-            const isRec = t.id === recommended.id;
-            const TrackIcon = t.id === 'coming-back' ? HandHeart : Compass;
-            const completed = (progress[t.id] || []).length;
+          {journeys.map((j) => {
+            const isActive = activeId === j.id;
+            const done = (progress[j.id] || []).length;
+            const pct = Math.round((done / j.modules.length) * 100);
             return (
               <button
-                key={t.id}
-                onClick={() => setActiveTrack(t)}
+                key={j.id}
+                onClick={() => setViewing(j)}
                 className={cn(
-                  "w-full p-6 rounded-2xl border text-left transition-all",
-                  isRec ? "border-primary/50 bg-primary/5" : "border-border hover:border-primary/30"
+                  'w-full p-5 rounded-2xl border text-left transition-all',
+                  isActive ? 'border-primary/50 bg-primary/5' : 'border-border hover:border-primary/30'
                 )}
               >
                 <div className="flex items-start gap-4">
-                  <div className={cn(
-                    "w-12 h-12 rounded-xl flex items-center justify-center shrink-0",
-                    t.id === 'coming-back' ? "bg-secondary/15" : "bg-primary/15"
-                  )}>
-                    <TrackIcon className={cn("h-6 w-6", t.id === 'coming-back' ? "text-secondary" : "text-primary")} />
+                  <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 text-3xl">
+                    {j.emoji}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <h2 className="font-display text-2xl">{t.name}</h2>
-                      {isRec && (
-                        <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-primary/15 text-primary">
-                          Recommended
+                    <div className="flex items-center gap-2 mb-1 flex-wrap">
+                      <h2 className="font-display text-2xl">{j.title}</h2>
+                      {isActive && (
+                        <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-primary/15 text-primary font-semibold">
+                          Active
                         </span>
                       )}
                     </div>
-                    <p className="text-muted-foreground mb-3">{t.tagline}</p>
-                    <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                      <span className="flex items-center gap-1"><BookOpen className="h-3.5 w-3.5" /> {t.lessons.length} lessons</span>
-                      <span>{completed}/{t.lessons.length} complete</span>
+                    <p className="text-muted-foreground mb-3">{j.tagline}</p>
+                    <div className="flex items-center justify-between text-xs text-muted-foreground">
+                      <span>{done}/{j.modules.length} modules</span>
+                      <span>{pct}%</span>
                     </div>
+                    <Progress value={pct} className="h-1.5 mt-1.5" />
                   </div>
                 </div>
               </button>

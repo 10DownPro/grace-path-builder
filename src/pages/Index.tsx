@@ -1,18 +1,17 @@
 import { useState, useEffect } from 'react';
 import { PageLayout } from '@/components/layout/PageLayout';
-import { StreakBadge } from '@/components/home/StreakBadge';
+import { GraceStreakBadge } from '@/components/home/GraceStreakBadge';
 import { WorkoutCard } from '@/components/home/WorkoutCard';
-import { WeeklyGrind } from '@/components/home/WeeklyGrind';
-import { MissionCard } from '@/components/home/MissionCard';
-import { BattleVerse } from '@/components/home/BattleVerse';
-import { BattleVersesCard } from '@/components/home/BattleVersesCard';
-import { BattleVerseOfDayCard } from '@/components/home/BattleVerseOfDayCard';
-import { TestimonyOfTheWeekCard } from '@/components/home/TestimonyOfTheWeekCard';
-import { BattleMode } from '@/components/session/BattleMode';
+import { DailyCheckIn } from '@/components/home/DailyCheckIn';
+import { JourneyProgressCard } from '@/components/home/JourneyProgressCard';
+import { TodaysFocusCard } from '@/components/home/TodaysFocusCard';
+import { TodaysScriptureCard } from '@/components/home/TodaysScriptureCard';
+import { SmallStepsCard } from '@/components/home/SmallStepsCard';
+import { ThisWeeksWalk } from '@/components/home/ThisWeeksWalk';
+import { MilestoneShelf } from '@/components/home/MilestoneShelf';
 import { OnboardingFlow } from '@/components/onboarding/OnboardingFlow';
 import { Day1LaunchScreen } from '@/components/onboarding/Day1LaunchScreen';
 import { FreeChapterUnlockedDialog } from '@/components/rewards/FreeChapterUnlockedDialog';
-import { QuickActionsBar } from '@/components/micro-actions';
 import { OnboardingTour } from '@/components/onboarding/OnboardingTour';
 import { useProfile } from '@/hooks/useProfile';
 import { useUserProgress } from '@/hooks/useUserProgress';
@@ -20,39 +19,22 @@ import { usePrayers } from '@/hooks/usePrayers';
 import { useSessions } from '@/hooks/useSessions';
 import { useMilestoneChecker } from '@/hooks/useMilestoneChecker';
 import { useFreeChapter } from '@/hooks/useFreeChapter';
-import { User, Shield, Flame, Zap, Trophy, TrendingUp, Info, X, Sunrise } from 'lucide-react';
+import { User, Flame, Info, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import { cn } from '@/lib/utils';
-
-const dailyMissions = [
-  "Pray for someone who wronged you",
-  "Memorize one verse and recite it 10 times",
-  "Write down 3 things you're grateful for",
-  "Spend 5 minutes in complete silence with God",
-  "Send an encouraging text to someone struggling",
-  "Confess one thing you've been avoiding",
-  "Read a full chapter without distractions",
-];
+import type { MilestoneStats } from '@/lib/milestonesV2';
 
 export default function Index() {
   const { profile, loading: profileLoading, updateProfile } = useProfile();
   const { progress, loading: progressLoading, checkStreakStatus } = useUserProgress();
   const { prayers } = usePrayers();
-  const { todaySession, loading: sessionsLoading, getWeeklyData, getWeeklyVersesRead } = useSessions();
+  const { sessions, todaySession, loading: sessionsLoading, getWeeklyData, getWeeklyVersesRead } = useSessions();
   const { checkAndAwardMilestones } = useMilestoneChecker();
   const { shouldShowUnlock, downloadChapter, closeDialog } = useFreeChapter();
-  const [battleModeOpen, setBattleModeOpen] = useState(false);
   const [freeChapterOpen, setFreeChapterOpen] = useState(false);
   const [showDay1Launch, setShowDay1Launch] = useState(false);
-  const [pendingOnboardingData, setPendingOnboardingData] = useState<{
-    name: string;
-    commitment: 'starter' | 'committed' | 'warrior';
-    preferredTime: 'morning' | 'afternoon' | 'evening' | 'flexible';
-    focusAreas: string[];
-    weeklyGoal: number;
-  } | null>(null);
+  const [pendingOnboardingData, setPendingOnboardingData] = useState<any>(null);
   const [showInstructions, setShowInstructions] = useState(() => {
     return localStorage.getItem('home-instructions-dismissed') !== 'true';
   });
@@ -63,36 +45,22 @@ export default function Index() {
     localStorage.setItem('home-instructions-dismissed', 'true');
   };
 
-  // Show free chapter unlock dialog when user hits 7-day streak
   useEffect(() => {
     if (shouldShowUnlock) {
-      // Small delay to let the page load first
-      const timer = setTimeout(() => {
-        setFreeChapterOpen(true);
-      }, 1500);
+      const timer = setTimeout(() => setFreeChapterOpen(true), 1500);
       return () => clearTimeout(timer);
     }
   }, [shouldShowUnlock]);
 
-  // Check milestones and streak status on page load
   useEffect(() => {
     if (!profileLoading && !progressLoading && !sessionsLoading && profile) {
-      checkStreakStatus(); // Reset streak if user missed a day
+      checkStreakStatus();
       checkAndAwardMilestones();
     }
   }, [profileLoading, progressLoading, sessionsLoading, profile]);
-  
-  // Get consistent daily mission
-  const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000);
-  const todayMission = dailyMissions[dayOfYear % dailyMissions.length];
-
-  const handleBattleModeComplete = () => {
-    toast.success('Battle Mode Victory! 🏆 Streak maintained!');
-  };
 
   const handleOnboardingComplete = async (data: any) => {
     setPendingOnboardingData(data);
-    // Persist journey for tracks routing/recommendation
     if (data?.journey) {
       try { localStorage.setItem('faithfit-journey', data.journey); } catch {}
     }
@@ -106,14 +74,13 @@ export default function Index() {
         commitment: pendingOnboardingData.commitment,
         preferred_time: pendingOnboardingData.preferredTime,
         focus_areas: pendingOnboardingData.focusAreas,
-        weekly_goal: pendingOnboardingData.weeklyGoal
+        weekly_goal: pendingOnboardingData.weeklyGoal,
       });
       setPendingOnboardingData(null);
     }
     setShowDay1Launch(false);
   };
 
-  // Show loading state
   if (profileLoading || progressLoading || sessionsLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -124,18 +91,16 @@ export default function Index() {
     );
   }
 
-  // Show Day 1 launch screen after onboarding
   if (showDay1Launch && pendingOnboardingData) {
     return (
       <Day1LaunchScreen
         userName={pendingOnboardingData.name}
-        journey={(pendingOnboardingData as any).journey}
+        journey={pendingOnboardingData.journey}
         onComplete={handleDay1LaunchComplete}
       />
     );
   }
 
-  // Show onboarding if profile has no name set
   if (profile && !profile.name) {
     return <OnboardingFlow onComplete={handleOnboardingComplete} />;
   }
@@ -143,10 +108,8 @@ export default function Index() {
   const userName = profile?.name || 'Friend';
   const currentStreak = progress?.current_streak || 0;
   const totalSessions = progress?.total_sessions || 0;
-  const totalMinutes = progress?.total_minutes || 0;
-  const longestStreak = progress?.longest_streak || 0;
   const journey = (typeof window !== 'undefined' && (localStorage.getItem('faithfit-journey') as any)) || 'new';
-  const isReturning = journey === 'returning';
+  const isReturning = journey === 'returning' || journey === 'longtime';
 
   const todaySteps = [
     { name: 'Worship', icon: '🎵', completed: todaySession?.worship_completed || false, duration: '15 min' },
@@ -155,22 +118,57 @@ export default function Index() {
     { name: 'Reflect', icon: '✍️', completed: todaySession?.reflection_completed || false, duration: '5 min' },
   ];
 
+  // Weekly metrics
+  const weeklySessions = getWeeklyData().filter((d) => d === 1).length;
+  const weeklyPrayers = prayers.filter((p) => {
+    const d = new Date(p.created_at);
+    const w = new Date();
+    w.setDate(w.getDate() - 7);
+    return d >= w;
+  }).length;
+  const weeklyScriptures = getWeeklyVersesRead();
+  const weeklyReflections = (sessions || []).filter((s) => {
+    if (!s.reflection_completed) return false;
+    const d = new Date(s.created_at);
+    const w = new Date();
+    w.setDate(w.getDate() - 7);
+    return d >= w;
+  }).length;
+
+  // Days walked this month
+  const daysWalkedThisMonth = (() => {
+    const now = new Date();
+    const month = now.getMonth();
+    const year = now.getFullYear();
+    const days = new Set<string>();
+    (sessions || []).forEach((s) => {
+      const d = new Date(s.created_at);
+      if (d.getMonth() === month && d.getFullYear() === year) {
+        days.add(d.toISOString().slice(0, 10));
+      }
+    });
+    return days.size;
+  })();
+
+  const milestoneStats: MilestoneStats = {
+    prayersCount: prayers.length,
+    sessionsCount: totalSessions,
+    reflectionsCount: (sessions || []).filter((s) => s.reflection_completed).length,
+    chaptersReadCount: (sessions || []).reduce((sum, s) => sum + (s.verses_read || 0), 0) / 20 | 0,
+    encouragementsSent: 0,
+    circlesJoined: 0,
+    daysWalkedThisMonth,
+    longestStreak: progress?.longest_streak || 0,
+    currentStreak,
+  };
+
   return (
     <PageLayout>
       <div className="min-h-screen">
-        {/* Hero Header with Gradient Background */}
+        {/* Hero Header */}
         <div className="relative overflow-hidden">
-          {/* Gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-background to-background" />
-          
-          {/* Grid pattern overlay */}
-          <div className="absolute inset-0 opacity-5">
-            <div className="absolute inset-0" style={{
-              backgroundImage: 'linear-gradient(hsl(var(--primary)) 1px, transparent 1px), linear-gradient(to right, hsl(var(--primary)) 1px, transparent 1px)',
-              backgroundSize: '40px 40px'
-            }} />
-          </div>
-          
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/15 via-background to-background" />
+
           <div className="relative px-4 pt-6 pb-8">
             <div className="flex items-start justify-between">
               <div className="space-y-3">
@@ -187,9 +185,9 @@ export default function Index() {
                 </p>
               </div>
               <Link to="/profile">
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
+                <Button
+                  variant="ghost"
+                  size="icon"
                   className="text-muted-foreground hover:text-primary hover:bg-primary/10"
                 >
                   <User className="h-6 w-6" />
@@ -197,15 +195,11 @@ export default function Index() {
               </Link>
             </div>
           </div>
-          
-          {/* Bottom border accent */}
-          <div className="h-1 bg-gradient-to-r from-primary via-warning to-primary" />
         </div>
 
-        <div className="px-4 pb-28 space-y-5 -mt-2">
-          {/* Instructions Banner */}
+        <div className="px-4 pb-28 space-y-5">
           {showInstructions && (
-            <div className="relative gym-card p-4 border-l-2 border-primary">
+            <div className="relative rounded-xl border border-border bg-card p-4 border-l-2 border-l-primary">
               <button
                 onClick={dismissInstructions}
                 className="absolute top-2 right-2 p-1 text-muted-foreground hover:text-foreground transition-colors"
@@ -215,134 +209,64 @@ export default function Index() {
               <div className="flex items-start gap-3 pr-6">
                 <Info className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
                 <div className="space-y-2">
-                  <h3 className="font-display text-xl text-foreground">
-                    Welcome home.
-                  </h3>
+                  <h3 className="font-display text-xl text-foreground">Welcome home.</h3>
                   <p className="text-base text-muted-foreground leading-relaxed">
-                    Each day, FaithFit guides you through four short steps: worship, scripture, prayer, and reflection.
-                    Take them at your pace — five minutes is plenty.
-                  </p>
-                  <p className="text-base text-muted-foreground">
-                    Ready when you are. Tap <strong className="text-foreground">Walk</strong> below to begin today.
+                    No pressure, no streaks to defend. Just a quiet companion for your walk with God.
+                    Start with how you're feeling today, and we'll meet you there.
                   </p>
                 </div>
               </div>
             </div>
           )}
 
-          {/* Streak Badge - Enhanced */}
-          <StreakBadge streak={currentStreak} />
+          {/* 1. Daily Check-in */}
+          <DailyCheckIn />
 
-          {/* Today's Walk */}
+          {/* 2. Today's Focus */}
+          <TodaysFocusCard />
+
+          {/* 3. Today's Walk (4 steps) */}
           <WorkoutCard
             steps={todaySteps}
-            allCompleted={todaySteps.every(s => s.completed)}
+            allCompleted={todaySteps.every((s) => s.completed)}
           />
 
-          {/* Continue your guided track */}
-          <Link to="/tracks" className="block">
-            <div className="gym-card p-5 hover:border-primary/40 transition-colors">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-secondary/15 flex items-center justify-center shrink-0">
-                  <TrendingUp className="h-6 w-6 text-secondary" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs uppercase tracking-[0.2em] text-secondary mb-1 font-semibold">Guided track</p>
-                  <p className="font-display text-xl text-foreground">
-                    {isReturning ? 'Coming Back' : 'Starting Faith'}
-                  </p>
-                  <p className="text-base text-muted-foreground">Pick up where you left off.</p>
-                </div>
-              </div>
-            </div>
-          </Link>
+          {/* 4. Journey progress */}
+          <JourneyProgressCard />
 
-          {/* Quick Actions - Micro-Actions */}
-          <QuickActionsBar />
+          {/* 5. Today's Scripture */}
+          <TodaysScriptureCard />
 
-          {/* Battle Verse of the Day */}
-          <BattleVerseOfDayCard />
+          {/* 6. Small Steps */}
+          <SmallStepsCard />
 
-          {/* Scripture for what you're facing */}
-          <BattleVersesCard />
-
-          {/* Quick reset - softened */}
-          <Button
-            variant="outline"
-            onClick={() => setBattleModeOpen(true)}
-            className="w-full h-auto min-h-14 py-4 px-4 border-border hover:border-primary/40 hover:bg-primary/5 text-foreground font-medium flex items-center justify-center gap-3"
-          >
-            <Shield className="h-5 w-5 text-primary flex-shrink-0" />
-            <span className="whitespace-normal text-center leading-tight">
-              Feeling overwhelmed? Take a quiet moment.
-            </span>
-          </Button>
-
-          {/* Weekly Stats - Use weekly session count */}
-          <WeeklyGrind 
-            sessions={getWeeklyData().filter(d => d === 1).length} 
-            prayers={prayers.filter(p => {
-              const prayerDate = new Date(p.created_at);
-              const weekAgo = new Date();
-              weekAgo.setDate(weekAgo.getDate() - 7);
-              return prayerDate >= weekAgo;
-            }).length} 
-            verses={getWeeklyVersesRead()} 
+          {/* 7. Grace-based streak */}
+          <GraceStreakBadge
+            currentStreak={currentStreak}
+            daysWalkedThisMonth={daysWalkedThisMonth}
+            lastSessionDate={progress?.last_session_date}
           />
 
-          {/* Daily Mission */}
-          <MissionCard mission={todayMission} />
+          {/* 8. This Week's Walk */}
+          <ThisWeeksWalk
+            sessions={weeklySessions}
+            prayers={weeklyPrayers}
+            reflections={weeklyReflections}
+            scriptures={weeklyScriptures}
+          />
 
-          {/* Testimony of the Week */}
-          <TestimonyOfTheWeekCard />
-
-          {/* Battle Verse */}
-          <BattleVerse />
-
-          {/* Stats moved to Squad/Profile page */}
-
-          {/* Growth Card */}
-          <div className="gym-card p-5 border-l-4 border-l-success">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 rounded-lg bg-success/20 flex items-center justify-center">
-                <TrendingUp className="h-5 w-5 text-success" />
-              </div>
-              <div>
-                <p className="font-display text-sm text-success uppercase tracking-wide">Growth Track</p>
-                <p className="text-xs text-muted-foreground">You're building momentum</p>
-              </div>
-            </div>
-            <div className="h-2 rounded-full bg-muted overflow-hidden">
-              <div 
-                className="h-full rounded-full bg-gradient-to-r from-success to-primary transition-all duration-1000"
-                style={{ width: '67%' }}
-              />
-            </div>
-            <p className="text-xs text-muted-foreground mt-2">
-              67% to your next milestone • Keep grinding!
-            </p>
-          </div>
+          {/* 9. Milestones */}
+          <MilestoneShelf stats={milestoneStats} />
 
           {/* Gentle footer */}
           <div className="text-center py-6">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-muted/40 border border-border">
-              <Sunrise className="h-4 w-4 text-accent-warm" />
-              <p className="text-xs text-muted-foreground italic">
-                One step. One day. He meets you here.
-              </p>
-            </div>
+            <p className="text-sm text-muted-foreground italic">
+              One step. One day. He meets you here.
+            </p>
           </div>
         </div>
       </div>
 
-      {/* Battle Mode Overlay */}
-      <BattleMode 
-        isOpen={battleModeOpen} 
-        onClose={() => setBattleModeOpen(false)}
-        onComplete={handleBattleModeComplete}
-      />
-
-      {/* Free Chapter Unlock Dialog - Triggered on 7-day streak */}
       <FreeChapterUnlockedDialog
         open={freeChapterOpen}
         onOpenChange={(open) => {
@@ -355,46 +279,13 @@ export default function Index() {
         }}
       />
 
-      {/* Onboarding Tour - Guided walkthrough for new users */}
       <OnboardingTour />
     </PageLayout>
   );
 }
 
-interface StatCardProps {
-  label: string;
-  value: number;
-  icon: React.ElementType;
-  color: string;
-}
-
-function StatCard({ label, value, icon: Icon, color }: StatCardProps) {
-  return (
-    <div className="gym-card p-4 text-center relative overflow-hidden group hover:border-primary/50 transition-colors">
-      {/* Background glow on hover */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-      
-      <div className="relative">
-        <div className={cn("w-8 h-8 rounded-lg mx-auto mb-2 flex items-center justify-center", 
-          color === 'text-primary' && "bg-primary/20",
-          color === 'text-warning' && "bg-warning/20",
-          color === 'text-success' && "bg-success/20"
-        )}>
-          <Icon className={cn("h-4 w-4", color)} />
-        </div>
-        <p className="font-display text-3xl text-foreground">{value}</p>
-        <p className="text-[10px] text-muted-foreground uppercase tracking-wider mt-1">
-          {label}
-        </p>
-      </div>
-    </div>
-  );
-}
-
 function getFormattedDate() {
-  return new Date().toLocaleDateString('en-US', {
-    weekday: 'short',
-    month: 'short',
-    day: 'numeric'
-  }).toUpperCase();
+  return new Date()
+    .toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })
+    .toUpperCase();
 }
