@@ -46,7 +46,7 @@ export default function Profile() {
       description: 'Personal goals',
       color: 'text-warning',
       bgColor: 'bg-warning/10',
-      onClick: () => navigate('/friends?tab=challenges')
+      onClick: () => navigate('/community')
     },
     {
       icon: Music,

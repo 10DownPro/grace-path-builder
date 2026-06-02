@@ -133,7 +133,7 @@ export default function Bible() {
               
               {/* Group Study CTA */}
               <div className="pt-4 mt-4 border-t border-border">
-                <Link to="/friends?tab=squads">
+                <Link to="/community">
                   <Button variant="outline" size="sm" className="w-full gap-2 border-primary/30 hover:bg-primary/10">
                     <Users className="h-4 w-4 text-primary" />
                     <span className="font-display text-xs uppercase">Study with Squad</span>

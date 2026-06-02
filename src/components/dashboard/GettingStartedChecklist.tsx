@@ -117,7 +117,7 @@ export const defaultChecklistItems: ChecklistItem[] = [
     title: 'Join or create a squad',
     description: 'Train with friends',
     completed: false,
-    link: '/friends',
+    link: '/community',
     icon: Users,
   },
   {
