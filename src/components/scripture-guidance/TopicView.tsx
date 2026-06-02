@@ -62,7 +62,7 @@ export function TopicView({ topic, onBack, onOpenCommunity }: TopicViewProps) {
         <div className="rounded-2xl border border-border bg-card p-5 space-y-4">
           <ContextBlock title="What's happening" body={topic.context.whatsHappening} />
           <ContextBlock title="Why it matters" body={topic.context.whyItMatters} />
-          <ContextBlock title="What it teaches" body={topic.context.whatItTeaches} />
+          <ContextBlock title="What Jesus says about this" body={topic.context.whatItTeaches} />
         </div>
       </section>
 
