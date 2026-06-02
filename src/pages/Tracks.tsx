@@ -222,34 +222,27 @@ export default function Tracks() {
           </p>
         </div>
 
-        {active && (
+        {active && completedCount > 0 && (
           <div className="rounded-2xl border border-primary/30 bg-primary/5 p-5 mb-6">
             <p className="text-base uppercase tracking-[0.2em] text-primary mb-1.5 font-semibold">
-              Continue where you left off
+              Continue Journey
             </p>
-            <h2 className="font-display text-2xl mb-1">{active.title}</h2>
-            {currentModule && (
-              <p className="text-base text-foreground/90 mb-1">
-                Module: <span className="font-semibold">{currentModule.title}</span>
-              </p>
-            )}
-            {nextLesson && (
-              <p className="text-base text-foreground mb-1">
-                Next lesson: <span className="font-semibold">{nextLesson.title}</span>
-              </p>
-            )}
-            <p className="text-base text-muted-foreground mb-3">
-              {completedCount} of {totalLessons} lessons · {percent}%
-            </p>
+            <h2 className="font-display text-2xl mb-2">{active.title}</h2>
+            <div className="space-y-1 mb-3">
+              {currentModule && (
+                <p className="text-base text-foreground/90">
+                  Module {Math.max(1, active.modules.findIndex(m => m.id === currentModule.id) + 1)} of {active.modules.length} — <span className="font-semibold">{currentModule.title}</span>
+                </p>
+              )}
+              {nextLesson && (
+                <p className="text-base text-foreground/90">
+                  Lesson {completedCount + 1} of {totalLessons} — <span className="font-semibold">{nextLesson.title}</span>
+                </p>
+              )}
+            </div>
             <Progress value={percent} className="h-1.5 mb-3" />
-            {estimatedMinutesRemaining > 0 && (
-              <p className="flex items-center gap-1.5 text-base text-muted-foreground mb-4">
-                <Clock className="h-4 w-4" />
-                About {estimatedMinutesRemaining} min of lessons remaining
-              </p>
-            )}
             <Button onClick={() => setViewing(active)} className="w-full">
-              Open track <ChevronRight className="h-4 w-4 ml-2" />
+              Continue Journey <ChevronRight className="h-4 w-4 ml-2" />
             </Button>
           </div>
         )}
@@ -259,7 +252,9 @@ export default function Tracks() {
             const isActive = activeId === j.id;
             const lessonsInJ = getAllLessons(j);
             const done = (progress[j.id] || []).length;
+            const hasStarted = done > 0;
             const pct = lessonsInJ.length ? Math.round((done / lessonsInJ.length) * 100) : 0;
+            const weeks = estimateWeeks(lessonsInJ.length);
             return (
               <button
                 key={j.id}
@@ -274,22 +269,25 @@ export default function Tracks() {
                     {j.emoji}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1 flex-wrap">
-                      <h2 className="font-display text-xl sm:text-2xl">{j.title}</h2>
+                    <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                      <h2 className="font-display text-2xl leading-tight">{j.title}</h2>
                       {isActive && (
                         <span className="text-xs uppercase tracking-wider px-2 py-0.5 rounded-full bg-primary/15 text-primary font-semibold">
                           Active
                         </span>
                       )}
                     </div>
-                    <p className="text-base text-muted-foreground mb-3">{j.tagline}</p>
-                    <div className="flex items-center justify-between text-base text-muted-foreground">
-                      <span>
-                        {j.modules.length} module{j.modules.length === 1 ? '' : 's'} · {done}/{lessonsInJ.length} lessons
-                      </span>
-                      <span>{pct}%</span>
-                    </div>
-                    <Progress value={pct} className="h-1.5 mt-1.5" />
+                    <p className="text-base text-muted-foreground mb-3 leading-snug">{j.tagline}</p>
+                    <TrackMeta modules={j.modules.length} lessons={lessonsInJ.length} weeks={weeks} />
+                    {hasStarted && (
+                      <div className="mt-3">
+                        <div className="flex items-center justify-between text-sm text-muted-foreground mb-1">
+                          <span>{done} of {lessonsInJ.length} lessons</span>
+                          <span>{pct}%</span>
+                        </div>
+                        <Progress value={pct} className="h-1.5" />
+                      </div>
+                    )}
                   </div>
                 </div>
               </button>
