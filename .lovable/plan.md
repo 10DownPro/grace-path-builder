@@ -1,78 +1,86 @@
-# FaithFit Repositioning Plan
+# FaithFit Retention & Engagement Redesign
 
-A focused rework across visual system, copy, onboarding, homepage, and daily experience. Preserves existing data model and routes — changes are concentrated in the design system, landing page, onboarding, and the dashboard/session surfaces.
+Shifts the app from "fitness/grind tracking" to a guided, grace-based walk. No leaderboards, no streak shame, no battles. Users return because they feel progress, belonging, and welcome.
 
-## 1. Visual System (foundation — do first)
+## 1. Journey System (replaces generic activity)
 
-Update `src/index.css` and `tailwind.config.ts`:
-- Replace orange-dominant palette with the new tokens:
-  - `--background` → #111827 (Deep Navy Charcoal)
-  - `--card` / secondary surface → #1F2937
-  - `--primary` → #4F7CAC (Muted Faith Blue)
-  - `--secondary` / accent → #6B8F71 (Restoration Sage)
-  - `--success` → #6B8F71
-  - `--border` → #374151
-  - `--muted-foreground` → #9CA3AF
-  - `--foreground` → #FFFFFF, secondary text #D1D5DB
-- Demote orange (#E87722) to a sparingly-used highlight token (`--accent-warm`) for notifications, brand moments, active states only.
-- Soften typography: keep Bebas Neue only for the FaithFit logo wordmark; switch headings to a calmer display (Fraunces or Instrument Serif) and body to Inter for a premium spiritual-formation feel.
-- Replace harsh shadows/borders (4px gym borders) with softer 1px borders, gentle shadows, and more whitespace.
+- Extend `src/lib/tracks.ts` into a full Journey model: `id`, `title`, `description`, `modules[]` (each with `id`, `title`, `summary`, `scripture`, `reflection`, `prayer`).
+- New hook `src/hooks/useJourney.ts` (localStorage-backed): tracks active journey, completed module IDs, % complete, next recommended module, recently unlocked.
+- Seed 6 journeys: Starting Faith, Coming Back, Learning Prayer, Understanding Jesus, Building Consistency, Healing & Restoration.
+- Rebuild `src/pages/Tracks.tsx` → renamed display as "Journeys" with progress bars, next step CTA, recently unlocked strip.
+- Home dashboard gets a `JourneyProgressCard` showing current journey %, next module, "Continue your journey" CTA.
 
-## 2. Landing Page (`src/pages/Landing.tsx`)
+## 2. Milestone System (replaces ranks/grind achievements)
 
-Full copy + layout pass:
-- Headline: **Build or Rebuild Your Walk With God.**
-- Subheadline: *Whether you're just getting started or finding your way back, FaithFit guides you through worship, scripture, prayer, and reflection — one day at a time.*
-- Primary CTA: **Join the Waitlist** → `/waitlist`
-- Secondary CTA: **See How It Works** → scrolls to How It Works
-- Two audience cards: *New to faith* / *Coming back to God*
-- "Today's Walk" feature section (Worship · Scripture · Prayer · Reflection) — conversational, not athletic
-- Remove all "grind/battle/workout/level up/spiritual athlete" language
+- New `src/lib/milestones.ts` with grace-based milestones (First Prayer, First Chapter Read, 7 Days of Prayer, First Reflection, First Month, Encouraged Someone, Joined a Circle, etc.). Each: `id`, `emoji`, `title`, `description`, `predicate(stats)`.
+- New hook `src/hooks/useMilestonesV2.ts` evaluates predicates against sessions/prayers/progress and stores achieved IDs in localStorage (no DB migration).
+- New `MilestoneShelf` component shown on Home + Profile.
+- Replace the existing "rank" display in Profile and remove `WeeklyGrind` achievement badges.
 
-## 3. Onboarding (`src/components/onboarding/OnboardingFlow.tsx`)
+## 3. Daily Check-in
 
-Replace existing commitment/time/focus steps with three warm questions:
-1. **Where are you in your journey?** — New to faith / Curious about God / Returning after time away / Following for years
-2. **What do you need most right now?** — Guidance / Consistency / Healing / Purpose / Prayer / Understanding the Bible
-3. **How much time can you give God each day?** — 5 / 10 / 15 / 20+ min
+- New `src/components/home/DailyCheckIn.tsx`: four options (Struggling / Distracted / Doing Okay / Growing) shown once per day, persisted in localStorage as `faithfit-mood-YYYY-MM-DD`.
+- New `src/lib/moodContent.ts`: per-mood scripture suggestion, prayer prompt, reflection question, encouragement line.
+- Home dashboard, session intro, and Today's Scripture all read the day's mood to adapt copy/verse selection.
 
-End screen: replace **"DAY 1 STARTS NOW"** with **"Your Walk Begins"** — calm reveal of their personalized track (Starting Faith or Coming Back) instead of confetti/countdown.
+## 4. Faith Circles (replaces Squads/Battles language)
 
-## 4. Guided Tracks (new lightweight feature)
+- Rename `src/pages/Friends.tsx` route content + nav label to "Circles" (keep underlying DB tables — pure UI/copy change).
+- Update `src/components/friends/SquadsList.tsx`, `SquadChat.tsx`, `SquadPrayerWall.tsx`, `CreateSquadDialog.tsx` copy: Squad → Circle, "join squad" → "join circle", remove competition framing.
+- Hide `Leaderboard.tsx` from the Circles page (keep file, remove route/tab).
+- Add suggested Circle themes when creating: Starting Faith / Coming Back / Prayer / Healing / Consistency / Purpose.
+- Remove all "Battle" navigation — `/battles` route stays for scripture-by-feeling but renamed to "Scripture for Today" inside the Scripture section; remove from primary nav.
 
-Add `src/pages/Tracks.tsx` + `src/lib/tracks.ts` with two seeded tracks:
-- **Starting Faith**: Who is God? · Who is Jesus? · What is prayer? · How do I read the Bible? · What does salvation mean?
-- **Coming Back**: Starting over · Guilt and shame · Trusting God again · Rebuilding consistency · Returning to prayer · Hearing God's voice
+## 5. Prayer Partner System
 
-Each topic = short intro + scripture + reflection prompt. Stored client-side initially (no migration needed). Surfaced on the homepage based on onboarding answer.
+- New `src/components/circles/PrayerPartnerCard.tsx` and a simple opt-in toggle stored in profile (`localStorage` for now to avoid DB migration in this pass — flagged as TODO for backend pairing).
+- UI surfaces: weekly prayer goal, send-encouragement quick action, "Check in on your partner" prompt when partner hasn't logged in 3+ days (client-side using last session date from sessions hook for self; partner placeholder until backend pairing).
 
-## 5. Home Dashboard (`src/pages/Dashboard.tsx` + home components)
+## 6. Small Steps (replaces Quick Wins)
 
-- Rename "Today's Workout" → **Today's Walk**; rework `WorkoutCard.tsx` into `TodaysWalkCard.tsx` with calmer styling (no "SETS", no gradient progress bar shine, no dumbbell icon).
-- Replace `WeeklyGrind.tsx` ("This Week's Grind", "PERFECT WEEK", "WARRIOR") with `WeeklyRhythm.tsx` — gentle progress without ranking labels.
-- Replace `BattleVersesCard.tsx` "Struggling Today?" → **Scripture for what you're facing** (keep destination, soften visual).
-- Streak handling: on return after missed days show **"Welcome back. Let's continue."** — never "You broke your streak."
-- Add a "Continue your track" card linking to the user's chosen guided track.
+- Rework `src/components/micro-actions/QuickActionsBar.tsx` → new `SmallStepsCard.tsx`:
+  - Pray for one person
+  - Read one verse
+  - Write one sentence (reflection)
+  - Encourage one person
+- Remove competition/goal-percentage language; replace with "Even one step counts today."
+- Keep underlying `useMicroActions` hook for persistence; relabel categories.
 
-## 6. Navigation (`src/components/layout/Navigation.tsx`)
+## 7. Today's Focus + Today's Scripture
 
-- Train → **Walk**
-- Trenches → **Community**
-- Squad → **Friends**
-- Keep Home, Bible
+- New `src/components/home/TodaysFocusCard.tsx`: single recommended action derived from active journey's next module + daily mood.
+- Rename `BattleVerseOfDayCard.tsx` → `TodaysScriptureCard.tsx`. Adds: context line, reflection question, prayer prompt, Save + Share buttons.
+- Remove `BattleVerse.tsx` / `BattleVersesCard.tsx` usage from Home.
 
-## 7. Session / Daily Experience (`src/pages/Session.tsx`)
+## 8. This Week's Walk (replaces Weekly Grind)
 
-- Header: **Today's Walk** (not "Training Session")
-- Step names: Worship / Scripture / Prayer / Reflection (already correct) — soften surrounding copy, remove "set", "rep", "battle" language
-- Completion state: **"Well done. See you tomorrow."** (replace "Workout Complete! 💪")
+- New `src/components/home/ThisWeeksWalk.tsx` replacing `WeeklyGrind.tsx`. Same 4 metrics tracked (sessions, prayers, reflections, scriptures) but framed as growth: no "PERFECT WEEK / WARRIOR / SCHOLAR" tiered badges. Soft progress bars only.
 
-## 8. Copy Sweep
+## 9. Grace-Based Streaks
 
-Global search/replace pass across components for: workout → walk, training → time with God, grind → rhythm, battle mode → scripture for hard days, spiritual athlete → (remove), level up → grow, locked in → ready. Keep changes presentation-only; do not touch DB schema or hooks logic.
+- Update `useProgress` and any streak displays: never render "streak broken". When `lastSessionDate` is >1 day old, show "We've saved your place. Welcome back."
+- Add `daysWalkedThisMonth` derived counter shown alongside current streak: "You've walked with God N days this month."
+- Remove pulsing/aggressive streak protection UI; soften copy.
 
-## Out of Scope
-- No database migrations (existing tables/streaks remain; only UI messaging changes)
-- No new backend logic
-- Keeps Faith Training Guide / book code flow as-is, just softened copy
-- Logo asset untouched
+## 10. Unlock System
+
+- Journey modules naturally unlock as previous ones complete.
+- Add `lockedReason` field shown calmly: "Complete <previous> to open this study." No countdown timers, no scarcity.
+
+## 11. Copy + Navigation Sweep
+
+- Nav order: Home, Journey (was Walk/Train), Circles (was Community/Squad), Scripture, Profile.
+- Global copy sweep: battle→scripture for today, grind→walk, squad→circle, mission→focus, rank→milestone, "broken streak"→"welcome back".
+
+## Technical notes
+
+- No database migrations in this pass. All new state (journey progress, milestones v2, daily mood, prayer partner opt-in) uses localStorage keys prefixed `faithfit-*`. Existing Supabase tables (sessions, prayers, squads) are reused with renamed UI labels only.
+- All new components use existing design tokens (`--primary`, `--secondary` sage, `--card`, `--muted-foreground`). No new color tokens needed.
+- Files to create: `src/hooks/useJourney.ts`, `src/hooks/useMilestonesV2.ts`, `src/hooks/useDailyMood.ts`, `src/lib/journeys.ts`, `src/lib/milestonesV2.ts`, `src/lib/moodContent.ts`, `src/components/home/DailyCheckIn.tsx`, `src/components/home/JourneyProgressCard.tsx`, `src/components/home/TodaysFocusCard.tsx`, `src/components/home/TodaysScriptureCard.tsx`, `src/components/home/ThisWeeksWalk.tsx`, `src/components/home/MilestoneShelf.tsx`, `src/components/home/SmallStepsCard.tsx`, `src/components/circles/PrayerPartnerCard.tsx`.
+- Files to edit: `src/pages/Index.tsx`, `src/pages/Tracks.tsx`, `src/pages/Friends.tsx`, `src/components/layout/Navigation.tsx`, `src/components/friends/*` (copy), and remove Battle entries from nav.
+
+## Out of scope (this pass)
+
+- Backend prayer-partner pairing (placeholder UI only).
+- Push-notification scheduling changes.
+- Removing the `/battles` route entirely — kept accessible from Scripture for users mid-flow.
