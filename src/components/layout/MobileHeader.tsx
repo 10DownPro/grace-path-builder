@@ -37,7 +37,7 @@ export function MobileHeader() {
       <Link to="/home" className="flex items-center gap-2">
         <img src={logo} alt="FaithFit" className="h-8 w-8" />
         <span className="font-display text-lg uppercase tracking-wider">
-          Faith<span className="text-[#ed7621]">Fit</span>
+          Faith<span className="text-accent-warm">Fit</span>
         </span>
       </Link>
 

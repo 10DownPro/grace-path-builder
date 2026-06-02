@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Dumbbell, Target, Trophy, Users, BookOpen, Flame } from 'lucide-react';
+import { Sparkles, Heart, Trophy, Users, BookOpen, Flame } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 
 interface ActivityItem {
@@ -15,8 +15,8 @@ interface ActivityFeedProps {
 }
 
 const activityIcons = {
-  session: Dumbbell,
-  prayer: Target,
+  session: Sparkles,
+  prayer: Heart,
   milestone: Trophy,
   squad: Users,
   scripture: BookOpen,
@@ -44,7 +44,7 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
         <CardContent>
           <div className="flex flex-col items-center justify-center py-8 text-center">
             <div className="p-4 rounded-full bg-muted mb-4">
-              <Dumbbell className="h-8 w-8 text-muted-foreground" />
+              <BookOpen className="h-8 w-8 text-muted-foreground" />
             </div>
             <h3 className="font-display text-lg uppercase mb-2">No Activity Yet</h3>
             <p className="text-sm text-muted-foreground max-w-xs">

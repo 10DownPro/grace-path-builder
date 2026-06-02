@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { ArrowLeft, BookOpen, PenLine, Swords, Crown } from 'lucide-react';
+import { ArrowLeft, BookOpen, PenLine, Bookmark, Crown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { CrisisBanner } from './CrisisBanner';
 import { VerseDisplay } from './VerseDisplay';
@@ -214,7 +214,7 @@ export function CategoryDetail({ category, onBack }: CategoryDetailProps) {
               onClick={handleSaveAll}
               className="h-14 border-2 border-border hover:border-primary/50 flex-col gap-1"
             >
-              <Swords className="h-5 w-5 text-primary" />
+              <Bookmark className="h-5 w-5 text-primary" />
               <span className="font-display text-xs uppercase">Save All Verses</span>
             </Button>
           </div>
