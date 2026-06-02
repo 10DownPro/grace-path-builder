@@ -136,7 +136,7 @@ export default function Index() {
   }).length;
 
   // Days walked this month
-  const daysWalkedThisMonth = useMemo(() => {
+  const daysWalkedThisMonth = (() => {
     const now = new Date();
     const month = now.getMonth();
     const year = now.getFullYear();
@@ -148,7 +148,7 @@ export default function Index() {
       }
     });
     return days.size;
-  }, [sessions]);
+  })();
 
   const milestoneStats: MilestoneStats = {
     prayersCount: prayers.length,
