@@ -21,6 +21,7 @@ import Community from "./pages/Community";
 import Help from "./pages/Help";
 import Install from "./pages/Install";
 import Tracks from "./pages/Tracks";
+import Bible from "./pages/Bible";
 
 const queryClient = new QueryClient();
 
