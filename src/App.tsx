@@ -79,7 +79,7 @@ const App = () => (
           <Route path="/friends" element={<Navigate to="/community" replace />} />
           <Route path="/feed" element={<Navigate to="/community" replace />} />
           <Route path="/circles" element={<Navigate to="/community" replace />} />
-          <Route path="/bible" element={<Navigate to="/scripture" replace />} />
+          
           <Route path="/tracks" element={<Navigate to="/journey" replace />} />
 
           <Route path="*" element={<NotFound />} />
