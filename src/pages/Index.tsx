@@ -20,7 +20,7 @@ import { usePrayers } from '@/hooks/usePrayers';
 import { useSessions } from '@/hooks/useSessions';
 import { useMilestoneChecker } from '@/hooks/useMilestoneChecker';
 import { useFreeChapter } from '@/hooks/useFreeChapter';
-import { User, Shield, Flame, Zap, Trophy, TrendingUp, Info, X } from 'lucide-react';
+import { User, Shield, Flame, Zap, Trophy, TrendingUp, Info, X, Sunrise } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
@@ -233,30 +233,48 @@ export default function Index() {
           {/* Streak Badge - Enhanced */}
           <StreakBadge streak={currentStreak} />
 
-          {/* Today's Workout */}
-          <WorkoutCard 
-            steps={todaySteps} 
-            allCompleted={todaySteps.every(s => s.completed)} 
+          {/* Today's Walk */}
+          <WorkoutCard
+            steps={todaySteps}
+            allCompleted={todaySteps.every(s => s.completed)}
           />
+
+          {/* Continue your guided track */}
+          <Link to="/tracks" className="block">
+            <div className="gym-card p-5 hover:border-primary/40 transition-colors">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-secondary/15 flex items-center justify-center shrink-0">
+                  <TrendingUp className="h-6 w-6 text-secondary" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs uppercase tracking-[0.2em] text-secondary mb-1">Guided track</p>
+                  <p className="font-display text-lg text-foreground">
+                    {isReturning ? 'Coming Back' : 'Starting Faith'}
+                  </p>
+                  <p className="text-sm text-muted-foreground">Pick up where you left off.</p>
+                </div>
+              </div>
+            </div>
+          </Link>
 
           {/* Quick Actions - Micro-Actions */}
           <QuickActionsBar />
 
-          {/* Battle Verse of the Day - NEW PROMINENT CARD */}
+          {/* Battle Verse of the Day */}
           <BattleVerseOfDayCard />
 
-          {/* Battle Verses Card - Navigate to Find By Feeling */}
+          {/* Scripture for what you're facing */}
           <BattleVersesCard />
 
-          {/* Battle Mode Button - Mobile Optimized */}
+          {/* Quick reset - softened */}
           <Button
-            variant="destructive"
+            variant="outline"
             onClick={() => setBattleModeOpen(true)}
-            className="w-full h-auto min-h-14 py-4 px-4 bg-destructive/90 hover:bg-destructive text-destructive-foreground font-display uppercase tracking-wide text-sm sm:text-base flex items-center justify-center gap-3 shadow-lg"
+            className="w-full h-auto min-h-14 py-4 px-4 border-border hover:border-primary/40 hover:bg-primary/5 text-foreground font-medium flex items-center justify-center gap-3"
           >
-            <Shield className="h-6 w-6 flex-shrink-0" />
+            <Shield className="h-5 w-5 text-primary flex-shrink-0" />
             <span className="whitespace-normal text-center leading-tight">
-              Need a quick reset? Enter Battle Mode
+              Feeling overwhelmed? Take a quiet moment.
             </span>
           </Button>
 
@@ -305,12 +323,12 @@ export default function Index() {
             </p>
           </div>
 
-          {/* Motivational Footer */}
+          {/* Gentle footer */}
           <div className="text-center py-6">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-muted/50 border border-border">
-              <Flame className="h-4 w-4 text-primary" />
-              <p className="text-xs text-muted-foreground uppercase tracking-widest">
-                Faith won't build itself
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-muted/40 border border-border">
+              <Sunrise className="h-4 w-4 text-accent-warm" />
+              <p className="text-xs text-muted-foreground italic">
+                One step. One day. He meets you here.
               </p>
             </div>
           </div>
