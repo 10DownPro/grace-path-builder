@@ -1,83 +1,65 @@
-import { useState } from 'react';
+import { useMemo } from 'react';
 import { useDailyMood } from '@/hooks/useDailyMood';
 import { moodContent } from '@/lib/moodContent';
 import { Button } from '@/components/ui/button';
-import { Bookmark, Share2, BookOpen } from 'lucide-react';
-import { toast } from 'sonner';
+import { BookOpen, ChevronRight, Sparkles } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { getTodaysBread } from '@/lib/dailyBread';
 
-const defaultVerse = {
-  reference: 'Lamentations 3:22-23',
-  text: 'Because of the Lord\'s great love we are not consumed, for his compassions never fail. They are new every morning.',
-};
-const defaultAboutJesus = "Every fresh mercy you receive is purchased by Jesus' faithfulness — He is the reason today gets to be new.";
-
+/**
+ * Home card — surfaces today's Daily Bread (passage-based reading) along
+ * with the mood-adapted Jesus-centered nudge. Tapping opens /scripture for
+ * the full Quick/Daily/Deep reader.
+ */
 export function TodaysScriptureCard() {
   const { mood } = useDailyMood();
-  const verse = mood ? moodContent[mood].scripture : defaultVerse;
-  const aboutJesus = mood ? moodContent[mood].aboutJesus : defaultAboutJesus;
-  const reflection = mood ? moodContent[mood].reflection : 'What does this verse stir in you about Jesus today?';
-  const prayer = mood
-    ? moodContent[mood].prayerPrompt
-    : "Jesus, speak to me through this verse today. In Jesus' name, Amen. 🙏🏽";
-  const [saved, setSaved] = useState(false);
-
-  const handleShare = async () => {
-    const text = `"${verse.text}" — ${verse.reference}`;
-    if (navigator.share) {
-      try { await navigator.share({ text }); } catch {}
-    } else {
-      navigator.clipboard.writeText(text);
-      toast.success('Copied to clipboard');
-    }
-  };
-
-  const handleSave = () => {
-    setSaved(true);
-    try {
-      const saved = JSON.parse(localStorage.getItem('faithfit-saved-verses') || '[]');
-      saved.push({ ...verse, savedAt: new Date().toISOString() });
-      localStorage.setItem('faithfit-saved-verses', JSON.stringify(saved));
-    } catch {}
-    toast.success('Saved to your verses');
-  };
+  const bread = useMemo(() => getTodaysBread(), []);
+  const moodNudge = mood ? moodContent[mood].aboutJesus : null;
 
   return (
-    <div className="rounded-2xl border border-border bg-gradient-to-br from-primary/5 via-card to-card p-5">
+    <Link
+      to="/scripture"
+      className="block rounded-2xl border border-border bg-gradient-to-br from-primary/5 via-card to-card p-5 hover:border-primary/40 transition-colors"
+    >
       <div className="flex items-center gap-2 mb-3">
         <BookOpen className="h-4 w-4 text-primary" />
-        <p className="text-xs uppercase tracking-[0.2em] text-primary font-semibold">Today's Scripture</p>
+        <p className="text-xs uppercase tracking-[0.2em] text-primary font-semibold">
+          Today's Daily Bread
+        </p>
       </div>
 
-      <p className="font-display text-xl sm:text-2xl text-foreground leading-relaxed mb-2">
-        "{verse.text}"
-      </p>
-      <p className="text-sm text-muted-foreground mb-5">— {verse.reference}</p>
+      <h3 className="font-display text-2xl text-foreground leading-tight mb-1">
+        {bread.theme}
+      </h3>
+      <p className="text-sm text-muted-foreground mb-4 italic">{bread.oneLine}</p>
 
-      <div className="space-y-3 pt-4 border-t border-border">
-        <div>
-          <p className="text-xs uppercase tracking-wider text-primary font-semibold mb-1">Points us to Jesus</p>
-          <p className="text-base text-foreground leading-relaxed">{aboutJesus}</p>
-        </div>
-        <div>
-          <p className="text-xs uppercase tracking-wider text-secondary font-semibold mb-1">Reflect</p>
-          <p className="text-base text-foreground leading-relaxed">{reflection}</p>
-        </div>
-        <div>
-          <p className="text-xs uppercase tracking-wider text-secondary font-semibold mb-1">Pray</p>
-          <p className="text-base text-foreground leading-relaxed">{prayer}</p>
-        </div>
+      <div className="rounded-xl bg-background/40 border border-border p-3 mb-4">
+        <p className="text-xs uppercase tracking-wide text-secondary font-semibold mb-1">
+          {bread.passageTitle}
+        </p>
+        <p className="text-sm text-foreground/90">
+          {bread.passageRef} · {bread.verses.length} verses
+        </p>
       </div>
 
-      <div className="flex items-center gap-2 mt-5">
-        <Button variant="outline" size="sm" onClick={handleSave} disabled={saved} className="flex-1">
-          <Bookmark className="h-4 w-4 mr-2" />
-          {saved ? 'Saved' : 'Save'}
-        </Button>
-        <Button variant="outline" size="sm" onClick={handleShare} className="flex-1">
-          <Share2 className="h-4 w-4 mr-2" />
-          Share
-        </Button>
-      </div>
-    </div>
+      {moodNudge && (
+        <div className="border-t border-border pt-4 mb-4">
+          <div className="flex items-center gap-1.5 mb-1">
+            <Sparkles className="h-3.5 w-3.5 text-primary" />
+            <p className="text-xs uppercase tracking-wider text-primary font-semibold">
+              Points us to Jesus
+            </p>
+          </div>
+          <p className="text-sm text-foreground/90 leading-relaxed">{moodNudge}</p>
+        </div>
+      )}
+
+      <Button variant="default" size="sm" className="w-full justify-between" asChild={false}>
+        <span className="flex items-center justify-between w-full">
+          Open today's reading
+          <ChevronRight className="h-4 w-4" />
+        </span>
+      </Button>
+    </Link>
   );
 }
