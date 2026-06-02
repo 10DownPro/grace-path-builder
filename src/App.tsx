@@ -21,6 +21,7 @@ import Community from "./pages/Community";
 import Help from "./pages/Help";
 import Install from "./pages/Install";
 import Tracks from "./pages/Tracks";
+import Bible from "./pages/Bible";
 
 const queryClient = new QueryClient();
 
@@ -60,6 +61,7 @@ const App = () => (
           <Route path="/home" element={<ProtectedRoute><Index /></ProtectedRoute>} />
           <Route path="/journey" element={<ProtectedRoute><Tracks /></ProtectedRoute>} />
           <Route path="/scripture" element={<ProtectedRoute><Scripture /></ProtectedRoute>} />
+          <Route path="/bible" element={<ProtectedRoute><Bible /></ProtectedRoute>} />
           <Route path="/community" element={<ProtectedRoute><Community /></ProtectedRoute>} />
           <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
 
@@ -77,7 +79,7 @@ const App = () => (
           <Route path="/friends" element={<Navigate to="/community" replace />} />
           <Route path="/feed" element={<Navigate to="/community" replace />} />
           <Route path="/circles" element={<Navigate to="/community" replace />} />
-          <Route path="/bible" element={<Navigate to="/scripture" replace />} />
+          
           <Route path="/tracks" element={<Navigate to="/journey" replace />} />
 
           <Route path="*" element={<NotFound />} />

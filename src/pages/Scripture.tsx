@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { PageLayout } from '@/components/layout/PageLayout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { BookOpen, Bookmark, BookmarkCheck, Search, ChevronRight, Loader2, RefreshCw, Shield, Flame, Mountain, Sparkles, Share2 } from 'lucide-react';
+import { BookOpen, Bookmark, BookmarkCheck, Search, ChevronRight, Loader2, RefreshCw, Shield, Flame, Mountain, Sparkles, Share2, Library } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { Scripture } from '@/types/faith';
 import { useScripture, BibleTranslation, translationNames } from '@/hooks/useScripture';
@@ -133,6 +134,23 @@ export default function ScripturePage() {
             </SelectContent>
           </Select>
         </div>
+        {/* Open Full Bible */}
+        <Link
+          to="/bible"
+          className="flex items-center justify-between rounded-2xl border border-border bg-card/60 hover:bg-card transition-colors p-4"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
+              <Library className="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <p className="font-display text-foreground">Open Full Bible</p>
+              <p className="text-sm text-muted-foreground">Browse books, chapters & translations</p>
+            </div>
+          </div>
+          <ChevronRight className="h-5 w-5 text-muted-foreground" />
+        </Link>
+
 
         {/* Visual Verse of the Day */}
         {dailyVerse && (
