@@ -247,11 +247,11 @@ export default function Index() {
                   <TrendingUp className="h-6 w-6 text-secondary" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs uppercase tracking-[0.2em] text-secondary mb-1">Guided track</p>
-                  <p className="font-display text-lg text-foreground">
+                  <p className="text-xs uppercase tracking-[0.2em] text-secondary mb-1 font-semibold">Guided track</p>
+                  <p className="font-display text-xl text-foreground">
                     {isReturning ? 'Coming Back' : 'Starting Faith'}
                   </p>
-                  <p className="text-sm text-muted-foreground">Pick up where you left off.</p>
+                  <p className="text-base text-muted-foreground">Pick up where you left off.</p>
                 </div>
               </div>
             </div>
