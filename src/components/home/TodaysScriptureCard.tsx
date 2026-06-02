@@ -9,12 +9,16 @@ const defaultVerse = {
   reference: 'Lamentations 3:22-23',
   text: 'Because of the Lord\'s great love we are not consumed, for his compassions never fail. They are new every morning.',
 };
+const defaultAboutJesus = "Every fresh mercy you receive is purchased by Jesus' faithfulness — He is the reason today gets to be new.";
 
 export function TodaysScriptureCard() {
   const { mood } = useDailyMood();
   const verse = mood ? moodContent[mood].scripture : defaultVerse;
-  const reflection = mood ? moodContent[mood].reflection : 'What does this verse stir in you today?';
-  const prayer = mood ? moodContent[mood].prayerPrompt : 'Speak one honest sentence to God.';
+  const aboutJesus = mood ? moodContent[mood].aboutJesus : defaultAboutJesus;
+  const reflection = mood ? moodContent[mood].reflection : 'What does this verse stir in you about Jesus today?';
+  const prayer = mood
+    ? moodContent[mood].prayerPrompt
+    : "Jesus, speak to me through this verse today. In Jesus' name, Amen. 🙏🏽";
   const [saved, setSaved] = useState(false);
 
   const handleShare = async () => {
@@ -50,6 +54,10 @@ export function TodaysScriptureCard() {
       <p className="text-sm text-muted-foreground mb-5">— {verse.reference}</p>
 
       <div className="space-y-3 pt-4 border-t border-border">
+        <div>
+          <p className="text-xs uppercase tracking-wider text-primary font-semibold mb-1">Points us to Jesus</p>
+          <p className="text-base text-foreground leading-relaxed">{aboutJesus}</p>
+        </div>
         <div>
           <p className="text-xs uppercase tracking-wider text-secondary font-semibold mb-1">Reflect</p>
           <p className="text-base text-foreground leading-relaxed">{reflection}</p>
