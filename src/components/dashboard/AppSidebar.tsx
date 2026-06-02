@@ -33,20 +33,14 @@ import {
 } from '@/components/ui/sidebar';
 
 const mainNavItems = [
-  { path: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-  { path: '/session', icon: Dumbbell, label: 'Training' },
-  { path: '/community', icon: MessageSquare, label: 'Trenches' },
-  { path: '/feed', icon: Rss, label: 'Feed' },
-  { path: '/prayer', icon: Target, label: 'Prayer' },
+  { path: '/home', icon: LayoutDashboard, label: 'Home' },
+  { path: '/journey', icon: Footprints, label: 'Journey' },
+  { path: '/scripture', icon: BookOpen, label: 'Scripture' },
   { path: '/community', icon: Users, label: 'Community' },
+  { path: '/profile', icon: Trophy, label: 'Profile' },
 ];
 
-const featureNavItems = [
-  { path: '/battles', icon: Sword, label: 'Battle Verses' },
-  { path: '/scripture', icon: BookOpen, label: 'Scripture' },
-  { path: '/rewards', icon: Trophy, label: 'Rewards' },
-  { path: '/progress', icon: Flame, label: 'Progress' },
-];
+const featureNavItems: { path: string; icon: typeof BookOpen; label: string }[] = [];
 
 const bottomNavItems = [
   { path: '/settings', icon: Settings, label: 'Settings' },
