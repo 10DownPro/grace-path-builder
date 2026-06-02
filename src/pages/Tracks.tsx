@@ -89,29 +89,54 @@ export default function Tracks() {
               <h1 className="font-display text-3xl sm:text-4xl">{journey.title}</h1>
             </div>
           </div>
-          <p className="text-lg text-muted-foreground mb-6">{journey.tagline}</p>
+          <p className="text-lg text-muted-foreground mb-5">{journey.tagline}</p>
 
-          {/* Progress summary */}
-          <div className="rounded-2xl border border-border bg-card p-5 mb-6">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-base text-muted-foreground">
-                {journeyCompleted.length} of {allLessons.length} lessons
-              </span>
-              <span className="text-base font-semibold text-foreground">{pct}%</span>
-            </div>
-            <Progress value={pct} className="h-2" />
-            <div className="grid grid-cols-3 gap-3 mt-5">
-              <Stat icon={<BookOpen className="h-4 w-4" />} label="Lessons" value={journeyCompleted.length} />
-              <Stat icon={<Heart className="h-4 w-4" />} label="Reflections" value={reflectionsWritten} />
-              <Stat icon={<MessageSquare className="h-4 w-4" />} label="Prayers" value={journeyCompleted.length} />
-            </div>
-          </div>
+          <TrackMeta
+            modules={journey.modules.length}
+            lessons={allLessons.length}
+            weeks={estimateWeeks(allLessons.length)}
+            className="mb-6"
+          />
 
-          {activeId !== journey.id && (
-            <Button onClick={() => setActive(journey.id)} variant="outline" className="w-full mb-6">
-              Make this my active track
-            </Button>
-          )}
+          {(() => {
+            const hasStarted = journeyCompleted.length > 0;
+            if (!hasStarted) return null;
+            const currentModIdx = journey.modules.findIndex((m) => m.lessons.some((l) => !journeyCompleted.includes(l.id)));
+            const currentLessonIdx = sequentialLessons.findIndex((l) => !journeyCompleted.includes(l.id));
+            return (
+              <div className="rounded-2xl border border-border bg-card p-5 mb-6">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-base text-muted-foreground">
+                    Module {Math.max(1, currentModIdx + 1)} of {journey.modules.length} · Lesson {Math.max(1, currentLessonIdx + 1)} of {allLessons.length}
+                  </span>
+                  <span className="text-base font-semibold text-foreground">{pct}%</span>
+                </div>
+                <Progress value={pct} className="h-2" />
+                <div className="grid grid-cols-3 gap-3 mt-5">
+                  <Stat icon={<BookOpen className="h-4 w-4" />} label="Lessons" value={journeyCompleted.length} />
+                  <Stat icon={<Heart className="h-4 w-4" />} label="Reflections" value={reflectionsWritten} />
+                  <Stat icon={<MessageSquare className="h-4 w-4" />} label="Prayers" value={journeyCompleted.length} />
+                </div>
+              </div>
+            );
+          })()}
+
+          {(() => {
+            const hasStarted = journeyCompleted.length > 0;
+            const label = hasStarted ? 'Continue Journey' : 'Start Journey';
+            const onClick = () => {
+              if (activeId !== journey.id) setActive(journey.id);
+              const target = sequentialLessons.find((l) => !journeyCompleted.includes(l.id)) || sequentialLessons[0];
+              if (!target) return;
+              const mod = journey.modules.find((m) => m.lessons.some((l) => l.id === target.id));
+              if (mod) setOpenLesson({ journey, module: mod, lesson: target });
+            };
+            return (
+              <Button onClick={onClick} size="lg" className="w-full mb-6">
+                {label} <ChevronRight className="h-4 w-4 ml-2" />
+              </Button>
+            );
+          })()}
 
           {/* Modules → Lessons */}
           <div className="space-y-6">
