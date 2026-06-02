@@ -4,16 +4,17 @@ import { Textarea } from '@/components/ui/textarea';
 import { Progress } from '@/components/ui/progress';
 import { ChevronLeft, ChevronRight, BookOpen, Heart, Sparkles, MessageCircle, CheckCircle2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import type { Journey, JourneyModule } from '@/lib/journeys';
+import type { Journey, Lesson, Module } from '@/lib/journeys';
+import { ensurePrayerEnding, getAllLessons } from '@/lib/journeys';
 import { useLesson, REACTIONS } from '@/hooks/useLesson';
 
 type Step = 'intro' | 'scripture' | 'reflection' | 'application' | 'prayer' | 'community' | 'complete';
 
 const STEPS: { key: Step; label: string }[] = [
-  { key: 'intro', label: 'Introduction' },
+  { key: 'intro', label: 'Teaching' },
   { key: 'scripture', label: 'Scripture' },
   { key: 'reflection', label: 'Reflection' },
-  { key: 'application', label: 'Application' },
+  { key: 'application', label: 'Action Step' },
   { key: 'prayer', label: 'Prayer' },
   { key: 'community', label: 'Community' },
 ];
@@ -22,21 +23,31 @@ type PrayerMode = 'read' | 'listen' | 'own';
 
 interface Props {
   journey: Journey;
-  module: JourneyModule;
-  nextRecommendation: { journey: Journey; module: JourneyModule } | null;
+  /** The lesson being viewed. Named `module` for backward compatibility. */
+  module: Lesson;
+  /** The parent Module that contains this lesson (optional during transition). */
+  parentModule?: Module;
+  nextRecommendation: { journey: Journey; module: Lesson } | null;
   onExit: () => void;
   onComplete: () => void; // marks complete in journey progress
-  onStartNext: (journey: Journey, module: JourneyModule) => void;
+  onStartNext: (journey: Journey, lesson: Lesson) => void;
 }
 
-export function LessonViewer({ journey, module, nextRecommendation, onExit, onComplete, onStartNext }: Props) {
+export function LessonViewer({ journey, module, parentModule, nextRecommendation, onExit, onComplete, onStartNext }: Props) {
   const [step, setStep] = useState<Step>('intro');
   const [prayerMode, setPrayerMode] = useState<PrayerMode>('read');
   const { reflections, saveReflection, counts, userReaction, toggleReaction } = useLesson(journey.id, module.id);
 
-  const moduleIndex = journey.modules.findIndex((m) => m.id === module.id);
+  // Index within the parent module (if known) for the "Lesson Y of Z" header.
+  const moduleLessons = parentModule?.lessons ?? [];
+  const lessonIndexInModule = moduleLessons.findIndex((l) => l.id === module.id);
+  const allLessons = useMemo(() => getAllLessons(journey), [journey]);
+  const lessonIndexGlobal = allLessons.findIndex((l) => l.id === module.id);
   const stepIndex = STEPS.findIndex((s) => s.key === step);
   const totalReactions = useMemo(() => Object.values(counts).reduce((a, b) => a + b, 0), [counts]);
+
+  // Always render prayers with the required ending.
+  const prayerText = ensurePrayerEnding(module.prayer);
 
   const goNext = () => {
     const i = STEPS.findIndex((s) => s.key === step);
