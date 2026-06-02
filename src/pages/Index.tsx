@@ -220,20 +220,21 @@ export default function Index() {
             </div>
           )}
 
-          {/* 1. Daily Check-in */}
+          {/* 1. Continue Your Journey — primary engagement card */}
+          <ContinueJourneyCard lastSessionDate={progress?.last_session_date} />
+
+          {/* 2. Daily Check-in */}
           <DailyCheckIn />
 
-          {/* 2. Today's Focus */}
+          {/* 3. Today's Focus */}
           <TodaysFocusCard />
 
-          {/* 3. Today's Walk (4 steps) */}
+          {/* 4. Today's Walk (4 steps) */}
           <WorkoutCard
             steps={todaySteps}
             allCompleted={todaySteps.every((s) => s.completed)}
           />
 
-          {/* 4. Journey progress */}
-          <JourneyProgressCard />
 
           {/* 5. Today's Scripture */}
           <TodaysScriptureCard />
