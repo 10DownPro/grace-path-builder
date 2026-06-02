@@ -55,6 +55,10 @@ export function TodaysScriptureCard() {
 
       <div className="space-y-3 pt-4 border-t border-border">
         <div>
+          <p className="text-xs uppercase tracking-wider text-primary font-semibold mb-1">Points us to Jesus</p>
+          <p className="text-base text-foreground leading-relaxed">{aboutJesus}</p>
+        </div>
+        <div>
           <p className="text-xs uppercase tracking-wider text-secondary font-semibold mb-1">Reflect</p>
           <p className="text-base text-foreground leading-relaxed">{reflection}</p>
         </div>
