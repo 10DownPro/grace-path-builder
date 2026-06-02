@@ -2,392 +2,228 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@300;400;500;600;700&family=Roboto+Condensed:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@300;400;500;600;700&display=swap');
 
 @layer base {
   :root {
-    /* GRITTY GYM PALETTE - Dark, Industrial, Raw */
-    --background: 0 0% 12%; /* Dark charcoal #1E1E1E */
-    --foreground: 0 0% 95%; /* Off-white #F2F2F2 */
-    
-    --card: 0 0% 16%; /* Slightly lighter gray #292929 */
-    --card-foreground: 0 0% 95%;
-    
-    --popover: 0 0% 16%;
-    --popover-foreground: 0 0% 95%;
-    
-    --primary: 25 85% 53%; /* Burnt orange/rust #E87722 */
-    --primary-foreground: 0 0% 95%;
-    
-    --secondary: 220 13% 35%; /* Steel blue-gray #4A5568 */
-    --secondary-foreground: 0 0% 95%;
-    
-    --muted: 0 0% 20%;
-    --muted-foreground: 0 0% 60%;
-    
-    --accent: 25 85% 53%; /* Same as primary - burnt orange */
-    --accent-foreground: 0 0% 95%;
-    
-    --destructive: 0 84% 50%;
-    --destructive-foreground: 0 0% 95%;
-    
-    --success: 142 40% 40%; /* Gritty green #3D8B61 */
-    --success-foreground: 0 0% 95%;
-    
-    --warning: 45 91% 61%; /* Caution tape yellow #F5C842 */
-    --warning-foreground: 0 0% 12%;
-    --warning-dark: 45 80% 45%; /* Darker warning for light mode */
-    
-    --border: 0 0% 25%; /* Dark gray #404040 */
-    --input: 0 0% 25%;
-    --ring: 25 85% 53%;
-    
-    /* Industrial shadows and effects */
-    --shadow-heavy: 0 8px 24px -4px hsla(0, 0%, 0%, 0.6);
-    --shadow-glow-accent: 0 0 20px -4px hsla(25, 85%, 53%, 0.4);
-    --shadow-pressed: 0 2px 4px -2px hsla(0, 0%, 0%, 0.5);
-    
-    /* Sidebar colors */
-    --sidebar-background: 0 0% 12%;
-    --sidebar-foreground: 0 0% 95%;
-    --sidebar-primary: 25 85% 53%;
-    --sidebar-primary-foreground: 0 0% 95%;
-    --sidebar-accent: 25 85% 53%;
-    --sidebar-accent-foreground: 0 0% 95%;
-    --sidebar-border: 0 0% 25%;
-    --sidebar-ring: 25 85% 53%;
-    
-    --radius: 0.5rem;
-  }
-  
-  /* Dark mode is the default */
-  .dark {
-    /* Same values - this IS a dark theme */
+    /* FaithFit — Strength + Grace palette */
+    --background: 221 39% 11%; /* #111827 Deep Navy Charcoal */
+    --foreground: 0 0% 100%;
+
+    --card: 217 33% 17%; /* #1F2937 Slate Charcoal */
+    --card-foreground: 0 0% 100%;
+
+    --popover: 217 33% 17%;
+    --popover-foreground: 0 0% 100%;
+
+    --primary: 209 36% 49%; /* #4F7CAC Muted Faith Blue */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 130 14% 49%; /* #6B8F71 Restoration Sage */
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 217 33% 22%;
+    --muted-foreground: 220 9% 65%;
+
+    --accent: 130 14% 49%;
+    --accent-foreground: 0 0% 100%;
+
+    /* Logo orange — use sparingly */
+    --accent-warm: 25 80% 53%;
+    --accent-warm-foreground: 0 0% 100%;
+
+    --destructive: 0 70% 55%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 130 14% 49%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 38 92% 60%;
+    --warning-foreground: 221 39% 11%;
+    --warning-dark: 38 80% 45%;
+
+    --border: 217 19% 27%; /* #374151 */
+    --input: 217 19% 27%;
+    --ring: 209 36% 49%;
+
+    --shadow-heavy: 0 10px 30px -10px hsla(221, 39%, 5%, 0.5);
+    --shadow-glow-accent: 0 0 24px -6px hsla(209, 36%, 49%, 0.35);
+    --shadow-pressed: 0 2px 4px -2px hsla(0, 0%, 0%, 0.4);
+
+    --sidebar-background: 221 39% 11%;
+    --sidebar-foreground: 220 14% 90%;
+    --sidebar-primary: 209 36% 49%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 130 14% 49%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 217 19% 27%;
+    --sidebar-ring: 209 36% 49%;
+
+    --radius: 0.75rem;
   }
 
-  /* Light mode theme */
+  .dark { /* dark is default */ }
+
   .light {
-    --background: 0 0% 98%; /* Light gray #FAFAFA */
-    --foreground: 0 0% 15%; /* Dark text #262626 */
-    
-    --card: 0 0% 100%; /* White cards */
-    --card-foreground: 0 0% 15%;
-    
+    --background: 40 33% 97%;
+    --foreground: 221 39% 14%;
+    --card: 0 0% 100%;
+    --card-foreground: 221 39% 14%;
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 15%;
-    
-    --primary: 25 85% 50%; /* Burnt orange #E67722 */
+    --popover-foreground: 221 39% 14%;
+    --primary: 209 40% 42%;
     --primary-foreground: 0 0% 100%;
-    
-    --secondary: 220 13% 75%; /* Light steel blue */
-    --secondary-foreground: 0 0% 15%;
-    
-    --muted: 0 0% 92%;
-    --muted-foreground: 0 0% 45%;
-    
-    --accent: 25 85% 50%;
+    --secondary: 130 18% 42%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 220 14% 93%;
+    --muted-foreground: 220 9% 40%;
+    --accent: 130 18% 42%;
     --accent-foreground: 0 0% 100%;
-    
-    --destructive: 0 84% 50%;
+    --accent-warm: 25 80% 50%;
+    --accent-warm-foreground: 0 0% 100%;
+    --destructive: 0 70% 50%;
     --destructive-foreground: 0 0% 100%;
-    
-    --success: 142 40% 40%;
+    --success: 130 18% 42%;
     --success-foreground: 0 0% 100%;
-    
-    --warning: 35 85% 45%; /* Darker orange-yellow for light mode visibility */
+    --warning: 38 85% 50%;
     --warning-foreground: 0 0% 100%;
-    --warning-dark: 35 85% 40%;
-    
-    --border: 0 0% 85%;
-    --input: 0 0% 85%;
-    --ring: 25 85% 50%;
-    
-    --shadow-heavy: 0 8px 24px -4px hsla(0, 0%, 0%, 0.15);
-    --shadow-glow-accent: 0 0 20px -4px hsla(25, 85%, 53%, 0.3);
-    --shadow-pressed: 0 2px 4px -2px hsla(0, 0%, 0%, 0.2);
-    
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 0 0% 15%;
-    --sidebar-primary: 25 85% 50%;
+    --warning-dark: 38 80% 40%;
+    --border: 220 13% 85%;
+    --input: 220 13% 85%;
+    --ring: 209 40% 42%;
+    --shadow-heavy: 0 10px 30px -10px hsla(221, 39%, 30%, 0.15);
+    --shadow-glow-accent: 0 0 24px -6px hsla(209, 40%, 42%, 0.25);
+    --shadow-pressed: 0 2px 4px -2px hsla(0, 0%, 0%, 0.15);
+    --sidebar-background: 40 33% 97%;
+    --sidebar-foreground: 221 39% 14%;
+    --sidebar-primary: 209 40% 42%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 25 85% 50%;
+    --sidebar-accent: 130 18% 42%;
     --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 0 0% 85%;
-    --sidebar-ring: 25 85% 50%;
+    --sidebar-border: 220 13% 85%;
+    --sidebar-ring: 209 40% 42%;
   }
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
+  * { @apply border-border; }
 
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: 'Oswald', 'Roboto Condensed', sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-feature-settings: 'cv02', 'cv03', 'cv04';
   }
 
-  /* Gym typography */
+  /* Calmer display typography for spiritual formation */
   .font-display {
-    font-family: 'Bebas Neue', 'Oswald', sans-serif;
-    letter-spacing: 0.05em;
+    font-family: 'Fraunces', 'Inter', serif;
+    letter-spacing: -0.01em;
+    font-weight: 500;
   }
 
-  .font-body {
-    font-family: 'Oswald', 'Roboto Condensed', sans-serif;
+  /* Keep Bebas only for the logo wordmark */
+  .font-wordmark {
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 0.06em;
   }
 
-  /* Force color-scheme based on class */
-  html {
-    color-scheme: dark;
-  }
+  .font-body { font-family: 'Inter', system-ui, sans-serif; }
 
-  html.light {
-    color-scheme: light;
-  }
+  html { color-scheme: dark; }
+  html.light { color-scheme: light; }
 }
 
 @layer components {
-  /* Industrial card style */
+  /* Calm premium card */
   .gym-card {
-    @apply rounded-lg border-2 border-border bg-card;
+    @apply rounded-2xl border border-border bg-card;
     box-shadow: var(--shadow-heavy);
   }
 
-  /* Dark mode card gradient */
-  .dark .gym-card {
-    background: linear-gradient(180deg, hsl(0 0% 18%) 0%, hsl(0 0% 14%) 100%);
-  }
+  .spiritual-card { @apply gym-card; }
 
-  /* Light mode card */
-  .light .gym-card {
-    background: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(0 0% 98%) 100%);
-  }
+  .gym-card-accent { @apply gym-card; border-left: 3px solid hsl(var(--primary)); }
+  .gym-card-warning { @apply gym-card; border-left: 3px solid hsl(var(--accent-warm)); }
 
-  /* Card with accent border */
-  .gym-card-accent {
-    @apply gym-card border-l-4 border-l-primary;
-  }
-
-  /* Card with warning border */
-  .gym-card-warning {
-    @apply gym-card border-l-4;
-    border-left-color: hsl(var(--warning));
-  }
-
-  /* Heavy 3D button */
+  /* Soft primary button (replaces gym button) */
   .btn-gym {
-    @apply relative font-display uppercase tracking-wider font-bold;
-    @apply py-4 px-6 rounded-lg;
-    @apply border-b-4 border-primary/60;
-    @apply transition-all duration-100;
-    background: linear-gradient(180deg, hsl(25 85% 55%) 0%, hsl(25 85% 48%) 100%);
-    box-shadow: 0 4px 12px -2px hsla(25, 85%, 53%, 0.4);
+    @apply relative font-medium tracking-wide;
+    @apply py-3 px-6 rounded-xl text-primary-foreground;
+    @apply transition-all duration-200;
+    background: hsl(var(--primary));
+    box-shadow: 0 4px 14px -4px hsla(209, 36%, 49%, 0.45);
   }
+  .btn-gym:hover { @apply scale-[1.01]; background: hsl(209 40% 53%); }
+  .btn-gym:active { @apply scale-[0.99]; }
 
-  .btn-gym:hover {
-    @apply scale-[1.02];
-    box-shadow: 0 6px 16px -2px hsla(25, 85%, 53%, 0.5);
-  }
-
-  .btn-gym:active {
-    @apply scale-[0.98] border-b-2 translate-y-0.5;
-    box-shadow: 0 2px 8px -2px hsla(25, 85%, 53%, 0.3);
-  }
-
-  /* Thick progress bar */
-  .progress-gym {
-    @apply h-3 rounded-full overflow-hidden;
-    background: hsl(0 0% 20%);
-  }
-
-  .light .progress-gym {
-    background: hsl(0 0% 88%);
-  }
-
+  .progress-gym { @apply h-2 rounded-full overflow-hidden; background: hsl(var(--muted)); }
   .progress-gym-fill {
     @apply h-full rounded-full transition-all duration-500;
-    background: linear-gradient(90deg, hsl(25 85% 53%) 0%, hsl(45 91% 61%) 100%);
+    background: linear-gradient(90deg, hsl(var(--primary)) 0%, hsl(var(--secondary)) 100%);
   }
 
-  /* Rivet decoration */
-  .rivet::before,
-  .rivet::after {
-    content: '';
-    @apply absolute w-2 h-2 rounded-full bg-border;
-    box-shadow: inset 0 1px 2px hsla(0, 0%, 0%, 0.5);
-  }
-
-  .rivet::before {
-    @apply top-3 left-3;
-  }
-
-  .rivet::after {
-    @apply top-3 right-3;
-  }
-
-  /* Noise texture overlay */
-  .texture-noise {
-    position: relative;
-  }
-
-  .texture-noise::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    opacity: 0.03;
-    pointer-events: none;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-  }
-
-  /* Exercise box styles */
   .exercise-box {
-    @apply border-2 border-border rounded-lg p-4 transition-all duration-200;
+    @apply border border-border rounded-xl p-4 transition-all duration-200;
     @apply hover:border-primary/50 hover:bg-primary/5;
   }
-
   .exercise-box-complete {
-    @apply border-2 rounded-lg p-4;
-    background: hsla(142, 40%, 40%, 0.1);
-    border-color: hsl(142 40% 40%);
+    @apply border rounded-xl p-4;
+    background: hsla(130, 14%, 49%, 0.10);
+    border-color: hsl(var(--secondary));
   }
 
-  /* Stat display */
-  .stat-number {
-    @apply font-display text-4xl font-bold text-foreground;
-    text-shadow: 0 2px 4px hsla(0, 0%, 0%, 0.3);
-  }
+  .stat-number { @apply font-display text-4xl font-semibold text-foreground; }
 
-  .light .stat-number {
-    text-shadow: 0 2px 4px hsla(0, 0%, 0%, 0.1);
-  }
+  .glow-accent { box-shadow: var(--shadow-glow-accent); }
+  .glow-warning { box-shadow: 0 0 20px -4px hsla(38, 92%, 60%, 0.35); }
 
-  /* Glow effects */
-  .glow-accent {
-    box-shadow: 0 0 20px -4px hsla(25, 85%, 53%, 0.5);
-  }
+  .nav-active { @apply bg-primary text-primary-foreground rounded-xl; }
 
-  .glow-warning {
-    box-shadow: 0 0 20px -4px hsla(45, 91%, 61%, 0.4);
-  }
-
-  /* Nav active state */
-  .nav-active {
-    @apply bg-primary text-background rounded-lg;
-  }
-
-  /* Gradient backgrounds - dark mode */
   .gradient-dawn {
-    background: linear-gradient(180deg, hsl(0 0% 14%) 0%, hsl(0 0% 12%) 50%, hsl(0 0% 10%) 100%);
+    background: radial-gradient(1200px 600px at 50% -10%, hsla(209, 36%, 49%, 0.12), transparent 60%),
+                linear-gradient(180deg, hsl(221 39% 12%) 0%, hsl(221 39% 11%) 50%, hsl(221 39% 9%) 100%);
   }
-
-  /* Light mode gradient backgrounds */
   .light .gradient-dawn {
-    background: linear-gradient(180deg, hsl(0 0% 98%) 0%, hsl(0 0% 96%) 50%, hsl(0 0% 94%) 100%);
+    background: radial-gradient(1200px 600px at 50% -10%, hsla(209, 40%, 42%, 0.08), transparent 60%),
+                linear-gradient(180deg, hsl(40 33% 98%) 0%, hsl(40 33% 96%) 100%);
   }
 
-  /* Ensure proper background inheritance in light mode */
-  .light .min-h-screen {
-    background-color: hsl(0 0% 98%);
-  }
+  .light .min-h-screen { background-color: hsl(var(--background)); }
 }
 
 @layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
-
-  /* Utility classes for gym colors */
-  .text-success {
-    color: hsl(var(--success));
-  }
-
-  .text-warning {
-    color: hsl(var(--warning));
-  }
-
-  .bg-success {
-    background-color: hsl(var(--success));
-  }
-
-  .bg-warning {
-    background-color: hsl(var(--warning));
-  }
-
-  .border-success {
-    border-color: hsl(var(--success));
-  }
-
-  .border-warning {
-    border-color: hsl(var(--warning));
-  }
-
-  /* Touch-friendly minimum sizes */
-  .touch-target {
-    min-width: 44px;
-    min-height: 44px;
-  }
-
-  /* Container queries support */
-  .container-responsive {
-    container-type: inline-size;
-  }
+  .text-balance { text-wrap: balance; }
+  .text-success { color: hsl(var(--success)); }
+  .text-warning { color: hsl(var(--warning)); }
+  .text-accent-warm { color: hsl(var(--accent-warm)); }
+  .bg-success { background-color: hsl(var(--success)); }
+  .bg-warning { background-color: hsl(var(--warning)); }
+  .bg-accent-warm { background-color: hsl(var(--accent-warm)); }
+  .border-success { border-color: hsl(var(--success)); }
+  .border-warning { border-color: hsl(var(--warning)); }
+  .border-accent-warm { border-color: hsl(var(--accent-warm)); }
+  .touch-target { min-width: 44px; min-height: 44px; }
+  .container-responsive { container-type: inline-size; }
 }
 
-/* Animations */
 @keyframes stamp-in {
-  0% {
-    transform: scale(2) rotate(-15deg);
-    opacity: 0;
-  }
-  50% {
-    transform: scale(1.1) rotate(5deg);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(1) rotate(0deg);
-    opacity: 1;
-  }
+  0% { transform: scale(2) rotate(-15deg); opacity: 0; }
+  50% { transform: scale(1.1) rotate(5deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
 }
-
 @keyframes pulse-glow {
-  0%, 100% {
-    box-shadow: 0 0 10px -2px hsla(25, 85%, 53%, 0.4);
-  }
-  50% {
-    box-shadow: 0 0 20px -2px hsla(25, 85%, 53%, 0.6);
-  }
+  0%, 100% { box-shadow: 0 0 12px -2px hsla(209, 36%, 49%, 0.35); }
+  50% { box-shadow: 0 0 24px -2px hsla(209, 36%, 49%, 0.55); }
 }
-
 @keyframes slide-up {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
+.animate-stamp { animation: stamp-in 0.3s ease-out forwards; }
+.animate-pulse-glow { animation: pulse-glow 2.4s ease-in-out infinite; }
+.animate-slide-up { animation: slide-up 0.4s ease-out forwards; }
 
-.animate-stamp {
-  animation: stamp-in 0.3s ease-out forwards;
-}
-
-.animate-pulse-glow {
-  animation: pulse-glow 2s ease-in-out infinite;
-}
-
-.animate-slide-up {
-  animation: slide-up 0.4s ease-out forwards;
-}
-
-/* Stagger children */
-.stagger-children > * {
-  opacity: 0;
-  animation: slide-up 0.4s ease-out forwards;
-}
-
+.stagger-children > * { opacity: 0; animation: slide-up 0.4s ease-out forwards; }
 .stagger-children > *:nth-child(1) { animation-delay: 0ms; }
 .stagger-children > *:nth-child(2) { animation-delay: 60ms; }
 .stagger-children > *:nth-child(3) { animation-delay: 120ms; }
@@ -397,18 +233,11 @@
 .stagger-children > *:nth-child(7) { animation-delay: 360ms; }
 .stagger-children > *:nth-child(8) { animation-delay: 420ms; }
 
-/* Safe area padding for mobile devices with notches/home indicators */
-.safe-area-pb {
-  padding-bottom: env(safe-area-inset-bottom, 0px);
-}
+.safe-area-pb { padding-bottom: env(safe-area-inset-bottom, 0px); }
 
-/* Shake animation for error states */
 @keyframes shake {
   0%, 100% { transform: translateX(0); }
   10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
   20%, 40%, 60%, 80% { transform: translateX(4px); }
 }
-
-.animate-shake {
-  animation: shake 0.5s ease-in-out;
-}
+.animate-shake { animation: shake 0.5s ease-in-out; }
