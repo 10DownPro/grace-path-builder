@@ -42,11 +42,11 @@ export default function Help() {
     },
     {
       icon: BookOpen,
-      title: 'Scripture & Battle Verses',
+      title: 'Scripture & Bible',
       faqs: [
         {
-          question: 'What are Battle Verses?',
-          answer: 'Battle Verses are powerful scriptures for spiritual warfare. Each day features a new verse to memorize and meditate on. Practice them in Battle Mode to strengthen your spiritual armor.'
+          question: "What's the difference between Bible and Scripture?",
+          answer: "Bible is the full reader — browse any book and chapter at your pace. Scripture is curated: today's verse, saved verses, search by reference, and verses tied to your Journey lessons."
         },
         {
           question: 'Which Bible translations are available?',
@@ -54,28 +54,29 @@ export default function Help() {
         },
         {
           question: 'How do I save verses for later?',
-          answer: 'Tap the bookmark icon on any verse to save it to your collection. Access saved verses from the Scripture page under "My Verses."'
+          answer: 'Tap the bookmark icon on any verse to save it to your collection. Access saved verses from the Scripture page under "Saved Verses."'
         }
       ]
     },
     {
       icon: Users,
-      title: 'Squads & Community',
+      title: 'Community & Faith Circles',
       faqs: [
         {
-          question: 'How do I join a squad?',
-          answer: 'Go to the Squad page and tap "Join Squad." Enter the squad code shared by your squad leader, or browse public squads to find one that fits your goals.'
+          question: 'How do I join a Faith Circle?',
+          answer: 'Open the Community tab and choose Faith Circles. Pick a circle that fits where you are — Starting Faith, Coming Back, Healing, Consistency, or Prayer — and tap Join Circle.'
         },
         {
-          question: 'What can I do in The Trenches?',
-          answer: 'The Trenches is our community discussion space. Share prayer requests, post testimonies, ask theological questions, and encourage fellow believers. Remember: attack ideas, not people!'
+          question: 'What is Walking Together?',
+          answer: 'Walking Together is the shared community feed. Share reflections, post encouragements, and lift others up in prayer. Keep it kind, honest, and Christ-centered.'
         },
         {
-          question: 'How do friend codes work?',
-          answer: 'Your unique friend code is in Settings. Share it with others so they can add you as a friend. You can also add friends by entering their code in the Squad page.'
+          question: 'What are Prayer Partners?',
+          answer: 'Prayer Partners is an optional 1-on-1 pairing. Opt in when you\'re ready and we\'ll match you with someone else walking with God so you can check in and pray for each other.'
         }
       ]
     },
+
     {
       icon: Trophy,
       title: 'Rewards & Progress',

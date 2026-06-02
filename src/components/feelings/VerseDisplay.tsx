@@ -116,7 +116,7 @@ export function VerseDisplay({
       {/* Refresh Button */}
       <div className="flex items-center justify-between">
         <p className="text-xs text-muted-foreground font-display uppercase tracking-wider">
-          {verses.length} Verses For Your Battle
+          {verses.length} verses for where you are
         </p>
         <Button
           variant="ghost"

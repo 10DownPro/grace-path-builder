@@ -102,7 +102,7 @@ export const READING_LEVELS = [
 
 export const GROUP_TYPES = [
   { value: 'family', label: 'Family', emoji: '👨‍👩‍👧‍👦', description: 'Parents and children studying together' },
-  { value: 'friends', label: 'Friends', emoji: '🤝', description: 'Peers studying together' },
+  { value: 'friends', label: 'Companions', emoji: '🤝', description: 'Peers studying together' },
   { value: 'small_group', label: 'Small Group', emoji: '⛪', description: 'Church-based mixed ages' },
   { value: 'youth', label: 'Youth Group', emoji: '🎓', description: 'Teens and young adults' },
   { value: 'couples', label: 'Couples', emoji: '💑', description: 'Married or dating couples' },
