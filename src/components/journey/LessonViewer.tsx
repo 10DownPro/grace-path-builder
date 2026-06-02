@@ -229,13 +229,13 @@ export function LessonViewer({ journey, module, parentModule, nextRecommendation
             </div>
             {prayerMode === 'read' && (
               <div className="rounded-xl border border-border bg-card p-6 border-l-2 border-l-accent-warm">
-                <p className="text-lg leading-relaxed italic text-foreground">{module.prayer}</p>
+                <p className="text-lg leading-relaxed italic text-foreground">{prayerText}</p>
               </div>
             )}
             {prayerMode === 'listen' && (
               <div className="rounded-xl border border-border bg-card p-6 text-center">
                 <p className="text-base text-muted-foreground mb-3">Audio prayers coming soon. For now, read the prayer slowly out loud.</p>
-                <p className="text-base italic text-foreground">"{module.prayer}"</p>
+                <p className="text-base italic text-foreground">"{prayerText}"</p>
               </div>
             )}
             {prayerMode === 'own' && (
