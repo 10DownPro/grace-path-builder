@@ -227,6 +227,9 @@ export default function Index() {
           {/* 2. Daily Check-in */}
           <DailyCheckIn />
 
+          {/* 2b. Scripture for what you're facing */}
+          <ScriptureGuidanceCard />
+
           {/* 3. Today's Focus */}
           <TodaysFocusCard />
 
