@@ -42,7 +42,7 @@ export function ShareVerseToFeedDialog({ open, onOpenChange, verse }: ShareVerse
       return;
     }
 
-    toast.success('Verse shared to The Trenches! 📖');
+    toast.success('Verse shared with the community 📖');
     setThoughts('');
     onOpenChange(false);
   };

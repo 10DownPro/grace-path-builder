@@ -70,20 +70,21 @@ const Waitlist = () => {
   const features = [
     {
       icon: Flame,
-      title: "4-Set Daily Workouts",
-      description: "Worship. Scripture. Prayer. Reflection. 30 minutes. No excuses. Build spiritual muscle."
+      title: "Today's Walk",
+      description: "Worship. Scripture. Prayer. Reflection. A guided 30-minute rhythm to walk with God each day."
     },
     {
       icon: Users,
-      title: "Squad Accountability",
-      description: "Lock in with your crew. Track each other's grind. Iron sharpens iron."
+      title: "Faith Circles",
+      description: "Small, themed circles for people starting, returning, healing, or learning to pray together."
     },
     {
       icon: Shield,
-      title: "Battle Verses Armory",
-      description: "600+ weapons for 25+ struggles. Anxiety, doubt, grief—find your verse, fight back."
+      title: "Scripture for Every Season",
+      description: "600+ verses across 25+ life situations. Anxiety, doubt, grief — find God's word for where you are."
     }
   ];
+
 
   const earlyAccessBenefits = [
     "50% off Premium—forever",

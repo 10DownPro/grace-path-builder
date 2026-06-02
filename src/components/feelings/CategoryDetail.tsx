@@ -118,7 +118,7 @@ export function CategoryDetail({ category, onBack }: CategoryDetailProps) {
     }
     setSavedVerseIds(new Set(verses.map(v => v.id)));
     setSavedVerseCount(prev => prev + unsavedVerses.length);
-    toast.success(`Added ${unsavedVerses.length} verses to Battle Verses`);
+    toast.success(`Saved ${unsavedVerses.length} verses`);
   };
 
   // Get category-specific gradient

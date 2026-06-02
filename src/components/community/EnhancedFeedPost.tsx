@@ -103,7 +103,7 @@ export function EnhancedFeedPost({
       text = `🙏 ${contentData.prayer_content}`;
     }
     return {
-      title: 'Share from The Trenches',
+      title: 'Shared from FaithFit Community',
       text: text.slice(0, 200),
       url: window.location.href
     };

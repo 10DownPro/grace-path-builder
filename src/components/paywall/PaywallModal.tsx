@@ -20,7 +20,7 @@ const FEATURE_BENEFITS: Record<string, string> = {
   unlimited_testimonies: 'Share unlimited testimonies',
   unlimited_squads: 'Join unlimited training squads',
   unlimited_friends: 'Add unlimited training partners',
-  unlimited_saved_verses: 'Save unlimited Battle Verses',
+  unlimited_saved_verses: 'Save unlimited verses',
   unlimited_prayer_support: 'Support unlimited prayers',
 };
 

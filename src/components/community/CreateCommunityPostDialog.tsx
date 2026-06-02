@@ -493,8 +493,8 @@ export function CreateCommunityPostDialog({ open, onOpenChange }: CreateCommunit
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="public">Public</SelectItem>
-              <SelectItem value="squad_only">Squad Only</SelectItem>
-              <SelectItem value="friends_only">Friends Only</SelectItem>
+              <SelectItem value="squad_only">Faith Circle Only</SelectItem>
+              <SelectItem value="friends_only">Prayer Partners Only</SelectItem>
             </SelectContent>
           </Select>
         </div>

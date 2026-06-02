@@ -91,11 +91,11 @@ export default function ScripturePage() {
 
   const handleShareDailyVerse = async () => {
     if (!dailyVerse) return;
-    const shareText = `"${dailyVerse.text}" — ${dailyVerse.reference}\n\n#FaithTraining #BattleVerse`;
+    const shareText = `"${dailyVerse.text}" — ${dailyVerse.reference}\n\nShared from FaithFit`;
     
     if (navigator.share) {
       try {
-        await navigator.share({ title: 'Battle Verse', text: shareText });
+        await navigator.share({ title: "Today's Scripture", text: shareText });
       } catch {
         navigator.clipboard.writeText(shareText);
         toast.success('Verse copied!');
@@ -103,6 +103,7 @@ export default function ScripturePage() {
     } else {
       navigator.clipboard.writeText(shareText);
       toast.success('Verse copied!');
+
     }
   };
 
@@ -231,8 +232,8 @@ export default function ScripturePage() {
                 <BookOpen className="h-5 w-5 text-primary" />
               </div>
               <div>
-                <p className="font-display text-sm text-primary uppercase tracking-wide">30-Day Psalms Journey</p>
-                <p className="text-xs text-muted-foreground">Day 7 of 30 • Keep grinding</p>
+                <p className="font-display text-base text-foreground">30-Day Psalms Journey</p>
+                <p className="text-sm text-muted-foreground">Day 7 of 30 · One step at a time</p>
               </div>
             </div>
             <Button variant="ghost" size="icon">
@@ -256,9 +257,9 @@ export default function ScripturePage() {
         {/* Saved Verses */}
         {savedVerses.size > 0 && (
           <div className="space-y-3">
-            <h2 className="font-display text-sm text-primary uppercase tracking-wide flex items-center gap-2">
+            <h2 className="font-display text-lg text-foreground flex items-center gap-2">
               <BookmarkCheck className="h-4 w-4" />
-              Saved Ammo ({savedVerses.size})
+              Saved Verses ({savedVerses.size})
             </h2>
             <div className="flex gap-2 overflow-x-auto pb-2">
               {Array.from(savedVerses).map(ref => (
@@ -276,8 +277,8 @@ export default function ScripturePage() {
         {/* Search Result Banner */}
         {searchResult && (
           <div className="flex items-center justify-between p-3 rounded-lg bg-success/10 border-2 border-success/30">
-            <span className="text-sm text-success font-bold uppercase tracking-wide">
-              Target acquired: "{searchQuery}"
+            <span className="text-sm text-success font-semibold">
+              Found: "{searchQuery}"
             </span>
             <Button 
               variant="ghost" 
@@ -296,8 +297,8 @@ export default function ScripturePage() {
         {/* Verses List */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="font-display text-lg text-foreground uppercase tracking-wide">
-              {searchResult ? 'Target Found' : 'Battle Verses'}
+            <h2 className="font-display text-xl text-foreground">
+              {searchResult ? 'Search Result' : "Today's Scripture"}
             </h2>
             {!searchResult && (
               <Button variant="ghost" size="sm" onClick={loadVerses} disabled={loading}>
