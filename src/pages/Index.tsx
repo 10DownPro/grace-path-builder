@@ -20,7 +20,7 @@ import { usePrayers } from '@/hooks/usePrayers';
 import { useSessions } from '@/hooks/useSessions';
 import { useMilestoneChecker } from '@/hooks/useMilestoneChecker';
 import { useFreeChapter } from '@/hooks/useFreeChapter';
-import { User, Shield, Flame, Zap, Trophy, TrendingUp, Info, X } from 'lucide-react';
+import { User, Shield, Flame, Zap, Trophy, TrendingUp, Info, X, Sunrise } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
@@ -90,15 +90,12 @@ export default function Index() {
     toast.success('Battle Mode Victory! 🏆 Streak maintained!');
   };
 
-  const handleOnboardingComplete = async (data: {
-    name: string;
-    commitment: 'starter' | 'committed' | 'warrior';
-    preferredTime: 'morning' | 'afternoon' | 'evening' | 'flexible';
-    focusAreas: string[];
-    weeklyGoal: number;
-  }) => {
-    // Save onboarding data and show Day 1 launch screen
+  const handleOnboardingComplete = async (data: any) => {
     setPendingOnboardingData(data);
+    // Persist journey for tracks routing/recommendation
+    if (data?.journey) {
+      try { localStorage.setItem('faithfit-journey', data.journey); } catch {}
+    }
     setShowDay1Launch(true);
   };
 
@@ -130,9 +127,10 @@ export default function Index() {
   // Show Day 1 launch screen after onboarding
   if (showDay1Launch && pendingOnboardingData) {
     return (
-      <Day1LaunchScreen 
-        userName={pendingOnboardingData.name} 
-        onComplete={handleDay1LaunchComplete} 
+      <Day1LaunchScreen
+        userName={pendingOnboardingData.name}
+        journey={(pendingOnboardingData as any).journey}
+        onComplete={handleDay1LaunchComplete}
       />
     );
   }
@@ -142,13 +140,14 @@ export default function Index() {
     return <OnboardingFlow onComplete={handleOnboardingComplete} />;
   }
 
-  const userName = profile?.name || 'Soldier';
+  const userName = profile?.name || 'Friend';
   const currentStreak = progress?.current_streak || 0;
   const totalSessions = progress?.total_sessions || 0;
   const totalMinutes = progress?.total_minutes || 0;
   const longestStreak = progress?.longest_streak || 0;
+  const journey = (typeof window !== 'undefined' && (localStorage.getItem('faithfit-journey') as any)) || 'new';
+  const isReturning = journey === 'returning';
 
-  // Build today's steps from session data
   const todaySteps = [
     { name: 'Worship', icon: '🎵', completed: todaySession?.worship_completed || false, duration: '15 min' },
     { name: 'Scripture', icon: '📖', completed: todaySession?.scripture_completed || false, duration: '10 min' },
@@ -175,16 +174,16 @@ export default function Index() {
           <div className="relative px-4 pt-6 pb-8">
             <div className="flex items-start justify-between">
               <div className="space-y-2">
-                <p className="text-xs text-primary font-display uppercase tracking-[0.3em]">
+                <p className="text-xs text-primary uppercase tracking-[0.3em]">
                   {formattedDate}
                 </p>
-                <h1 className="font-display text-4xl text-foreground uppercase tracking-wide leading-none">
-                  Let's go,
+                <h1 className="font-display text-4xl text-foreground leading-tight">
+                  {isReturning ? 'Welcome back,' : 'Hello,'}
                   <br />
-                  <span className="text-primary">{userName}</span>
+                  <span className="text-primary">{userName}.</span>
                 </h1>
-                <p className="text-sm text-muted-foreground uppercase tracking-widest font-medium">
-                  No days off. No excuses.
+                <p className="text-sm text-muted-foreground">
+                  {isReturning ? "Let's continue — gently." : "One quiet step at a time."}
                 </p>
               </div>
               <Link to="/profile">
@@ -206,7 +205,7 @@ export default function Index() {
         <div className="px-4 pb-28 space-y-5 -mt-2">
           {/* Instructions Banner */}
           {showInstructions && (
-            <div className="relative gym-card p-4 border-l-4 border-primary bg-primary/5">
+            <div className="relative gym-card p-4 border-l-2 border-primary">
               <button
                 onClick={dismissInstructions}
                 className="absolute top-2 right-2 p-1 text-muted-foreground hover:text-foreground transition-colors"
@@ -216,17 +215,15 @@ export default function Index() {
               <div className="flex items-start gap-3 pr-6">
                 <Info className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
                 <div className="space-y-2">
-                  <h3 className="font-display text-sm uppercase tracking-wider text-foreground">
-                    Welcome to Your Training HQ
+                  <h3 className="font-display text-base text-foreground">
+                    Welcome home.
                   </h3>
-                  <ul className="text-xs text-muted-foreground space-y-1">
-                    <li>🔥 <strong>Streak</strong> — Your consecutive training days</li>
-                    <li>💪 <strong>Today's Workout</strong> — Complete all 4 sets: Worship, Scripture, Prayer, Reflect</li>
-                    <li>⚔️ <strong>Battle Mode</strong> — Quick spiritual reset when you're struggling</li>
-                    <li>🎯 <strong>Daily Mission</strong> — Extra challenge to push your faith</li>
-                  </ul>
-                  <p className="text-xs text-muted-foreground">
-                    Tap <strong>Train</strong> below to start your daily workout!
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    Each day, FaithFit guides you through four short, quiet steps: worship, scripture, prayer, and reflection.
+                    Take them at your pace — five minutes is plenty.
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    Ready when you are. Tap <strong className="text-foreground">Walk</strong> below to begin today.
                   </p>
                 </div>
               </div>
@@ -236,30 +233,48 @@ export default function Index() {
           {/* Streak Badge - Enhanced */}
           <StreakBadge streak={currentStreak} />
 
-          {/* Today's Workout */}
-          <WorkoutCard 
-            steps={todaySteps} 
-            allCompleted={todaySteps.every(s => s.completed)} 
+          {/* Today's Walk */}
+          <WorkoutCard
+            steps={todaySteps}
+            allCompleted={todaySteps.every(s => s.completed)}
           />
+
+          {/* Continue your guided track */}
+          <Link to="/tracks" className="block">
+            <div className="gym-card p-5 hover:border-primary/40 transition-colors">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-secondary/15 flex items-center justify-center shrink-0">
+                  <TrendingUp className="h-6 w-6 text-secondary" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs uppercase tracking-[0.2em] text-secondary mb-1">Guided track</p>
+                  <p className="font-display text-lg text-foreground">
+                    {isReturning ? 'Coming Back' : 'Starting Faith'}
+                  </p>
+                  <p className="text-sm text-muted-foreground">Pick up where you left off.</p>
+                </div>
+              </div>
+            </div>
+          </Link>
 
           {/* Quick Actions - Micro-Actions */}
           <QuickActionsBar />
 
-          {/* Battle Verse of the Day - NEW PROMINENT CARD */}
+          {/* Battle Verse of the Day */}
           <BattleVerseOfDayCard />
 
-          {/* Battle Verses Card - Navigate to Find By Feeling */}
+          {/* Scripture for what you're facing */}
           <BattleVersesCard />
 
-          {/* Battle Mode Button - Mobile Optimized */}
+          {/* Quick reset - softened */}
           <Button
-            variant="destructive"
+            variant="outline"
             onClick={() => setBattleModeOpen(true)}
-            className="w-full h-auto min-h-14 py-4 px-4 bg-destructive/90 hover:bg-destructive text-destructive-foreground font-display uppercase tracking-wide text-sm sm:text-base flex items-center justify-center gap-3 shadow-lg"
+            className="w-full h-auto min-h-14 py-4 px-4 border-border hover:border-primary/40 hover:bg-primary/5 text-foreground font-medium flex items-center justify-center gap-3"
           >
-            <Shield className="h-6 w-6 flex-shrink-0" />
+            <Shield className="h-5 w-5 text-primary flex-shrink-0" />
             <span className="whitespace-normal text-center leading-tight">
-              Need a quick reset? Enter Battle Mode
+              Feeling overwhelmed? Take a quiet moment.
             </span>
           </Button>
 
@@ -308,12 +323,12 @@ export default function Index() {
             </p>
           </div>
 
-          {/* Motivational Footer */}
+          {/* Gentle footer */}
           <div className="text-center py-6">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-muted/50 border border-border">
-              <Flame className="h-4 w-4 text-primary" />
-              <p className="text-xs text-muted-foreground uppercase tracking-widest">
-                Faith won't build itself
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-muted/40 border border-border">
+              <Sunrise className="h-4 w-4 text-accent-warm" />
+              <p className="text-xs text-muted-foreground italic">
+                One step. One day. He meets you here.
               </p>
             </div>
           </div>

@@ -204,10 +204,10 @@ export default function Session() {
         setShowCompletionAnimation(false);
         setCurrentPhase(phases[currentIndex + 1].id);
       }, 600);
-      toast.success('Set complete! 💪 Keep pushing!');
+      toast.success('Step complete. Keep going gently.');
     } else {
       celebrationPattern();
-      toast.success('Training session complete! 🏆 You showed up today!');
+      toast.success("Well done. See you tomorrow.");
       
       // Training complete - update streak, squad presence, and check milestones
       setTimeout(async () => {
@@ -216,8 +216,8 @@ export default function Session() {
         // Increment streak for completing training
         const streakResult = await incrementStreak();
         if (!streakResult.error) {
-          toast.success(`🔥 Day ${(userProgress?.current_streak || 0) + 1} streak!`, {
-            description: 'Keep the grind going!'
+          toast.success(`Day ${(userProgress?.current_streak || 0) + 1} of your walk.`, {
+            description: 'One quiet step at a time.'
           });
         }
         
@@ -267,37 +267,37 @@ export default function Session() {
         <div className="px-4 pt-6 pb-4 bg-gradient-to-b from-card to-background border-b-2 border-border">
           <div className="flex items-center justify-between mb-4">
             <Link to="/">
-              <Button variant="ghost" size="sm" className="gap-2 font-display uppercase text-sm">
+              <Button variant="ghost" size="sm" className="gap-2 text-sm text-muted-foreground">
                 <ChevronLeft className="h-4 w-4" />
                 Exit
               </Button>
             </Link>
             <div className="flex items-center gap-2 text-sm">
               <Clock className="h-4 w-4 text-primary" />
-              <span className="font-display text-primary">~{remainingTime} MIN LEFT</span>
+              <span className="text-primary">~{remainingTime} min left</span>
             </div>
           </div>
 
-          {/* Instructions Banner */}
-          <div className="mb-4 p-3 rounded-lg bg-primary/10 border-2 border-primary/30">
-            <h2 className="font-display text-sm uppercase tracking-wide text-primary mb-1">
-              How This Works
+          {/* Gentle intro banner */}
+          <div className="mb-4 p-3 rounded-xl bg-primary/5 border border-primary/20">
+            <h2 className="font-display text-base text-primary mb-1">
+              Today's Walk
             </h2>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              Complete 4 sets to finish your daily training: <strong className="text-foreground">Worship</strong> (listen & connect), <strong className="text-foreground">Scripture</strong> (read & meditate), <strong className="text-foreground">Prayer</strong> (talk to God), and <strong className="text-foreground">Reflection</strong> (journal your thoughts). Tap "Complete Set" after each one.
+              Four quiet steps — <strong className="text-foreground">Worship</strong>, <strong className="text-foreground">Scripture</strong>, <strong className="text-foreground">Prayer</strong>, and <strong className="text-foreground">Reflection</strong>. Take them at your own pace.
             </p>
           </div>
 
-          {/* Phase Progress Bar */}
+          {/* Phase progress */}
           <div className="space-y-3">
-            <div className="flex items-center justify-between text-xs text-muted-foreground uppercase tracking-wider">
-              <span className="font-display">Set {currentIndex + 1} of {phases.length}</span>
-              <span className="font-display text-primary">
-                {completedPhases.size}/{phases.length} Complete
+            <div className="flex items-center justify-between text-xs text-muted-foreground">
+              <span>Step {currentIndex + 1} of {phases.length}</span>
+              <span className="text-primary">
+                {completedPhases.size}/{phases.length} complete
               </span>
             </div>
             <div className="progress-gym">
-              <div 
+              <div
                 className="progress-gym-fill"
                 style={{ width: `${(completedPhases.size / phases.length) * 100}%` }}
               />
@@ -366,8 +366,8 @@ export default function Session() {
                 <phase.icon className="h-6 w-6 text-primary" />
               </div>
               <div>
-                <h1 className="font-display text-2xl text-foreground uppercase tracking-wide">{phase.label}</h1>
-                <p className="text-sm text-muted-foreground">{phase.duration} min • Set {currentIndex + 1}</p>
+                <h1 className="font-display text-2xl text-foreground">{phase.label}</h1>
+                <p className="text-sm text-muted-foreground">{phase.duration} min · step {currentIndex + 1}</p>
               </div>
             </div>
 
@@ -392,23 +392,23 @@ export default function Session() {
         <div className="fixed bottom-20 left-0 right-0 px-4">
           <div className="max-w-lg mx-auto flex items-center gap-3">
             {currentIndex > 0 && (
-              <Button 
-                variant="outline" 
-                size="lg" 
-                onClick={goBack} 
-                className="flex-1 border-2 border-border hover:border-primary font-display uppercase"
+              <Button
+                variant="outline"
+                size="lg"
+                onClick={goBack}
+                className="flex-1 border-border hover:border-primary"
               >
                 <ChevronLeft className="h-4 w-4 mr-2" />
                 Back
               </Button>
             )}
-            <Button 
-              size="lg" 
+            <Button
+              size="lg"
               onClick={markComplete}
               disabled={saving || completedPhases.has(currentPhase)}
               className={cn(
-                "flex-1 btn-gym text-lg",
-                completedPhases.has(currentPhase) && "bg-success border-success/60"
+                "flex-1 btn-gym text-base",
+                completedPhases.has(currentPhase) && "bg-secondary"
               )}
             >
               {saving ? (
@@ -419,16 +419,16 @@ export default function Session() {
               ) : completedPhases.has(currentPhase) ? (
                 <>
                   <Check className="h-5 w-5 mr-2" />
-                  Set Done
+                  Step done
                 </>
               ) : currentIndex === phases.length - 1 ? (
                 <>
-                  <Flame className="h-5 w-5 mr-2" />
-                  Finish Training
+                  Finish today's walk
+                  <ChevronRight className="h-5 w-5 ml-2" />
                 </>
               ) : (
                 <>
-                  Complete Set
+                  Mark step complete
                   <ChevronRight className="h-5 w-5 ml-2" />
                 </>
               )}

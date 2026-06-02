@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Dumbbell, Target, Users, MessageSquare, BookOpen } from 'lucide-react';
+import { Home, Footprints, Users, MessageSquare, BookOpen } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { LucideIcon } from 'lucide-react';
 
@@ -12,17 +12,17 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { path: '/home', icon: Home, label: 'Home', tourId: 'nav-home' },
-  { path: '/session', icon: Dumbbell, label: 'Train', tourId: 'nav-train' },
+  { path: '/session', icon: Footprints, label: 'Walk', tourId: 'nav-train' },
   { path: '/bible', icon: BookOpen, label: 'Bible', tourId: 'nav-bible' },
-  { path: '/community', icon: MessageSquare, label: 'Trenches', tourId: 'nav-community' },
-  { path: '/friends', icon: Users, label: 'Squad', tourId: 'nav-squad' },
+  { path: '/community', icon: MessageSquare, label: 'Community', tourId: 'nav-community' },
+  { path: '/friends', icon: Users, label: 'Friends', tourId: 'nav-squad' },
 ];
 
 export function Navigation() {
   const location = useLocation();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t-2 border-border bg-card shadow-2xl shadow-black/50 safe-area-pb md:hidden">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-card/95 backdrop-blur-md shadow-2xl shadow-black/30 safe-area-pb md:hidden">
       <div className="mx-auto max-w-lg">
         <div className="flex items-center justify-around py-2 px-1">
           {navItems.map(({ path, icon: Icon, label, tourId }) => {
@@ -33,14 +33,14 @@ export function Navigation() {
                 to={path}
                 data-tour={tourId}
                 className={cn(
-                  "flex flex-col items-center gap-0.5 px-2 sm:px-4 py-2 rounded-lg transition-all duration-200 min-w-0",
-                  isActive 
-                    ? "bg-primary text-background" 
+                  "flex flex-col items-center gap-0.5 px-2 sm:px-4 py-2 rounded-xl transition-all duration-200 min-w-0",
+                  isActive
+                    ? "bg-primary text-primary-foreground"
                     : "text-muted-foreground hover:text-foreground"
                 )}
               >
-                <Icon className="h-5 w-5 sm:h-6 sm:w-6 flex-shrink-0" strokeWidth={2.5} />
-                <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wide truncate">
+                <Icon className="h-5 w-5 sm:h-6 sm:w-6 flex-shrink-0" strokeWidth={2} />
+                <span className="text-[10px] sm:text-xs font-medium tracking-wide truncate">
                   {label}
                 </span>
               </Link>

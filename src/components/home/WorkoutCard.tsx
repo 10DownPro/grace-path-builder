@@ -41,24 +41,24 @@ export function WorkoutCard({ steps, allCompleted }: WorkoutCardProps) {
         
         <div className="relative flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-lg bg-primary/15 flex items-center justify-center">
               <Dumbbell className="h-5 w-5 text-primary" />
             </div>
             <div>
-              <h2 className="font-display text-xl text-foreground uppercase tracking-wide">
-                Today's Workout
+              <h2 className="font-display text-xl text-foreground">
+                Today's Walk
               </h2>
               <div className="flex items-center gap-2 text-xs text-muted-foreground">
                 <Clock className="h-3 w-3" />
-                <span>~{totalDuration} min total</span>
+                <span>~{totalDuration} min · gentle pace</span>
               </div>
             </div>
           </div>
-          <div className="px-3 py-1.5 bg-primary/20 border-2 border-primary/40 rounded-lg">
+          <div className="px-3 py-1.5 bg-primary/10 border border-primary/30 rounded-lg">
             <span className="font-display text-lg text-primary">
               {completedCount}/{steps.length}
             </span>
-            <span className="font-display text-xs text-primary/70 ml-1">SETS</span>
+            <span className="text-xs text-primary/70 ml-1">steps</span>
           </div>
         </div>
         
@@ -158,22 +158,21 @@ export function WorkoutCard({ steps, allCompleted }: WorkoutCardProps) {
         {/* CTA Button */}
         {!allCompleted && (
           <Link to="/session" className="block" data-tour="start-training">
-            <button className="w-full py-4 px-6 rounded-xl font-display uppercase tracking-wider text-lg text-background bg-gradient-to-r from-primary via-primary to-warning border-b-4 border-primary/60 hover:scale-[1.02] active:scale-[0.98] active:border-b-2 transition-all shadow-lg shadow-primary/30 flex items-center justify-center gap-3">
-              <Play className="h-6 w-6" />
-              <span>Start Training</span>
+            <button className="w-full py-4 px-6 rounded-xl font-medium text-base text-primary-foreground bg-primary hover:scale-[1.01] active:scale-[0.99] transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-3">
+              <Play className="h-5 w-5" />
+              <span>Begin today's walk</span>
             </button>
           </Link>
         )}
 
         {allCompleted && (
-          <div className="relative overflow-hidden text-center py-5 bg-gradient-to-r from-success/20 via-success/10 to-success/20 rounded-xl border-2 border-success">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_hsl(var(--success)/0.3)_0%,_transparent_70%)]" />
+          <div className="relative overflow-hidden text-center py-5 bg-secondary/10 rounded-xl border border-secondary/30">
             <div className="relative">
-              <p className="font-display text-2xl text-success uppercase">
-                Workout Complete! 💪
+              <p className="font-display text-2xl text-secondary">
+                Well done. See you tomorrow.
               </p>
-              <p className="text-sm text-muted-foreground mt-1">
-                You showed up. That's what champions do.
+              <p className="text-sm text-muted-foreground mt-1 italic">
+                You showed up today. That's everything.
               </p>
             </div>
           </div>

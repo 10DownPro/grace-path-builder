@@ -14,9 +14,10 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['Oswald', 'Roboto Condensed', 'sans-serif'],
-        display: ['Bebas Neue', 'Oswald', 'sans-serif'],
-        body: ['Oswald', 'Roboto Condensed', 'sans-serif'],
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        display: ['Fraunces', 'Inter', 'serif'],
+        body: ['Inter', 'system-ui', 'sans-serif'],
+        wordmark: ['Bebas Neue', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -54,6 +55,10 @@ export default {
         },
         success: "hsl(var(--success))",
         warning: "hsl(var(--warning))",
+        "accent-warm": {
+          DEFAULT: "hsl(var(--accent-warm))",
+          foreground: "hsl(var(--accent-warm-foreground))",
+        },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
