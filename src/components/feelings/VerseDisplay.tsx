@@ -89,10 +89,10 @@ export function VerseDisplay({
   const toggleSave = (verse: FeelingVerse) => {
     if (savedVerseIds.has(verse.id)) {
       onUnsaveVerse(verse.id);
-      toast.success('Removed from Battle Verses');
+      toast.success('Removed from Saved Verses');
     } else {
       onSaveVerse(verse.id);
-      toast.success('Added to Battle Verses 🗡️');
+      toast.success('Saved verse 🔖');
     }
   };
 
