@@ -23,14 +23,14 @@ export function DailyCheckIn() {
               key={opt.id}
               onClick={() => setMood(opt.id)}
               className={cn(
-                'flex flex-col items-center gap-1 p-3 rounded-xl border-2 transition-all',
+                'flex flex-col items-center justify-start gap-1.5 p-2 rounded-xl border-2 transition-all min-w-0 overflow-hidden',
                 selected
                   ? 'border-primary bg-primary/10'
                   : 'border-border hover:border-primary/40 hover:bg-muted/40'
               )}
             >
-              <span className="text-3xl">{opt.emoji}</span>
-              <span className="text-xs text-foreground font-medium text-center leading-tight">
+              <span className="text-2xl leading-none">{opt.emoji}</span>
+              <span className="w-full text-[11px] text-foreground font-medium text-center leading-tight break-words">
                 {opt.label}
               </span>
             </button>
