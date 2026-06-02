@@ -40,18 +40,11 @@ export default function Community() {
 
   const [section, setSection] = useState<Section>('walking');
   const [showCreatePost, setShowCreatePost] = useState(false);
-  const [createDefault, setCreateDefault] = useState<'general' | 'prayer'>('general');
 
   const handleComment = async (_id: string, _t: string) => ({ error: null });
 
-  const openPrayerComposer = () => {
-    setCreateDefault('prayer');
-    setShowCreatePost(true);
-  };
-  const openGeneralComposer = () => {
-    setCreateDefault('general');
-    setShowCreatePost(true);
-  };
+  const openPrayerComposer = () => setShowCreatePost(true);
+  const openGeneralComposer = () => setShowCreatePost(true);
 
   // Switch feed filter when prayer tab is selected
   const visiblePosts = useMemo(() => posts, [posts]);
@@ -214,7 +207,6 @@ export default function Community() {
         <CreateCommunityPostDialog
           open={showCreatePost}
           onOpenChange={setShowCreatePost}
-          defaultType={createDefault}
         />
       </div>
     </DashboardLayout>
