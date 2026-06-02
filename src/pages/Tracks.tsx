@@ -140,7 +140,7 @@ export default function Tracks() {
       <div className="max-w-2xl mx-auto pb-12">
         <div className="mb-8">
           <p className="text-xs uppercase tracking-[0.2em] text-primary mb-2 font-semibold">Your Journey</p>
-          <h1 className="font-display text-4xl sm:text-5xl mb-2 leading-tight">What\'s next in your walk with God?</h1>
+          <h1 className="font-display text-4xl sm:text-5xl mb-2 leading-tight">What's next in your walk with God?</h1>
           <p className="text-lg text-muted-foreground">Guided paths to help you grow — one honest lesson at a time.</p>
         </div>
 

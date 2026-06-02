@@ -85,8 +85,8 @@ export function LessonViewer({ journey, module, nextRecommendation, onExit, onCo
           </div>
         ) : (
           <div className="rounded-2xl border border-border bg-card p-6 mb-4 text-center">
-            <p className="font-display text-xl mb-2">You\'ve completed this journey.</p>
-            <p className="text-muted-foreground">Choose another path when you\'re ready — there\'s always more to explore.</p>
+            <p className="font-display text-xl mb-2">You've completed this journey.</p>
+            <p className="text-muted-foreground">Choose another path when you're ready — there's always more to explore.</p>
           </div>
         )}
 
@@ -178,7 +178,7 @@ export function LessonViewer({ journey, module, nextRecommendation, onExit, onCo
             <div className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-muted-foreground">
               <Sparkles className="h-3.5 w-3.5" /> One step today
             </div>
-            <p className="text-base text-muted-foreground">Faith is meant to be lived. Here\'s one simple thing to carry into your day.</p>
+            <p className="text-base text-muted-foreground">Faith is meant to be lived. Here's one simple thing to carry into your day.</p>
             <div className="rounded-xl border border-secondary/30 bg-secondary/5 p-6">
               <p className="font-display text-xl leading-relaxed text-foreground">{module.applicationStep}</p>
             </div>
@@ -223,7 +223,7 @@ export function LessonViewer({ journey, module, nextRecommendation, onExit, onCo
             )}
             {prayerMode === 'own' && (
               <div className="rounded-xl border border-border bg-card p-6">
-                <p className="text-base text-muted-foreground mb-3">Talk to God in your own words. No format. No pressure. He\'s already listening.</p>
+                <p className="text-base text-muted-foreground mb-3">Talk to God in your own words. No format. No pressure. He's already listening.</p>
                 <Textarea
                   placeholder="Pray here, or close your eyes and pray out loud..."
                   value={reflections['__own_prayer'] || ''}
