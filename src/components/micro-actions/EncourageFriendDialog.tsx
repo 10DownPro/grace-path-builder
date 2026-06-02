@@ -21,12 +21,12 @@ interface EncourageFriendDialogProps {
 }
 
 const ENCOURAGEMENT_MESSAGES = [
-  { text: "Keep pushing! 🔥", emoji: "🔥" },
-  { text: "You got this! 💪", emoji: "💪" },
-  { text: "Don't quit on me! 🎯", emoji: "🎯" },
+  { text: "Thinking of you 💛", emoji: "💛" },
   { text: "I'm praying for you 🙏", emoji: "🙏" },
-  { text: "Stay strong! ⚔️", emoji: "⚔️" },
-  { text: "Proud of you! 🌟", emoji: "🌟" }
+  { text: "You are loved ✨", emoji: "✨" },
+  { text: "God is with you 🌿", emoji: "🌿" },
+  { text: "Grace upon grace 🤍", emoji: "🤍" },
+  { text: "One step at a time 🕊️", emoji: "🕊️" }
 ];
 
 export function EncourageFriendDialog({ open, onOpenChange }: EncourageFriendDialogProps) {
@@ -100,7 +100,7 @@ export function EncourageFriendDialog({ open, onOpenChange }: EncourageFriendDia
       <DialogContent className="max-w-sm max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-xl">
-            💪 Encourage Friend
+            💛 Encourage Someone
             <span className="text-sm text-primary font-normal">+5 pts</span>
           </DialogTitle>
         </DialogHeader>
@@ -110,7 +110,7 @@ export function EncourageFriendDialog({ open, onOpenChange }: EncourageFriendDia
             <div className="h-16 w-16 rounded-full bg-success/20 flex items-center justify-center animate-scale-in">
               <Check className="h-8 w-8 text-success" />
             </div>
-            <p className="text-lg font-bold text-success">Encouragement Sent!</p>
+            <p className="text-lg font-bold text-success">Encouragement sent</p>
             <p className="text-sm text-muted-foreground text-center">
               {selectedFriendData?.name} will be notified
             </p>
@@ -123,7 +123,7 @@ export function EncourageFriendDialog({ open, onOpenChange }: EncourageFriendDia
           <div className="flex flex-col items-center justify-center py-8 space-y-4">
             <Users className="h-12 w-12 text-muted-foreground" />
             <p className="text-center text-muted-foreground">
-              Add friends to send encouragements
+              Connect with someone to send encouragements.
             </p>
             <Button onClick={() => onOpenChange(false)}>
               Close
@@ -131,9 +131,9 @@ export function EncourageFriendDialog({ open, onOpenChange }: EncourageFriendDia
           </div>
         ) : (
           <div className="space-y-4">
-            {/* Step 1: Select Friend */}
+            {/* Step 1: Select recipient */}
             <div className="space-y-2">
-              <p className="text-sm font-medium">1. Choose a friend:</p>
+              <p className="text-sm font-medium">1. Choose someone:</p>
               <div className="grid grid-cols-3 gap-2">
                 {friends.slice(0, 6).map((friend) => (
                   <button
@@ -190,7 +190,7 @@ export function EncourageFriendDialog({ open, onOpenChange }: EncourageFriendDia
                 {loading ? (
                   <Loader2 className="h-4 w-4 animate-spin mr-2" />
                 ) : null}
-                Send to {selectedFriendData?.name} 💪
+                Send to {selectedFriendData?.name} 💛
               </Button>
             )}
           </div>
