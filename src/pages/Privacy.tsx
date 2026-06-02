@@ -79,7 +79,7 @@ export default function Privacy() {
             <p className="text-muted-foreground leading-relaxed">
               FaithFit ("we", "our", or "us") is committed to protecting your privacy. 
               This Privacy Policy explains how we collect, use, and safeguard your 
-              information when you use our faith training application. We believe your 
+              information when you use our FaithFit application. We believe your 
               spiritual journey is personal, and we treat your data with the respect 
               and security it deserves.
             </p>

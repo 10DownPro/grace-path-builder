@@ -138,13 +138,13 @@ const Waitlist = () => {
               </div>
 
               <h1 className="font-display text-5xl md:text-6xl lg:text-7xl tracking-tight mb-6 leading-[0.9]">
-                STOP SCROLLING.
-                <span className="block text-primary">START TRAINING.</span>
+                A guided walk
+                <span className="block text-primary">with God.</span>
               </h1>
 
               <p className="text-lg md:text-xl text-muted-foreground font-body max-w-2xl mx-auto lg:mx-0 mb-10 leading-relaxed">
-                Your faith won't build itself. FaithFit turns your daily quiet time into a 
-                spiritual workout—structured, accountable, and built to get results.
+                FaithFit helps you build — or rebuild — your walk with God. Scripture, prayer, reflection,
+                and community, one gentle step at a time.
               </p>
 
             {/* Waitlist Count */}
@@ -228,7 +228,7 @@ const Waitlist = () => {
               <span className="text-sm font-body uppercase tracking-wide text-primary">Founding Members Only</span>
             </div>
             <h2 className="font-display text-3xl md:text-4xl tracking-tight">
-              FIRST 500 GET THE GOODS
+              First 500 get the gift
             </h2>
           </div>
 
@@ -250,10 +250,10 @@ const Waitlist = () => {
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="font-display text-3xl md:text-5xl tracking-tight mb-4">
-              YOUR NEW <span className="text-primary">TRAINING REGIMEN</span>
+              A simple rhythm for <span className="text-primary">walking with God</span>
             </h2>
             <p className="text-muted-foreground font-body max-w-xl mx-auto">
-              This isn't another devotional app. It's a system built to forge unshakeable faith.
+              This isn't another devotional app. It's a gentle, guided companion for the long walk of faith.
             </p>
           </div>
 
@@ -284,18 +284,18 @@ const Waitlist = () => {
               <Bell className="w-8 h-8 text-primary" />
             </div>
             <h2 className="font-display text-3xl md:text-4xl tracking-tight mb-4">
-              THE GYM OPENS SOON
+              Doors open soon
             </h2>
             <p className="text-muted-foreground font-body mb-8">
-              We're loading the racks. Drop your email above and we'll 
-              let you know the second you can start training.
+              We're getting things ready. Drop your email above and we'll
+              let you know the moment you can begin.
             </p>
             {!isSubmitted && (
               <Button
                 onClick={() => document.querySelector('input')?.focus()}
                 className="btn-gym"
               >
-                Get In Line
+                Join the Waitlist
                 <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
             )}

@@ -95,7 +95,7 @@ FaithFit is a spiritual growth tool and is not a substitute for professional cou
           <CardContent className="p-6">
             <p className="text-muted-foreground leading-relaxed">
               Welcome to FaithFit! These Terms of Service ("Terms") govern your use of 
-              our faith training application and related services. Please read these 
+              our FaithFit application and related services. Please read these 
               Terms carefully before using FaithFit. Your access to and use of the 
               service is conditioned on your acceptance of these Terms.
             </p>
