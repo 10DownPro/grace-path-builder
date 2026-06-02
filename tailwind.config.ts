@@ -19,6 +19,22 @@ export default {
         body: ['Inter', 'system-ui', 'sans-serif'],
         wordmark: ['Bebas Neue', 'sans-serif'],
       },
+      // Accessibility-first typography scale.
+      // Floor for body/supporting/micro text is raised so the entire app reads
+      // comfortably from arm's length on mobile. All sizes in rem (16px base).
+      fontSize: {
+        xs:   ['0.875rem', { lineHeight: '1.55' }], // 14px - micro only
+        sm:   ['1rem',     { lineHeight: '1.6'  }], // 16px - supporting
+        base: ['1.125rem', { lineHeight: '1.65' }], // 18px - body min
+        lg:   ['1.25rem',  { lineHeight: '1.6'  }], // 20px
+        xl:   ['1.5rem',   { lineHeight: '1.45' }], // 24px - card title
+        '2xl':['1.75rem',  { lineHeight: '1.35' }], // 28px - section title
+        '3xl':['2rem',     { lineHeight: '1.25' }], // 32px
+        '4xl':['2.25rem',  { lineHeight: '1.2'  }], // 36px - page title
+        '5xl':['3rem',     { lineHeight: '1.1'  }], // 48px - display
+        '6xl':['3.5rem',   { lineHeight: '1.05' }], // 56px
+        '7xl':['4rem',     { lineHeight: '1.05' }], // 64px
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

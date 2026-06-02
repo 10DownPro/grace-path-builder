@@ -108,26 +108,53 @@
 @layer base {
   * { @apply border-border; }
 
-  html { font-size: 17px; }
-  @media (min-width: 768px) { html { font-size: 18px; } }
+  /* 16px base — text-* utilities map this into the accessibility-first scale. */
+  html { font-size: 16px; }
 
   body {
     @apply bg-background text-foreground antialiased;
     font-family: 'Inter', system-ui, sans-serif;
     font-feature-settings: 'cv02', 'cv03', 'cv04';
-    font-size: 1rem;
-    line-height: 1.6;
+    font-size: 1.125rem;   /* 18px body floor */
+    line-height: 1.65;
+    font-weight: 400;
   }
 
-  p { line-height: 1.65; }
+  /* Paragraph + readable text defaults */
+  p   { font-size: 1.125rem; line-height: 1.65; }
+  li  { font-size: 1.125rem; line-height: 1.65; }
+  small { font-size: 1rem; line-height: 1.55; }
 
-  h1, h2, h3, h4 { line-height: 1.15; }
+  /* Heading scale — solid colors only, never gradients. */
+  h1 { font-size: 2.25rem; line-height: 1.15; font-weight: 700; letter-spacing: -0.015em; color: hsl(var(--foreground)); }
+  h2 { font-size: 1.75rem; line-height: 1.2;  font-weight: 700; letter-spacing: -0.01em;  color: hsl(var(--foreground)); }
+  h3 { font-size: 1.5rem;  line-height: 1.25; font-weight: 700; color: hsl(var(--foreground)); }
+  h4 { font-size: 1.25rem; line-height: 1.3;  font-weight: 600; color: hsl(var(--foreground)); }
+  h5 { font-size: 1.125rem;line-height: 1.4;  font-weight: 600; color: hsl(var(--foreground)); }
+  h6 { font-size: 1rem;    line-height: 1.45; font-weight: 600; color: hsl(var(--foreground)); }
 
-  /* Confident display typography — calm but with presence */
+  /* Display headlines at the hero scale */
+  @media (min-width: 768px) {
+    h1 { font-size: 3rem; }
+    h2 { font-size: 2rem; }
+  }
+
+  /* Forms */
+  label { font-size: 1rem; line-height: 1.5; font-weight: 500; }
+  input, textarea, select {
+    font-size: 1.125rem;
+    line-height: 1.5;
+  }
+  /* iOS won't zoom on focus when input is >=16px; 18px also clears the bar */
+
+  /* Buttons — readable from arm's length */
+  button { font-size: 1.125rem; line-height: 1.4; font-weight: 500; }
+
+  /* Confident display typography */
   .font-display {
     font-family: 'Fraunces', 'Inter', serif;
     letter-spacing: -0.015em;
-    font-weight: 600;
+    font-weight: 700;
   }
 
   /* Keep Bebas only for the logo wordmark */
@@ -140,6 +167,17 @@
 
   html { color-scheme: dark; }
   html.light { color-scheme: light; }
+
+  /* Hard guard: no gradient text anywhere. Any element that previously combined
+     `bg-clip-text` + `text-transparent` is forced back to the heading color. */
+  .bg-clip-text.text-transparent,
+  [class*="text-transparent"][class*="bg-gradient"] {
+    -webkit-text-fill-color: hsl(var(--foreground)) !important;
+    color: hsl(var(--foreground)) !important;
+    background: none !important;
+    background-clip: initial !important;
+    -webkit-background-clip: initial !important;
+  }
 }
 
 @layer components {
