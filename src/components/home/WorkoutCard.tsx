@@ -92,7 +92,7 @@ export function WorkoutCard({ steps, allCompleted }: WorkoutCardProps) {
       <div className="p-5 space-y-4">
         <div className="grid grid-cols-2 gap-3">
           {steps.map((step, index) => {
-            const IconComponent = iconMap[step.icon] || Target;
+            const IconComponent = iconMap[step.icon] || Heart;
             return (
               <div 
                 key={step.name}
