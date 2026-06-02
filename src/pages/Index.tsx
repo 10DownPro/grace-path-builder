@@ -3,6 +3,7 @@ import { PageLayout } from '@/components/layout/PageLayout';
 import { GraceStreakBadge } from '@/components/home/GraceStreakBadge';
 import { WorkoutCard } from '@/components/home/WorkoutCard';
 import { DailyCheckIn } from '@/components/home/DailyCheckIn';
+import { ContinueJourneyCard } from '@/components/home/ContinueJourneyCard';
 import { JourneyProgressCard } from '@/components/home/JourneyProgressCard';
 import { TodaysFocusCard } from '@/components/home/TodaysFocusCard';
 import { TodaysScriptureCard } from '@/components/home/TodaysScriptureCard';
