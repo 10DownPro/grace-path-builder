@@ -173,17 +173,17 @@ export default function Index() {
           
           <div className="relative px-4 pt-6 pb-8">
             <div className="flex items-start justify-between">
-              <div className="space-y-2">
-                <p className="text-xs text-primary uppercase tracking-[0.3em]">
+              <div className="space-y-3">
+                <p className="text-sm text-primary uppercase tracking-[0.3em] font-semibold">
                   {formattedDate}
                 </p>
-                <h1 className="font-display text-4xl text-foreground leading-tight">
+                <h1 className="font-display text-5xl sm:text-6xl md:text-7xl text-foreground leading-[1.05] tracking-tight">
                   {isReturning ? 'Welcome back,' : 'Hello,'}
                   <br />
                   <span className="text-primary">{userName}.</span>
                 </h1>
-                <p className="text-sm text-muted-foreground">
-                  {isReturning ? "Let's continue — gently." : "One quiet step at a time."}
+                <p className="text-lg text-muted-foreground leading-relaxed max-w-md">
+                  {isReturning ? "Let's continue walking with God today." : "Let's walk with God today."}
                 </p>
               </div>
               <Link to="/profile">
@@ -215,14 +215,14 @@ export default function Index() {
               <div className="flex items-start gap-3 pr-6">
                 <Info className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
                 <div className="space-y-2">
-                  <h3 className="font-display text-base text-foreground">
+                  <h3 className="font-display text-xl text-foreground">
                     Welcome home.
                   </h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    Each day, FaithFit guides you through four short, quiet steps: worship, scripture, prayer, and reflection.
+                  <p className="text-base text-muted-foreground leading-relaxed">
+                    Each day, FaithFit guides you through four short steps: worship, scripture, prayer, and reflection.
                     Take them at your pace — five minutes is plenty.
                   </p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-base text-muted-foreground">
                     Ready when you are. Tap <strong className="text-foreground">Walk</strong> below to begin today.
                   </p>
                 </div>
@@ -247,11 +247,11 @@ export default function Index() {
                   <TrendingUp className="h-6 w-6 text-secondary" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs uppercase tracking-[0.2em] text-secondary mb-1">Guided track</p>
-                  <p className="font-display text-lg text-foreground">
+                  <p className="text-xs uppercase tracking-[0.2em] text-secondary mb-1 font-semibold">Guided track</p>
+                  <p className="font-display text-xl text-foreground">
                     {isReturning ? 'Coming Back' : 'Starting Faith'}
                   </p>
-                  <p className="text-sm text-muted-foreground">Pick up where you left off.</p>
+                  <p className="text-base text-muted-foreground">Pick up where you left off.</p>
                 </div>
               </div>
             </div>

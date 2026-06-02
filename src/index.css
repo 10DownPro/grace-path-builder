@@ -108,17 +108,26 @@
 @layer base {
   * { @apply border-border; }
 
+  html { font-size: 17px; }
+  @media (min-width: 768px) { html { font-size: 18px; } }
+
   body {
     @apply bg-background text-foreground antialiased;
     font-family: 'Inter', system-ui, sans-serif;
     font-feature-settings: 'cv02', 'cv03', 'cv04';
+    font-size: 1rem;
+    line-height: 1.6;
   }
 
-  /* Calmer display typography for spiritual formation */
+  p { line-height: 1.65; }
+
+  h1, h2, h3, h4 { line-height: 1.15; }
+
+  /* Confident display typography — calm but with presence */
   .font-display {
     font-family: 'Fraunces', 'Inter', serif;
-    letter-spacing: -0.01em;
-    font-weight: 500;
+    letter-spacing: -0.015em;
+    font-weight: 600;
   }
 
   /* Keep Bebas only for the logo wordmark */

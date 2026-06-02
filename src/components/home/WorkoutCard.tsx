@@ -45,20 +45,20 @@ export function WorkoutCard({ steps, allCompleted }: WorkoutCardProps) {
               <Dumbbell className="h-5 w-5 text-primary" />
             </div>
             <div>
-              <h2 className="font-display text-xl text-foreground">
+              <h2 className="font-display text-2xl sm:text-3xl text-foreground leading-tight">
                 Today's Walk
               </h2>
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <Clock className="h-3 w-3" />
+              <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
+                <Clock className="h-4 w-4" />
                 <span>~{totalDuration} min · gentle pace</span>
               </div>
             </div>
           </div>
           <div className="px-3 py-1.5 bg-primary/10 border border-primary/30 rounded-lg">
-            <span className="font-display text-lg text-primary">
+            <span className="font-display text-xl text-primary font-semibold">
               {completedCount}/{steps.length}
             </span>
-            <span className="text-xs text-primary/70 ml-1">steps</span>
+            <span className="text-sm text-primary/70 ml-1">steps</span>
           </div>
         </div>
         
@@ -121,12 +121,12 @@ export function WorkoutCard({ steps, allCompleted }: WorkoutCardProps) {
                   {/* Text */}
                   <div className="text-center">
                     <p className={cn(
-                      "font-display text-sm uppercase tracking-wide",
+                      "font-display text-lg sm:text-xl uppercase tracking-wide font-semibold",
                       step.completed ? "text-success" : "text-foreground"
                     )}>
                       {step.name}
                     </p>
-                    <p className="text-xs text-muted-foreground uppercase mt-0.5">
+                    <p className="text-sm text-muted-foreground uppercase mt-1 font-medium">
                       {step.duration}
                     </p>
                   </div>
@@ -158,8 +158,8 @@ export function WorkoutCard({ steps, allCompleted }: WorkoutCardProps) {
         {/* CTA Button */}
         {!allCompleted && (
           <Link to="/session" className="block" data-tour="start-training">
-            <button className="w-full py-4 px-6 rounded-xl font-medium text-base text-primary-foreground bg-primary hover:scale-[1.01] active:scale-[0.99] transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-3">
-              <Play className="h-5 w-5" />
+            <button className="w-full py-5 px-6 rounded-xl font-semibold text-lg text-primary-foreground bg-primary hover:scale-[1.01] active:scale-[0.99] transition-all shadow-lg shadow-primary/25 flex items-center justify-center gap-3">
+              <Play className="h-6 w-6" />
               <span>Begin today's walk</span>
             </button>
           </Link>
