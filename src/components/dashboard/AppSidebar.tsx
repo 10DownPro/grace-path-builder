@@ -30,7 +30,7 @@ import {
 const mainNavItems = [
   { path: '/home', icon: LayoutDashboard, label: 'Home' },
   { path: '/journey', icon: Footprints, label: 'Journey' },
-  { path: '/scripture', icon: BookOpen, label: 'Scripture' },
+  { path: '/bible', icon: BookOpen, label: 'Bible' },
   { path: '/community', icon: Users, label: 'Community' },
   { path: '/profile', icon: Trophy, label: 'Profile' },
 ];
