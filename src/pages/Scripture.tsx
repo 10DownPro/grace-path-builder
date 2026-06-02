@@ -137,6 +137,9 @@ export default function ScripturePage() {
             </SelectContent>
           </Select>
         </div>
+        {/* Daily Bread — passage-based discipleship reading */}
+        <DailyBreadReader reading={useMemo(() => getTodaysBread(), [])} />
+
         {/* Open Full Bible */}
         <Link
           to="/bible"
@@ -153,6 +156,8 @@ export default function ScripturePage() {
           </div>
           <ChevronRight className="h-5 w-5 text-muted-foreground" />
         </Link>
+
+
 
 
         {/* Visual Verse of the Day */}
