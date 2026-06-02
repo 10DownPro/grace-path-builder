@@ -153,7 +153,7 @@ export default function Friends() {
       <div className="space-y-6">
         {/* Header */}
         <div className="text-center">
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-orange-400 bg-clip-text text-transparent flex items-center justify-center gap-2">
+          <h1 className="text-4xl font-display text-foreground flex items-center justify-center gap-2">
             <Users className="h-8 w-8 text-primary" />
             Training Squad
           </h1>
