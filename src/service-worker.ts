@@ -9,18 +9,18 @@ precacheAndRoute(self.__WB_MANIFEST);
 // Handle push notifications
 self.addEventListener('push', (event) => {
   const data = event.data?.json() ?? {
-    title: 'Grace Training',
-    body: 'Time to train your faith!',
+    title: 'FaithFit',
+    body: 'A gentle invitation to spend a few moments with God today',
     icon: '/favicon.png',
     badge: '/favicon.png',
-    tag: 'faith-training-reminder',
+    tag: 'faithfit-walk-reminder',
   };
 
   const options: NotificationOptions = {
     body: data.body,
     icon: data.icon || '/favicon.png',
     badge: data.badge || '/favicon.png',
-    tag: data.tag || 'grace-notification',
+    tag: data.tag || 'faithfit-notification',
     data: {
       url: data.url || '/home',
     },

@@ -154,11 +154,11 @@ export function useNotifications() {
       return;
     }
 
-    new Notification('Faith Training Reminder', {
-      body: 'Time to train your faith! Your daily session is waiting.',
+    new Notification('FaithFit', {
+      body: 'A gentle nudge to spend a few moments with God today.',
       icon: '/favicon.png',
       badge: '/favicon.png',
-      tag: 'faith-training-reminder',
+      tag: 'faithfit-walk-reminder',
       requireInteraction: false
     });
   }, [permissionStatus]);
