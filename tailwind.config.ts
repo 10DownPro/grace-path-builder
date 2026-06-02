@@ -55,6 +55,10 @@ export default {
         },
         success: "hsl(var(--success))",
         warning: "hsl(var(--warning))",
+        "accent-warm": {
+          DEFAULT: "hsl(var(--accent-warm))",
+          foreground: "hsl(var(--accent-warm-foreground))",
+        },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
