@@ -90,13 +90,7 @@ export function DashboardHeader() {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>
-            <div className="flex flex-col">
-              <span>{profile?.name || 'Soldier'}</span>
-              <span className="text-xs font-normal text-muted-foreground">
-                {profile?.commitment === 'warrior' ? 'Warrior' : 
-                 profile?.commitment === 'committed' ? 'Committed' : 'Starter'}
-              </span>
-            </div>
+            <span>{profile?.name || 'Friend'}</span>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem asChild>

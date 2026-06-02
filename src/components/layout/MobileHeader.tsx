@@ -78,23 +78,14 @@ export function MobileHeader() {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>
-              <div className="flex flex-col">
-                <span>{profile?.name || "Soldier"}</span>
-                <span className="text-xs font-normal text-muted-foreground">
-                  {profile?.commitment === "warrior"
-                    ? "Warrior"
-                    : profile?.commitment === "committed"
-                      ? "Committed"
-                      : "Starter"}
-                </span>
-              </div>
+              <span>{profile?.name || "Friend"}</span>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
-              <Link to="/profile">Profile</Link>
+              <Link to="/home">Home</Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link to="/home">Dashboard</Link>
+              <Link to="/profile">Profile</Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
               <Link to="/settings">Settings</Link>
