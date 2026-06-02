@@ -35,7 +35,7 @@ export function AuthForm({ onSuccess }: AuthFormProps) {
         if (error) {
           toast.error(error.message);
         } else {
-          toast.success('Account created! Welcome to Faith Training.');
+          toast.success('Account created. Welcome to FaithFit.');
           onSuccess?.();
         }
       } else {

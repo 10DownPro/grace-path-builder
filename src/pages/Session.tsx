@@ -464,7 +464,7 @@ function WorshipContent({
   return (
     <div className="space-y-5">
       <p className="text-muted-foreground">
-        Begin your training with worship. Let your heart be still and focused on God's presence.
+        Begin with worship. Let your heart be still and focused on God's presence.
       </p>
 
       {/* Embedded YouTube Player */}
@@ -642,7 +642,7 @@ function ScriptureContent() {
           </li>
           <li className="flex items-start gap-2">
             <span className="text-primary">•</span>
-            <span>How does this apply to your training today?</span>
+            <span>How does this apply to your walk today?</span>
           </li>
         </ul>
       </div>

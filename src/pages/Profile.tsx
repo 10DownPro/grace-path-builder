@@ -59,7 +59,7 @@ export default function Profile() {
     {
       icon: BookMarked,
       label: 'Saved Verses',
-      description: 'Your armory',
+      description: 'Verses you treasure',
       color: 'text-secondary',
       bgColor: 'bg-secondary/10',
       onClick: () => navigate('/community')
@@ -231,7 +231,7 @@ export default function Profile() {
                     <div className="p-8 text-center">
                       <UserPlus className="h-12 w-12 mx-auto text-muted-foreground/50 mb-3" />
                       <p className="text-muted-foreground">Not following anyone</p>
-                      <p className="text-sm text-muted-foreground">Find training partners in the Feed!</p>
+                      <p className="text-sm text-muted-foreground">Find others walking with God in the Community.</p>
                       <Button
                         variant="outline"
                         size="sm"

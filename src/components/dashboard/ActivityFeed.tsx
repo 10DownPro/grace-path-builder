@@ -46,9 +46,9 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
             <div className="p-4 rounded-full bg-muted mb-4">
               <BookOpen className="h-8 w-8 text-muted-foreground" />
             </div>
-            <h3 className="font-display text-lg uppercase mb-2">No Activity Yet</h3>
+            <h3 className="font-display text-lg mb-2">No Activity Yet</h3>
             <p className="text-sm text-muted-foreground max-w-xs">
-              Start your first training session to see your activity here!
+              Take your first step today to see your walk reflected here.
             </p>
           </div>
         </CardContent>

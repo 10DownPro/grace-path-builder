@@ -20,11 +20,11 @@ export function BookOwnershipStep({ onHasBook, onNoBook }: BookOwnershipStepProp
   return (
     <div className="flex-1 flex flex-col justify-center space-y-8 animate-fade-in">
       <div className="space-y-3 text-center">
-        <h2 className="font-display text-2xl uppercase tracking-wider text-foreground">
+        <h2 className="font-display text-2xl text-foreground">
           Do You Have The Book?
         </h2>
         <p className="text-muted-foreground">
-          The Faith Training Guide that goes with this app
+          The FaithFit Companion Guide that goes with this app
         </p>
       </div>
 
@@ -87,27 +87,27 @@ export function BookOwnershipStep({ onHasBook, onNoBook }: BookOwnershipStepProp
       <Dialog open={showBookInfo} onOpenChange={setShowBookInfo}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="font-display text-xl uppercase tracking-wider">
-              The Faith Training Guide
+            <DialogTitle className="font-display text-xl">
+              The FaithFit Companion Guide
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <p className="text-muted-foreground">
-              The Faith Training Guide is the companion book that teaches you the <strong>WHY</strong> behind every practice in this app.
+              The FaithFit Companion Guide is the book that teaches the <strong>why</strong> behind every practice in this app.
             </p>
             <div className="space-y-2">
-              <p className="font-display uppercase text-sm text-foreground">What You'll Learn:</p>
+              <p className="font-display text-sm text-foreground">What you'll learn:</p>
               <ul className="text-sm text-muted-foreground space-y-1">
-                <li>• How to build unshakeable faith through daily discipline</li>
-                <li>• The secrets to powerful prayer and worship</li>
-                <li>• How to overcome spiritual battles and temptation</li>
-                <li>• Building a Scripture meditation practice</li>
-                <li>• Creating lasting spiritual transformation</li>
+                <li>• How to build a steady walk with God through small daily steps</li>
+                <li>• A simple rhythm for prayer and worship</li>
+                <li>• Walking through doubt, struggle, and temptation with grace</li>
+                <li>• How to read and reflect on Scripture</li>
+                <li>• Growing in Christ over the long road</li>
               </ul>
             </div>
             <div className="p-3 rounded-lg bg-warning/10 border border-warning/30">
               <p className="text-sm text-warning">
-                <strong>Book Buyers Get:</strong> Lifetime premium access with exclusive audio devotionals and extended training plans.
+                <strong>Book readers get:</strong> Lifetime premium access with audio devotionals and extended journey content.
               </p>
             </div>
             <Button

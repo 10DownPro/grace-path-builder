@@ -50,7 +50,7 @@ const Auth = () => {
         if (error) {
           toast.error(error.message);
         } else {
-          toast.success('Account created! Welcome to Faith Training.');
+          toast.success('Account created. Welcome to FaithFit.');
           navigate('/home');
         }
       } else {

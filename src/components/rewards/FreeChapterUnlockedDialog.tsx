@@ -62,10 +62,10 @@ export function FreeChapterUnlockedDialog({
 
           <div className="space-y-2">
             <p className="text-muted-foreground">
-              You completed your first week of training. That takes discipline.
+              You walked with God this week. That's no small thing.
             </p>
             <p className="text-muted-foreground">
-              Here's <span className="text-foreground font-medium">Chapter 1</span> of the Faith Training Guide as a reward.
+              Here's <span className="text-foreground font-medium">Chapter 1</span> of the FaithFit Companion Guide as a gift.
             </p>
           </div>
 
@@ -75,7 +75,7 @@ export function FreeChapterUnlockedDialog({
               <BookOpen className="h-6 w-6 text-warning-foreground" />
             </div>
             <div className="text-left flex-1">
-              <p className="font-medium text-foreground text-sm">Faith Training Guide</p>
+              <p className="font-medium text-foreground text-sm">FaithFit Companion Guide</p>
               <p className="text-xs text-muted-foreground">Chapter 1: The Foundation</p>
             </div>
           </div>

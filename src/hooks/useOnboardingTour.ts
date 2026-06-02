@@ -15,57 +15,57 @@ export const TOUR_STEPS: TourStep[] = [
   {
     id: 'welcome',
     target: '[data-tour="streak-badge"]',
-    title: 'YOUR DAY GRIND',
-    content: 'This is your streak counter. Complete a training session every day to build your streak and unlock rewards.',
+    title: 'Your Walk With God',
+    content: 'A gentle marker of the days you spend with God. No pressure, no shame — just an invitation to keep walking.',
     placement: 'bottom'
   },
   {
     id: 'workout',
     target: '[data-tour="workout-card"]',
-    title: "TODAY'S WORKOUT",
-    content: 'Your daily training has 4 sets: Worship, Scripture, Prayer, and Reflection. Complete all 4 to finish your workout.',
+    title: "Today's Walk",
+    content: 'A simple rhythm: Worship, Scripture, Prayer, and Reflection. Take one step or take all four — He meets you wherever you start.',
     placement: 'bottom'
   },
   {
     id: 'start-training',
     target: '[data-tour="start-training"]',
-    title: 'START TRAINING',
-    content: 'Tap here to begin your daily spiritual workout. Each session takes about 15-30 minutes.',
+    title: 'Begin Today',
+    content: 'Tap here to start your time with God. Most days take 15–30 minutes, but even a few quiet moments count.',
     placement: 'top'
   },
   {
     id: 'quick-actions',
     target: '[data-tour="quick-actions"]',
-    title: 'QUICK WINS',
-    content: 'Need a quick faith boost? These micro-actions take seconds and earn you points throughout the day.',
+    title: 'Small Steps',
+    content: 'Quick ways to turn toward God throughout the day — a verse, a breath prayer, a moment of gratitude.',
     placement: 'top'
   },
   {
     id: 'weekly-grind',
     target: '[data-tour="weekly-grind"]',
-    title: 'WEEKLY PROGRESS',
-    content: 'Track your weekly training stats here. See your sessions, prayers logged, and verses read.',
+    title: "This Week's Walk",
+    content: 'A gentle look at your week — sessions, prayers, and Scripture read. Growth, not perfection.',
     placement: 'top'
   },
   {
     id: 'navigation',
     target: '[data-tour="nav-train"]',
-    title: 'TRAIN TAB',
-    content: 'Jump straight to your training session anytime from here.',
+    title: 'Your Journey',
+    content: 'Jump back into your time with God anytime from here.',
     placement: 'top'
   },
   {
     id: 'prayer',
     target: '[data-tour="nav-prayer"]',
-    title: 'PRAYER ARMORY',
-    content: 'Log your prayers using the ACTS method: Adoration, Confession, Thanksgiving, Supplication.',
+    title: 'Prayer Journal',
+    content: 'A quiet place to talk with God using the ACTS rhythm: Adoration, Confession, Thanksgiving, Supplication.',
     placement: 'top'
   },
   {
     id: 'squad',
     target: '[data-tour="nav-squad"]',
-    title: 'YOUR SQUAD',
-    content: 'Connect with friends, join squads, and compete on leaderboards. Accountability is key!',
+    title: 'Walking Together',
+    content: 'Connect with friends and faith circles. You aren\'t walking alone.',
     placement: 'top'
   }
 ];
@@ -97,7 +97,6 @@ export function useOnboardingTour() {
         steps_completed: (data.steps_completed as string[]) || []
       });
       
-      // Auto-start tour if not completed and user hasn't dismissed
       if (!data.tour_completed && data.current_step === 0) {
         const dismissed = localStorage.getItem('tour-dismissed');
         if (!dismissed) {
@@ -105,7 +104,6 @@ export function useOnboardingTour() {
         }
       }
     } else if (!data) {
-      // Create progress record
       const { data: newProgress, error: createError } = await supabase
         .from('user_onboarding_progress')
         .insert({ user_id: user.id })
@@ -119,7 +117,6 @@ export function useOnboardingTour() {
           steps_completed: []
         });
         
-        // Auto-start for new users
         const dismissed = localStorage.getItem('tour-dismissed');
         if (!dismissed) {
           setIsActive(true);
@@ -146,7 +143,6 @@ export function useOnboardingTour() {
     const completedSteps = [...progress.steps_completed, currentStep.id];
 
     if (isLastStep) {
-      // Complete the tour
       await supabase
         .from('user_onboarding_progress')
         .update({

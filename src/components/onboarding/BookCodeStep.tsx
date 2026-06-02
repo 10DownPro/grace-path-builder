@@ -83,7 +83,7 @@ export function BookCodeStep({ onSuccess, onSkip }: BookCodeStepProps) {
           Unlock Premium Features
         </h2>
         <p className="text-muted-foreground">
-          Each Faith Training Guide includes a unique code for lifetime premium access.
+          Each FaithFit Companion Guide includes a unique code for lifetime premium access.
         </p>
       </div>
 

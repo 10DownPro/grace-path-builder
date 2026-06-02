@@ -15,11 +15,11 @@ interface PaywallModalProps {
 }
 
 const FEATURE_BENEFITS: Record<string, string> = {
-  unlimited_follows: 'Follow unlimited training partners',
+  unlimited_follows: 'Follow unlimited friends on the walk',
   unlimited_posts: 'Create unlimited posts each week',
   unlimited_testimonies: 'Share unlimited testimonies',
-  unlimited_squads: 'Join unlimited training squads',
-  unlimited_friends: 'Add unlimited training partners',
+  unlimited_squads: 'Join unlimited faith circles',
+  unlimited_friends: 'Add unlimited friends',
   unlimited_saved_verses: 'Save unlimited verses',
   unlimited_prayer_support: 'Support unlimited prayers',
 };

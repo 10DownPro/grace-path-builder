@@ -186,7 +186,7 @@ export const milestones: Milestone[] = [
   },
   {
     id: '3',
-    name: 'Prayer Warrior',
+    name: 'Faithful in Prayer',
     description: 'Write 30 prayer entries',
     scripture: '"Pray without ceasing." - 1 Thessalonians 5:17',
     achieved: false,

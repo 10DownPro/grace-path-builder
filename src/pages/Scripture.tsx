@@ -119,8 +119,8 @@ export default function ScripturePage() {
         {/* Header */}
         <div className="flex items-start justify-between">
           <div className="space-y-1">
-            <h1 className="font-display text-3xl text-primary uppercase tracking-wide">Armory</h1>
-            <p className="text-muted-foreground text-sm uppercase tracking-wider">Load your ammo</p>
+            <h1 className="font-display text-3xl text-primary">Scripture</h1>
+            <p className="text-muted-foreground text-sm">God's word for your walk</p>
           </div>
           <Select value={translation} onValueChange={(v) => setTranslation(v as BibleTranslation)}>
             <SelectTrigger className="w-24 bg-muted border-border">
