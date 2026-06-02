@@ -535,26 +535,288 @@ const healingRestoration: JourneyModule[] = [
   enrich({ id: 'restored-purpose', title: 'Restored purpose', minutes: 8, summary: 'You are not too broken to be used.', scripture: { reference: 'Joel 2:25', text: 'I will repay you for the years the locusts have eaten.' }, reflection: 'What hope feels possible again, even just a little?', prayer: 'Restore what I cannot, Lord. Amen.', questions: ['What hope feels possible again, even faintly?', 'Where would you most like to see restoration?'] }),
 ];
 
-// ---------- Wrap existing lessons into Modules ----------
-// Phase 1 grouping: each track has one starting Module ("Foundations") containing
-// all currently authored lessons. Phase 2 will reorganize into the full module map
-// (Who Is God?, Who Is Jesus?, etc.) and grow each track to its target lesson count.
-function foundationsModule(trackTitle: string, lessons: Lesson[]): Module {
-  return {
-    id: 'foundations',
-    title: 'Foundations',
-    summary: `Starting lessons for ${trackTitle}.`,
-    lessons,
-  };
-}
+// ---------- Compact lesson builder for module expansion ----------
+// `mini` mirrors `enrich` with a compact signature for the module-map below.
+const mini = (
+  id: string,
+  title: string,
+  summary: string,
+  ref: string,
+  text: string,
+  reflection: string,
+  prayer: string,
+  minutes = 7,
+): Lesson => enrich({
+  id, title, summary, minutes,
+  scripture: { reference: ref, text },
+  reflection, prayer,
+  questions: [reflection, 'Where does this meet you today?'],
+});
+
+// Pull lessons out of the existing arrays by id (kept here so authored lessons stay rich).
+const pick = (arr: Lesson[], id: string): Lesson => {
+  const found = arr.find((l) => l.id === id);
+  if (!found) throw new Error(`Lesson not found: ${id}`);
+  return found;
+};
+
+// Helper to build a Module.
+const mod = (id: string, title: string, summary: string, lessons: Lesson[]): Module =>
+  ({ id, title, summary, lessons });
+
+// ============================================================
+// STARTING FAITH — 6 modules · 25 lessons (~4 weeks)
+// ============================================================
+const startingFaithModules: Module[] = [
+  mod('who-is-god', 'Who Is God?', 'Meet the God who made you and wants to be known.', [
+    pick(startingFaith, 'who-is-god'),
+    mini('god-is-love', 'God is love', 'Love is not just what God does — it is who he is.', '1 John 4:8', 'Whoever does not love does not know God, because God is love.', 'What would change if you believed God actually likes you?', 'Father, help me know your love, not just hear about it. Amen.'),
+    mini('god-is-near', 'God is near', 'He is closer than you think, even when you cannot feel him.', 'Psalm 34:18', 'The Lord is near to the brokenhearted.', 'Where do you most need God to feel near today?', 'God, draw near to the places I keep hidden. Amen.'),
+    mini('god-is-good', 'God is good', 'Even when life is not, God still is.', 'Psalm 100:5', 'For the Lord is good and his love endures forever.', 'Where have you doubted that God is good?', 'God, help me trust your goodness even where I cannot see it. Amen.'),
+  ]),
+  mod('who-is-jesus', 'Who Is Jesus?', 'See Jesus clearly — not the version culture sold you.', [
+    pick(startingFaith, 'who-is-jesus'),
+    pick(startingFaith, 'salvation'),
+    pick(startingFaith, 'grace'),
+    mini('jesus-with-us', 'God with us', 'In Jesus, God stepped into our story.', 'Matthew 1:23', 'They will call him Immanuel — which means, God with us.', 'What would it mean for Jesus to be with you right now?', 'Jesus, thank you for not staying distant. Amen.'),
+  ]),
+  mod('talking-with-god', 'Talking with God', 'Prayer is conversation, not performance.', [
+    pick(startingFaith, 'what-is-prayer'),
+    mini('prayer-honest-start', 'Pray your real thoughts', 'God already knows — honesty just unlocks the door.', 'Psalm 62:8', 'Pour out your hearts to him.', 'What is the most honest sentence you could pray today?', 'God, here is what is really going on. Hear me. Amen.'),
+    mini('prayer-short-prayers', 'Short prayers count', 'You do not need long words to reach God.', 'Matthew 6:7', 'Do not keep on babbling like pagans.', 'What is a one-sentence prayer you could pray ten times today?', 'Jesus, I lift my heart to you. Amen.'),
+    mini('prayer-thanksgiving', 'Begin with thanks', 'Gratitude reorients the heart.', '1 Thessalonians 5:18', 'Give thanks in all circumstances.', 'What are three small things you can thank God for today?', 'Thank you, God, for what I usually miss. Amen.'),
+  ]),
+  mod('the-bible', 'The Bible', 'Learn to read Scripture for life, not for points.', [
+    pick(startingFaith, 'reading-bible'),
+    mini('bible-where-start', 'Where to start', 'Begin with the Gospel of John — meet Jesus first.', 'John 20:31', 'These are written that you may believe.', 'When this week could you read one chapter slowly?', 'God, open my eyes as I open your Word. Amen.'),
+    mini('bible-slow-reading', 'Read slowly', 'A few verses with attention beats a chapter on autopilot.', 'Psalm 1:2', 'On his law he meditates day and night.', 'What does it look like for you to read slowly?', 'Lord, slow my heart so I can hear yours. Amen.'),
+    mini('bible-let-it-shape-you', 'Let it shape you', 'The goal is not information — it is transformation.', 'James 1:22', 'Do not merely listen to the word. Do what it says.', 'What is one verse you can carry into your day?', 'Spirit, shape me through what I read. Amen.'),
+  ]),
+  mod('following-daily', 'Following Jesus Daily', 'Walking with Jesus in ordinary days.', [
+    pick(startingFaith, 'following-daily'),
+    mini('daily-surrender', 'Daily surrender', 'A surrendered morning shapes the whole day.', 'Luke 9:23', 'Whoever wants to be my disciple must take up their cross daily.', 'What do you need to hand over to Jesus today?', 'Jesus, I give you today. Lead me. Amen.'),
+    mini('daily-temptation', 'Walking through temptation', 'Following Jesus is real — and so is the pull away.', '1 Corinthians 10:13', 'God is faithful — he will not let you be tempted beyond what you can bear.', 'What temptation has the loudest voice in your life?', 'Jesus, give me strength where I am weakest. Amen.'),
+    mini('daily-obedience', 'Small obedience', 'Big faith is built on small yeses.', 'John 14:15', 'If you love me, keep my commands.', 'What small obedience is in front of you right now?', 'Jesus, help me say yes to the small thing today. Amen.'),
+  ]),
+  mod('belonging-purpose', 'Belonging & Purpose', 'You were not made to walk alone or aimless.', [
+    pick(startingFaith, 'finding-community'),
+    pick(startingFaith, 'trusting-god'),
+    pick(startingFaith, 'living-with-purpose'),
+    mini('belonging-known', 'Known and loved', 'You are not a stranger to God.', 'Psalm 139:1', 'You have searched me, Lord, and you know me.', 'Where do you most want to be known by God?', 'God, thank you that I am not hidden from you. Amen.'),
+    mini('purpose-everyday', 'Purpose in the everyday', 'Faithfulness in small places is your calling too.', 'Colossians 3:23', 'Whatever you do, work at it with all your heart, as working for the Lord.', 'What ordinary thing could become an act of worship today?', 'God, make my ordinary day matter for you. Amen.'),
+  ]),
+];
+
+// ============================================================
+// COMING BACK — 5 modules · 22 lessons (~4 weeks)
+// ============================================================
+const comingBackModules: Module[] = [
+  mod('welcome-home', 'Welcome Home', 'No catching up. No condemnation. Just home.', [
+    pick(comingBack, 'welcome-home'),
+    pick(comingBack, 'letting-go-shame'),
+    mini('cb-prodigal', 'The Father runs', 'He is not waiting at the door with crossed arms.', 'Luke 15:20', 'But while he was still a long way off, his father saw him and ran.', 'What does it feel like to picture God running toward you?', 'Father, thank you that you run toward me. Amen.'),
+    mini('cb-no-distance', 'No distance too far', 'Wherever you have been, the way home is open.', 'Romans 8:38-39', 'Nothing in all creation can separate us from the love of God.', 'What part of you fears it is too late to return?', 'God, help me believe nothing has separated me from you. Amen.'),
+  ]),
+  mod('reconnecting', 'Reconnecting', 'Begin again — slowly, honestly, gently.', [
+    pick(comingBack, 'starting-again'),
+    pick(comingBack, 'returning-to-prayer'),
+    mini('cb-small-step', 'One small step', 'You do not have to do everything today.', 'Zechariah 4:10', 'Do not despise these small beginnings.', 'What is the smallest faithful step you could take today?', 'God, bless this small return. Amen.'),
+    mini('cb-honest-prayer', 'A prayer of return', 'Even "I do not know what to say" is a prayer.', 'Psalm 51:17', 'A broken and contrite heart you, God, will not despise.', 'What honest prayer have you been holding back?', 'God, here I am. That is all I have today. Amen.'),
+  ]),
+  mod('trusting-again', 'Trusting Again', 'Rebuilding what fear and disappointment broke.', [
+    pick(comingBack, 'trusting-god-again'),
+    pick(comingBack, 'healing-church-hurt'),
+    mini('cb-disappointment', 'When you are disappointed in God', 'Honest doubt is welcome here.', 'Psalm 13:1', 'How long, Lord? Will you forget me forever?', 'What disappointment have you been afraid to bring to God?', 'God, I am bringing this honest disappointment to you. Amen.'),
+    mini('cb-rebuild-trust', 'Rebuilding trust slowly', 'Trust is a series of small returns.', 'Lamentations 3:22-23', 'His mercies are new every morning.', 'Where could you take one small step of trust today?', 'God, give me courage for one small yes. Amen.'),
+  ]),
+  mod('listening-to-god', 'Listening to God', 'Learning to hear his voice again.', [
+    pick(comingBack, 'hearing-gods-voice'),
+    mini('cb-stillness', 'The practice of stillness', 'You cannot hear what you will not slow down for.', 'Psalm 46:10', 'Be still, and know that I am God.', 'When could you sit in silence for two minutes today?', 'God, quiet me enough to hear you. Amen.'),
+    mini('cb-word-speaks', 'God speaks through Scripture', 'His voice is most clearly found in his Word.', '2 Timothy 3:16', 'All Scripture is God-breathed.', 'What passage might God want to speak to you through this week?', 'God, speak to me through your Word. Amen.'),
+    mini('cb-confirming-voice', 'Testing what you hear', 'God’s voice never contradicts his character.', '1 John 4:1', 'Test the spirits to see whether they are from God.', 'How do you tell God’s voice from your own?', 'God, help me discern your voice clearly. Amen.'),
+  ]),
+  mod('walking-forward', 'Walking Forward', 'Build a sustainable life with Jesus from here.', [
+    pick(comingBack, 'rebuilding-consistency'),
+    pick(comingBack, 'walking-forward'),
+    pick(comingBack, 'staying-connected'),
+    mini('cb-community-again', 'Community again', 'You were not designed to walk alone.', 'Hebrews 10:24-25', 'Let us not give up meeting together.', 'Who is one person you could reach out to this week?', 'God, lead me to people who can walk with me. Amen.'),
+    mini('cb-grace-pace', 'Move at the pace of grace', 'You do not have to make up for lost time.', 'Isaiah 40:31', 'Those who hope in the Lord will renew their strength.', 'Where are you tempted to push too hard?', 'God, set my pace. Amen.'),
+    mini('cb-new-story', 'A new story starts now', 'Your past is not your future.', 'Isaiah 43:19', 'See, I am doing a new thing!', 'What new thing might God be doing in you?', 'God, write a new story in me. Amen.'),
+  ]),
+];
+
+// ============================================================
+// LEARNING PRAYER — 5 modules · 22 lessons (~4 weeks)
+// ============================================================
+const learningPrayerModules: Module[] = [
+  mod('why-we-pray', 'Why We Pray', 'Prayer is not a transaction — it is a relationship.', [
+    mini('lp-why', 'Why prayer matters', 'Prayer changes us before it changes circumstances.', 'Philippians 4:6-7', 'In every situation, by prayer and petition, present your requests to God.', 'What do you most want prayer to do for you?', 'God, teach me to pray. Amen.'),
+    mini('lp-relationship', 'Prayer is relationship', 'God invites you in, not just to ask but to know.', 'John 15:15', 'I have called you friends.', 'What would it mean to pray as a friend, not a beggar?', 'Father, draw me closer in prayer. Amen.'),
+    mini('lp-jesus-prayed', 'Jesus prayed', 'If Jesus needed it, so do we.', 'Mark 1:35', 'Very early in the morning, Jesus went off to a solitary place to pray.', 'When does Jesus’ rhythm of prayer challenge you?', 'Jesus, teach me to pray like you. Amen.'),
+    mini('lp-keep-asking', 'Keep asking', 'Persistent prayer is not nagging — it is trust.', 'Luke 18:1', 'Always pray and not give up.', 'What have you stopped praying about?', 'God, give me courage to keep asking. Amen.'),
+  ]),
+  mod('praying-honestly', 'Praying Honestly', 'God can handle every real thing you bring him.', [
+    pick(learningPrayer, 'pray-honest'),
+    mini('lp-lament', 'Permission to lament', 'A third of the Psalms are honest complaints to God.', 'Psalm 13:1', 'How long, Lord?', 'What grief or anger do you need to put into words?', 'God, hear my honest grief. Amen.'),
+    mini('lp-confession', 'Honest confession', 'Confession opens the door to freedom.', '1 John 1:9', 'If we confess our sins, he is faithful and just.', 'What sin have you been carrying alone?', 'God, I confess this to you. Cleanse me. Amen.'),
+    mini('lp-no-mask', 'No mask required', 'You don’t need church language to talk to God.', 'Matthew 6:7-8', 'Your Father knows what you need before you ask.', 'Where have you been performing in prayer?', 'God, I drop the mask. Hear the real me. Amen.'),
+  ]),
+  mod('pattern-for-prayer', 'A Pattern for Prayer', 'Frameworks that train your heart, not box it in.', [
+    pick(learningPrayer, 'pray-acts'),
+    mini('lp-lords-prayer', 'The Lord’s Prayer', 'A blueprint Jesus gave us himself.', 'Matthew 6:9-13', 'This, then, is how you should pray...', 'Which line of the Lord’s Prayer hits hardest for you today?', 'Father, teach me to pray as Jesus prayed. Amen.'),
+    mini('lp-praise-first', 'Begin with praise', 'Worship reorders the soul before we ask anything.', 'Psalm 100:4', 'Enter his gates with thanksgiving.', 'What about God do you most want to praise today?', 'God, you are worthy. I praise you. Amen.'),
+    mini('lp-bring-needs', 'Bringing your needs', 'God invites you to ask, plainly and specifically.', 'Matthew 7:7', 'Ask and it will be given to you.', 'What specific need are you avoiding bringing to God?', 'Father, here is my need. I trust you. Amen.'),
+  ]),
+  mod('listening-prayer', 'Listening Prayer', 'Prayer is two-way — God speaks too.', [
+    pick(learningPrayer, 'pray-listen'),
+    mini('lp-silence', 'Embracing silence', 'God’s voice often comes after the noise dies down.', '1 Kings 19:12', 'After the fire came a gentle whisper.', 'What noise do you need to quiet to hear God?', 'God, quiet me enough to hear you. Amen.'),
+    mini('lp-journaling', 'Journaling prayer', 'Writing slows the heart and clarifies what you’re really praying.', 'Habakkuk 2:2', 'Write down the revelation.', 'What might come up if you wrote your prayers this week?', 'God, give me words for what I cannot yet say. Amen.'),
+    mini('lp-spirit-prays', 'When you can’t find words', 'The Spirit prays through you.', 'Romans 8:26', 'The Spirit himself intercedes for us through wordless groans.', 'Where do you not know what to pray right now?', 'Spirit, pray through me. Amen.'),
+  ]),
+  mod('life-of-prayer', 'A Life of Prayer', 'Prayer woven through ordinary days.', [
+    pick(learningPrayer, 'pray-others'),
+    mini('lp-pray-without-ceasing', 'Pray without ceasing', 'A constant turning of your heart toward God.', '1 Thessalonians 5:17', 'Pray continually.', 'How could you make your day a conversation with God?', 'God, may my day be one long prayer. Amen.'),
+    mini('lp-breath-prayer', 'Breath prayers', 'A few words you can pray on every breath.', 'Psalm 150:6', 'Let everything that has breath praise the Lord.', 'What is one short prayer you could breathe today?', 'Jesus, have mercy on me. Amen.'),
+    mini('lp-pray-scripture', 'Praying Scripture', 'God’s Word in your mouth shapes your heart.', 'Psalm 119:11', 'I have hidden your word in my heart.', 'What verse could become your prayer this week?', 'God, I pray your Word back to you. Amen.'),
+    mini('lp-pray-anywhere', 'Prayer anywhere', 'You can pray in traffic, line, bed, or shower.', 'Nehemiah 2:4-5', 'Then I prayed to the God of heaven, and I answered the king.', 'Where could you sneak prayer into your day?', 'God, meet me everywhere I am today. Amen.'),
+    mini('lp-keep-going', 'When prayers feel unanswered', 'God is at work even in the silence.', 'Isaiah 55:8-9', 'My thoughts are not your thoughts.', 'What unanswered prayer is hardest for you?', 'God, I trust you in the silence. Amen.'),
+  ]),
+];
+
+// ============================================================
+// UNDERSTANDING JESUS — 6 modules · 25 lessons (~4 weeks)
+// ============================================================
+const understandingJesusModules: Module[] = [
+  mod('before-jesus', 'Before Jesus', 'The promise the world waited for.', [
+    mini('uj-promise', 'A promise kept', 'God promised a rescuer — and kept his word.', 'Genesis 3:15', 'He will crush your head, and you will strike his heel.', 'Where do you most need to believe God keeps his promises?', 'God, thank you for keeping every promise in Jesus. Amen.'),
+    mini('uj-prophecy', 'The prophets pointed to him', 'Centuries before, God spoke of him.', 'Isaiah 53:5', 'He was pierced for our transgressions.', 'How does it land that Jesus was promised long before he came?', 'God, thank you for the long faithfulness of your plan. Amen.'),
+    mini('uj-incarnation', 'The Word became flesh', 'God did not stay far — he stepped in.', 'John 1:14', 'The Word became flesh and made his dwelling among us.', 'What does it mean to you that Jesus was fully God and fully human?', 'Jesus, thank you for coming so close. Amen.'),
+    mini('uj-emmanuel', 'God with us', 'Immanuel — he is not distant, he is here.', 'Matthew 1:23', 'They will call him Immanuel.', 'Where do you most need Jesus to be with you?', 'Jesus, be with me here. Amen.'),
+  ]),
+  mod('how-jesus-lived', 'How Jesus Lived', 'The way he treated people changes everything.', [
+    pick(understandingJesus, 'jesus-loved'),
+    mini('uj-met-outcasts', 'He met the outcasts', 'Jesus went where religion would not.', 'Mark 2:17', 'It is not the healthy who need a doctor, but the sick.', 'Where do you feel like an outsider with God?', 'Jesus, thank you for coming for me too. Amen.'),
+    mini('uj-touched-untouchable', 'He touched the untouchable', 'No one was too unclean for his hand.', 'Matthew 8:3', 'Jesus reached out his hand and touched the man.', 'What part of you feels too unclean to bring to Jesus?', 'Jesus, touch what I’ve been hiding. Amen.'),
+    mini('uj-with-broken', 'He stayed with the broken', 'Jesus did not flinch at pain.', 'John 11:35', 'Jesus wept.', 'Where do you need Jesus to weep with you?', 'Jesus, sit with me in this. Amen.'),
+  ]),
+  mod('what-jesus-taught', 'What Jesus Taught', 'The kingdom Jesus announced — and how to live in it.', [
+    pick(understandingJesus, 'jesus-taught'),
+    mini('uj-beatitudes', 'Blessed are the broken', 'The kingdom flips the world upside down.', 'Matthew 5:3-4', 'Blessed are the poor in spirit, blessed are those who mourn.', 'Which beatitude meets you today?', 'Jesus, teach me your kingdom way. Amen.'),
+    mini('uj-forgive', 'Forgive as you’ve been forgiven', 'Mercy is the family resemblance of God’s people.', 'Matthew 6:14-15', 'If you forgive others, your heavenly Father will also forgive you.', 'Who do you need to begin forgiving?', 'Jesus, help me forgive as you forgave me. Amen.'),
+    mini('uj-fear-not', 'Do not be afraid', 'Jesus said it more than almost anything else.', 'John 14:27', 'Do not let your hearts be troubled.', 'What fear do you need to hand to Jesus today?', 'Jesus, take this fear from me. Amen.'),
+  ]),
+  mod('why-jesus-died', 'Why Jesus Died', 'The cross is the heart of the gospel.', [
+    pick(understandingJesus, 'jesus-died'),
+    mini('uj-for-you', 'He died for you', 'Not for an idea — for a person.', 'Galatians 2:20', 'He loved me and gave himself for me.', 'What does it mean that Jesus died for you, specifically?', 'Jesus, I receive what you did for me. Amen.'),
+    mini('uj-substitute', 'He took our place', 'The exchange of the cross is the heart of grace.', '2 Corinthians 5:21', 'God made him who had no sin to be sin for us.', 'What do you most need taken from you today?', 'Jesus, I bring it to your cross. Amen.'),
+    mini('uj-finished', 'It is finished', 'You do not need to add to what Jesus completed.', 'John 19:30', 'It is finished.', 'Where are you still trying to earn what Jesus already gave?', 'Jesus, I rest in your finished work. Amen.'),
+  ]),
+  mod('jesus-rose', 'Jesus Rose', 'Resurrection is the hinge of all hope.', [
+    pick(understandingJesus, 'jesus-rose'),
+    mini('uj-empty-tomb', 'The empty tomb', 'Hope is not a feeling — it is a fact.', 'Matthew 28:6', 'He is not here; he has risen, just as he said.', 'What hope do you most need today?', 'Jesus, raise hope in me again. Amen.'),
+    mini('uj-new-life', 'New life now', 'Resurrection is not just future — it is for today.', 'Romans 6:4', 'We too may live a new life.', 'Where do you need resurrection life right now?', 'Jesus, breathe new life into this. Amen.'),
+    mini('uj-fear-of-death', 'No more fear of death', 'Death is not the end of the story.', '1 Corinthians 15:55', 'Where, O death, is your victory?', 'How does Jesus’ resurrection change how you face loss?', 'Jesus, take the sting out of my fear. Amen.'),
+  ]),
+  mod('following-jesus-today', 'Following Jesus Today', 'What it looks like to walk with him now.', [
+    mini('uj-take-up-cross', 'Take up your cross', 'Following Jesus costs — and is worth it.', 'Luke 9:23', 'Whoever wants to be my disciple must take up their cross daily.', 'What is Jesus asking you to lay down today?', 'Jesus, I follow you, even here. Amen.'),
+    mini('uj-abide', 'Abide in him', 'Fruit comes from connection, not effort.', 'John 15:5', 'I am the vine; you are the branches.', 'How could you stay connected to Jesus today?', 'Jesus, keep me close. Amen.'),
+    mini('uj-spirit-helps', 'The Spirit helps you follow', 'You are not following Jesus alone.', 'John 14:26', 'The Holy Spirit will teach you all things.', 'Where do you most need the Spirit’s help today?', 'Spirit, lead me today. Amen.'),
+    mini('uj-mission', 'Sent ones', 'Following Jesus sends you into the world.', 'Matthew 28:19', 'Go and make disciples of all nations.', 'Who has God placed in your life to love today?', 'Jesus, use me where you’ve placed me. Amen.'),
+    mini('uj-coming-back', 'He’s coming back', 'The story ends with him — and with us with him.', 'Revelation 21:3', 'God himself will be with them and be their God.', 'How does Jesus’ return shape how you live today?', 'Jesus, come quickly. Amen.'),
+  ]),
+];
+
+// ============================================================
+// BUILDING CONSISTENCY — 5 modules · 20 lessons (~4 weeks)
+// ============================================================
+const buildingConsistencyModules: Module[] = [
+  mod('why-consistency', 'Why Consistency', 'Why small, repeated steps matter more than big bursts.', [
+    mini('bc-faithful-small', 'Faithful in small things', 'Big faith is built in tiny obediences.', 'Luke 16:10', 'Whoever can be trusted with very little can also be trusted with much.', 'What small faithfulness is in front of you today?', 'God, help me be faithful in the small. Amen.'),
+    mini('bc-motivation-fades', 'Motivation fades, formation lasts', 'Spiritual growth outlasts feelings.', 'Galatians 6:9', 'Let us not become weary in doing good.', 'Where have you confused motivation with growth?', 'God, form me beyond feelings. Amen.'),
+    mini('bc-roots-deep', 'Deep roots, slow growth', 'Trees that last grow slowly.', 'Jeremiah 17:7-8', 'They will be like a tree planted by the water.', 'What deep root do you most want to grow?', 'God, grow me deep, not fast. Amen.'),
+    mini('bc-grace-first', 'Grace fuels consistency', 'You don’t earn God’s love through consistency — it’s the response to it.', 'Titus 2:11-12', 'The grace of God teaches us to say no to ungodliness.', 'How does grace change why you show up?', 'God, let grace move me, not guilt. Amen.'),
+  ]),
+  mod('small-yes', 'The Small Yes', 'Tiny faithful steps beat heroic bursts.', [
+    pick(buildingConsistency, 'small-yes'),
+    mini('bc-two-minutes', 'Two-minute habits', 'Make it so small you can’t fail.', 'Zechariah 4:10', 'Do not despise small beginnings.', 'What two-minute habit could you start tomorrow?', 'God, bless this small step. Amen.'),
+    mini('bc-stack-it', 'Stack it on what you already do', 'Anchor a new habit to an old one.', 'Deuteronomy 6:6-7', 'Talk about them when you sit at home and when you walk along the road.', 'What daily routine could you attach prayer or Scripture to?', 'God, make me mindful in ordinary moments. Amen.'),
+    mini('bc-just-show-up', 'Just show up', 'Half of consistency is presence.', 'Matthew 18:20', 'Where two or three gather in my name, there am I with them.', 'What does “just showing up” look like for you this week?', 'God, here I am again. Meet me. Amen.'),
+  ]),
+  mod('daily-rhythm', 'Building a Daily Rhythm', 'Same time. Same place. Soft repetition.', [
+    pick(buildingConsistency, 'gentle-rhythm'),
+    mini('bc-morning', 'Morning with God', 'Even a few minutes shapes the day.', 'Psalm 5:3', 'In the morning, Lord, you hear my voice.', 'When could you give the first five minutes of your day to God?', 'God, I give you my morning. Amen.'),
+    mini('bc-evening', 'Evening reflection', 'Look back with God before sleep.', 'Psalm 4:8', 'In peace I will lie down and sleep.', 'What might it look like to end the day with God?', 'God, hold me as I sleep. Amen.'),
+    mini('bc-sabbath', 'A weekly stop', 'Rest is not laziness — it is worship.', 'Exodus 20:8', 'Remember the Sabbath day by keeping it holy.', 'When could you build in one hour of rest this week?', 'God, teach me to rest in you. Amen.'),
+  ]),
+  mod('grace-for-misses', 'Grace for Misses', 'A missed day is not a failed walk.', [
+    pick(buildingConsistency, 'grace-misses'),
+    mini('bc-begin-again', 'Begin again', 'Today is always available.', 'Lamentations 3:22-23', 'His mercies are new every morning.', 'What does “begin again” mean for you today?', 'God, I begin again. Thank you for new mercy. Amen.'),
+    mini('bc-streak-trap', 'The streak trap', 'Consistency is the goal — not perfection.', 'Romans 8:1', 'There is now no condemnation for those in Christ.', 'Where has shame about misses kept you from returning?', 'God, free me from the streak trap. Amen.'),
+    mini('bc-rest-is-faithful', 'Rest is faithful too', 'Sometimes faithfulness looks like stopping.', 'Mark 6:31', 'Come with me by yourselves to a quiet place and get some rest.', 'Where might rest be the most faithful thing today?', 'God, help me rest as worship. Amen.'),
+  ]),
+  mod('sustaining-walk', 'Sustaining the Walk', 'How rhythms become a life.', [
+    mini('bc-community-keeps', 'Community keeps you', 'You are more consistent with others.', 'Hebrews 10:24-25', 'Spur one another on toward love and good deeds.', 'Who could walk with you in this rhythm?', 'God, give me people who help me show up. Amen.'),
+    mini('bc-review', 'Review and adjust', 'A good rhythm gets refined over time.', 'Lamentations 3:40', 'Let us examine our ways and test them.', 'What is working in your rhythm? What needs to change?', 'God, help me adjust without quitting. Amen.'),
+    mini('bc-seasons', 'Different seasons, different rhythms', 'Your walk will look different in different seasons.', 'Ecclesiastes 3:1', 'There is a time for everything.', 'What does this season need from your rhythm?', 'God, give me wisdom for this season. Amen.'),
+    mini('bc-long-haul', 'In it for the long haul', 'You’re building a life, not a sprint.', '2 Timothy 4:7', 'I have fought the good fight, I have finished the race.', 'How does the long view change what you do today?', 'God, give me endurance for the long road. Amen.'),
+  ]),
+];
+
+// ============================================================
+// HEALING & RESTORATION — 6 modules · 30 lessons (~6 weeks)
+// ============================================================
+const healingRestorationModules: Module[] = [
+  mod('come-weary', 'Come as You Are Weary', 'Rest before performance.', [
+    pick(healingRestoration, 'come-weary'),
+    mini('hr-not-alone', 'You are not alone', 'God meets the weary, not just the strong.', 'Isaiah 41:10', 'Do not fear, for I am with you.', 'Where do you most need God to be with you today?', 'God, I am not alone in this. Amen.'),
+    mini('hr-permission-rest', 'Permission to rest', 'Rest is not weakness — it is design.', 'Genesis 2:2-3', 'God blessed the seventh day and made it holy.', 'What rest do you need permission to take?', 'God, help me rest without guilt. Amen.'),
+    mini('hr-burnout', 'Burnout and the soul', 'Your soul has limits — and that is good.', 'Mark 6:31', 'Come away by yourselves and rest.', 'Where are you running on empty?', 'God, refill what is empty in me. Amen.'),
+    mini('hr-quiet-strength', 'Quiet strength', 'You don’t have to perform your faith to keep it.', 'Isaiah 30:15', 'In quietness and trust is your strength.', 'What would quiet trust look like for you today?', 'God, I trust you quietly today. Amen.'),
+  ]),
+  mod('name-the-pain', 'Name the Pain', 'Healing begins with honesty.', [
+    pick(healingRestoration, 'name-pain'),
+    mini('hr-lament', 'The gift of lament', 'God invites your honest grief.', 'Psalm 13:2', 'How long must I wrestle with my thoughts?', 'What lament have you been holding back?', 'God, hear my honest grief. Amen.'),
+    mini('hr-anger', 'Anger before God', 'God is big enough for your anger.', 'Ephesians 4:26', 'Be angry, and do not sin.', 'What anger do you need to bring to God?', 'God, here is my anger. Help me with it. Amen.'),
+    mini('hr-tears', 'God collects your tears', 'No pain of yours goes unnoticed.', 'Psalm 56:8', 'You keep track of all my sorrows.', 'What grief have you felt unseen in?', 'God, thank you that you see all of it. Amen.'),
+    mini('hr-not-too-much', 'You are not too much', 'God does not flinch at your pain.', 'Psalm 34:18', 'The Lord is close to the brokenhearted.', 'Where have you felt “too much” for others?', 'God, thank you that I’m not too much for you. Amen.'),
+  ]),
+  mod('shame-and-guilt', 'Shame and Guilt', 'Letting go of what God already has.', [
+    pick(healingRestoration, 'forgive-self'),
+    mini('hr-no-condemnation', 'No condemnation', 'In Christ, the verdict has already been spoken.', 'Romans 8:1', 'There is now no condemnation for those in Christ.', 'What condemnation have you been carrying?', 'God, I drop the verdict you’ve already removed. Amen.'),
+    mini('hr-confess-not-hide', 'Confess, don’t hide', 'Confession is the path to freedom.', '1 John 1:9', 'He is faithful and just to forgive.', 'What do you need to bring into the light?', 'God, I bring this into your light. Amen.'),
+    mini('hr-guilt-vs-shame', 'Guilt vs shame', 'Guilt says I did wrong. Shame says I am wrong.', 'Romans 5:8', 'While we were still sinners, Christ died for us.', 'Where has shame been disguised as guilt?', 'God, free me from shame I was never meant to carry. Amen.'),
+    mini('hr-new-name', 'A new name', 'Your identity is not your worst moment.', 'Isaiah 62:2', 'You will be called by a new name.', 'What new name might God be giving you?', 'God, name me as you see me. Amen.'),
+  ]),
+  mod('church-hurt', 'Church Hurt', 'When the people of God hurt you.', [
+    mini('hr-real-pain', 'It really hurt', 'God does not minimize what was done.', 'Psalm 55:12-14', 'It is not an enemy who insults me — but you, my close friend.', 'What part of church hurt has gone unspoken?', 'God, hear what I’ve carried alone. Amen.'),
+    mini('hr-god-not-church', 'God is not the church that hurt you', 'God is not the system or the person who harmed you.', 'Hebrews 13:8', 'Jesus Christ is the same yesterday and today and forever.', 'Where have you confused God with people who failed you?', 'God, help me see you apart from those who hurt me. Amen.'),
+    mini('hr-jesus-angry-too', 'Jesus was angry too', 'He was furious at religious harm.', 'Matthew 23:27-28', 'Woe to you, teachers of the law and Pharisees, you hypocrites!', 'How does it land that Jesus is angry at what was done to you?', 'Jesus, thank you for being on my side. Amen.'),
+    mini('hr-slow-trust', 'Slow trust', 'You don’t have to rush back into community.', 'Proverbs 4:23', 'Above all else, guard your heart.', 'What boundary do you need to protect your healing?', 'God, give me wisdom for safe steps. Amen.'),
+    mini('hr-someday-again', 'Someday, community again', 'God can rebuild what was broken.', 'Ezekiel 36:26', 'I will give you a new heart.', 'What hope can you hold for community someday?', 'God, soften what hurt has hardened. Amen.'),
+  ]),
+  mod('grief-and-loss', 'Grief and Loss', 'Walking with God through what cannot be undone.', [
+    mini('hr-grief-is-love', 'Grief is love with nowhere to go', 'You grieve because you loved.', 'John 11:35', 'Jesus wept.', 'Who or what are you grieving today?', 'God, hold me in this grief. Amen.'),
+    mini('hr-no-timeline', 'No timeline on grief', 'Grief moves in waves, not lines.', 'Ecclesiastes 3:4', 'A time to weep and a time to laugh.', 'Where have you tried to rush your grief?', 'God, let me grieve at your pace. Amen.'),
+    mini('hr-god-near-grief', 'God is near in grief', 'God does not leave you alone in loss.', 'Psalm 34:18', 'The Lord is close to the brokenhearted.', 'Where do you most need God’s nearness?', 'God, be close to me here. Amen.'),
+    mini('hr-hope-of-reunion', 'The hope of reunion', 'For those in Christ, goodbye is not the end.', '1 Thessalonians 4:13-14', 'We do not grieve like those who have no hope.', 'What hope can carry you through this grief?', 'God, anchor me to your hope. Amen.'),
+    mini('hr-living-with-grief', 'Learning to live with it', 'Grief reshapes you — it doesn’t end you.', 'Psalm 30:5', 'Weeping may stay for the night, but rejoicing comes in the morning.', 'What does living with this loss look like now?', 'God, teach me to live faithfully alongside grief. Amen.'),
+  ]),
+  mod('restoration-forward', 'Restoration & Walking Forward', 'God restores what only he can.', [
+    pick(healingRestoration, 'restored-purpose'),
+    mini('hr-locusts', 'The years restored', 'God redeems what felt wasted.', 'Joel 2:25', 'I will repay you for the years the locusts have eaten.', 'What years do you long to see redeemed?', 'God, redeem what felt lost. Amen.'),
+    mini('hr-beauty-ashes', 'Beauty from ashes', 'God specializes in resurrection.', 'Isaiah 61:3', 'A crown of beauty instead of ashes.', 'Where do you need God to bring beauty from ashes?', 'God, bring beauty where there has only been ash. Amen.'),
+    mini('hr-new-thing', 'A new thing', 'God is doing something new in you.', 'Isaiah 43:19', 'See, I am doing a new thing!', 'What new thing might God be doing in you?', 'God, I trust the new thing. Amen.'),
+    mini('hr-walk-with-others', 'Walk with others', 'Healing happens in safe community.', 'Galatians 6:2', 'Carry each other’s burdens.', 'Who is one safe person you could walk with?', 'God, lead me to safe community. Amen.'),
+  ]),
+];
 
 export const journeys: Journey[] = [
-  { id: 'starting-faith', title: 'Starting Faith', tagline: 'Begin at the beginning — one honest step.', emoji: '🌱', forStages: ['new', 'curious'], modules: [foundationsModule('Starting Faith', startingFaith)] },
-  { id: 'coming-back', title: 'Coming Back', tagline: 'No catching up. No condemnation. Just home.', emoji: '🏠', forStages: ['returning', 'longtime'], modules: [foundationsModule('Coming Back', comingBack)] },
-  { id: 'learning-prayer', title: 'Learning Prayer', tagline: 'How to actually talk with God.', emoji: '🙏', forStages: ['new', 'curious', 'returning', 'longtime'], modules: [foundationsModule('Learning Prayer', learningPrayer)] },
-  { id: 'understanding-jesus', title: 'Understanding Jesus', tagline: 'Get to know who he actually is.', emoji: '✝️', forStages: ['new', 'curious', 'returning', 'longtime'], modules: [foundationsModule('Understanding Jesus', understandingJesus)] },
-  { id: 'building-consistency', title: 'Building Consistency', tagline: 'Small, sustainable rhythms with Jesus.', emoji: '🌿', forStages: ['returning', 'longtime', 'curious'], modules: [foundationsModule('Building Consistency', buildingConsistency)] },
-  { id: 'healing-restoration', title: 'Healing & Restoration', tagline: 'For wounds, weariness, and weight.', emoji: '🤍', forStages: ['returning', 'longtime', 'curious'], modules: [foundationsModule('Healing & Restoration', healingRestoration)] },
+  { id: 'starting-faith',       title: 'Starting Faith',         tagline: 'Discover who God is, who Jesus is, and what it means to follow him from the very beginning.', emoji: '🌱', forStages: ['new', 'curious'],                       modules: startingFaithModules },
+  { id: 'coming-back',          title: 'Coming Back',            tagline: 'No catching up. No condemnation. A guided path home, one honest step at a time.',              emoji: '🏠', forStages: ['returning', 'longtime'],                modules: comingBackModules },
+  { id: 'learning-prayer',      title: 'Learning Prayer',        tagline: 'Learn how to actually talk with God — honestly, simply, and as a way of life.',                emoji: '🙏', forStages: ['new', 'curious', 'returning', 'longtime'], modules: learningPrayerModules },
+  { id: 'understanding-jesus',  title: 'Understanding Jesus',    tagline: 'Discover who Jesus is, what he taught, why he died, and what it means to follow him today.',  emoji: '✝️', forStages: ['new', 'curious', 'returning', 'longtime'], modules: understandingJesusModules },
+  { id: 'building-consistency', title: 'Building Consistency',   tagline: 'Learn how to create sustainable rhythms with God that last beyond motivation.',                emoji: '🌿', forStages: ['returning', 'longtime', 'curious'],     modules: buildingConsistencyModules },
+  { id: 'healing-restoration',  title: 'Healing & Restoration',  tagline: 'For church hurt, shame, guilt, grief, broken trust, and learning to walk forward again.',     emoji: '🤍', forStages: ['returning', 'longtime', 'curious'],     modules: healingRestorationModules },
 ];
 
 // Normalize every lesson's prayer to end with the required ending.
