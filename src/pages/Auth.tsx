@@ -58,7 +58,7 @@ const Auth = () => {
         if (error) {
           toast.error(error.message);
         } else {
-          toast.success('Welcome back, soldier!');
+          toast.success('Welcome back.');
           navigate('/home');
         }
       }
@@ -74,7 +74,7 @@ const Auth = () => {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center space-y-4">
           <div className="w-16 h-16 rounded-2xl bg-primary/20 flex items-center justify-center mx-auto animate-pulse">
-            <img src={logo} alt="Faith Training" className="w-10 h-10 object-contain" />
+            <img src={logo} alt="FaithFit" className="w-10 h-10 object-contain" />
           </div>
           <p className="text-muted-foreground font-display uppercase tracking-wider">
             Loading...
@@ -105,13 +105,13 @@ const Auth = () => {
         {/* Logo */}
         <div className="mb-8 text-center">
           <div className="w-24 h-24 lg:w-32 lg:h-32 mx-auto mb-4">
-            <img src={logo} alt="Faith Training" className="w-full h-full object-contain" />
+            <img src={logo} alt="FaithFit" className="w-full h-full object-contain" />
           </div>
           <h1 className="font-display text-2xl lg:text-3xl uppercase tracking-wider text-foreground">
-            Faith Training
+            FaithFit
           </h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            {mode === 'signin' ? 'Welcome back, soldier' : 'Join the ranks'}
+          <p className="text-base text-muted-foreground mt-1">
+            {mode === 'signin' ? 'Welcome back.' : 'Create your account.'}
           </p>
         </div>
 

@@ -98,8 +98,8 @@ export function GettingStartedChecklist({ items, onDismiss }: GettingStartedChec
 export const defaultChecklistItems: ChecklistItem[] = [
   {
     id: 'first-session',
-    title: 'Complete your first training',
-    description: 'Start with a 15-minute session',
+    title: 'Complete your first session',
+    description: 'A guided 15-minute walk with God',
     completed: false,
     link: '/session',
     icon: Dumbbell,
@@ -114,8 +114,8 @@ export const defaultChecklistItems: ChecklistItem[] = [
   },
   {
     id: 'join-squad',
-    title: 'Join or create a squad',
-    description: 'Train with friends',
+    title: 'Join a Faith Circle',
+    description: 'Walk alongside others',
     completed: false,
     link: '/community',
     icon: Users,

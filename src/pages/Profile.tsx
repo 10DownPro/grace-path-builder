@@ -95,14 +95,14 @@ export default function Profile() {
               <div className="flex-1">
                 <div className="flex items-center gap-2">
                   <h2 className="text-2xl font-bold text-foreground">
-                    {profile?.name || 'Warrior'}
+                    {profile?.name || 'Friend'}
                   </h2>
                   {isPremium && (
                     <Crown className="h-5 w-5 text-warning" />
                   )}
                 </div>
-                <p className="text-sm text-muted-foreground capitalize">
-                  {profile?.commitment || 'Committed'} • Training Daily
+                <p className="text-sm text-muted-foreground">
+                  Walking with God
                 </p>
               </div>
             </div>

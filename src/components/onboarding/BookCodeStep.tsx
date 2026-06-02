@@ -66,7 +66,7 @@ export function BookCodeStep({ onSuccess, onSkip }: BookCodeStepProps) {
             You now have lifetime access to all premium features.
           </p>
           <p className="font-display text-lg uppercase tracking-wider text-foreground mt-4">
-            Let's train.
+            Let's begin.
           </p>
         </div>
       </div>
