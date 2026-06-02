@@ -1,142 +1,78 @@
+# FaithFit Repositioning Plan
 
+A focused rework across visual system, copy, onboarding, homepage, and daily experience. Preserves existing data model and routes — changes are concentrated in the design system, landing page, onboarding, and the dashboard/session surfaces.
 
-# Plan: Fix Challenge Progress Tracking & Add Push Notifications
+## 1. Visual System (foundation — do first)
 
-## Problem Analysis
+Update `src/index.css` and `tailwind.config.ts`:
+- Replace orange-dominant palette with the new tokens:
+  - `--background` → #111827 (Deep Navy Charcoal)
+  - `--card` / secondary surface → #1F2937
+  - `--primary` → #4F7CAC (Muted Faith Blue)
+  - `--secondary` / accent → #6B8F71 (Restoration Sage)
+  - `--success` → #6B8F71
+  - `--border` → #374151
+  - `--muted-foreground` → #9CA3AF
+  - `--foreground` → #FFFFFF, secondary text #D1D5DB
+- Demote orange (#E87722) to a sparingly-used highlight token (`--accent-warm`) for notifications, brand moments, active states only.
+- Soften typography: keep Bebas Neue only for the FaithFit logo wordmark; switch headings to a calmer display (Fraunces or Instrument Serif) and body to Inter for a premium spiritual-formation feel.
+- Replace harsh shadows/borders (4px gym borders) with softer 1px borders, gentle shadows, and more whitespace.
 
-### Challenge Progress Issues (0/7 showing for both users)
-Based on my investigation, I found THREE problems preventing challenge progress from tracking:
+## 2. Landing Page (`src/pages/Landing.tsx`)
 
-1. **RLS Policy Blocks Progress Record Creation**: When creating a challenge, the code tries to insert progress records for BOTH users (yourself and opponent). But the RLS policy only allows `auth.uid() = user_id`, so the insert for the opponent fails silently.
+Full copy + layout pass:
+- Headline: **Build or Rebuild Your Walk With God.**
+- Subheadline: *Whether you're just getting started or finding your way back, FaithFit guides you through worship, scripture, prayer, and reflection — one day at a time.*
+- Primary CTA: **Join the Waitlist** → `/waitlist`
+- Secondary CTA: **See How It Works** → scrolls to How It Works
+- Two audience cards: *New to faith* / *Coming back to God*
+- "Today's Walk" feature section (Worship · Scripture · Prayer · Reflection) — conversational, not athletic
+- Remove all "grind/battle/workout/level up/spiritual athlete" language
 
-2. **Challenge Type Mismatch**: The challenge types stored in the database use **plural** names (`sessions`, `verses`, `prayers`), but when updating progress in Session.tsx, you call `challenge_type: 'session'` (singular). This means the update never finds matching records.
+## 3. Onboarding (`src/components/onboarding/OnboardingFlow.tsx`)
 
-3. **No Progress Records Exist**: The `challenge_progress` table is completely empty because the RLS issue has been blocking all inserts.
+Replace existing commitment/time/focus steps with three warm questions:
+1. **Where are you in your journey?** — New to faith / Curious about God / Returning after time away / Following for years
+2. **What do you need most right now?** — Guidance / Consistency / Healing / Purpose / Prayer / Understanding the Bible
+3. **How much time can you give God each day?** — 5 / 10 / 15 / 20+ min
 
-### Push Notifications
-Currently, the app only supports **foreground browser notifications** (when the browser is open). For true push notifications that work when the app is closed, we need:
-- A service worker for background handling
-- PWA configuration (manifest, icons)
-- Optional: Backend scheduled triggers
+End screen: replace **"DAY 1 STARTS NOW"** with **"Your Walk Begins"** — calm reveal of their personalized track (Starting Faith or Coming Back) instead of confetti/countdown.
 
----
+## 4. Guided Tracks (new lightweight feature)
 
-## Solution
+Add `src/pages/Tracks.tsx` + `src/lib/tracks.ts` with two seeded tracks:
+- **Starting Faith**: Who is God? · Who is Jesus? · What is prayer? · How do I read the Bible? · What does salvation mean?
+- **Coming Back**: Starting over · Guilt and shame · Trusting God again · Rebuilding consistency · Returning to prayer · Hearing God's voice
 
-### Part 1: Fix Challenge Progress System
+Each topic = short intro + scripture + reflection prompt. Stored client-side initially (no migration needed). Surfaced on the homepage based on onboarding answer.
 
-**A. Database Migration - Create SECURITY DEFINER Function for Challenge Creation**
+## 5. Home Dashboard (`src/pages/Dashboard.tsx` + home components)
 
-Create a new function that can insert progress records for both participants (bypasses RLS):
+- Rename "Today's Workout" → **Today's Walk**; rework `WorkoutCard.tsx` into `TodaysWalkCard.tsx` with calmer styling (no "SETS", no gradient progress bar shine, no dumbbell icon).
+- Replace `WeeklyGrind.tsx` ("This Week's Grind", "PERFECT WEEK", "WARRIOR") with `WeeklyRhythm.tsx` — gentle progress without ranking labels.
+- Replace `BattleVersesCard.tsx` "Struggling Today?" → **Scripture for what you're facing** (keep destination, soften visual).
+- Streak handling: on return after missed days show **"Welcome back. Let's continue."** — never "You broke your streak."
+- Add a "Continue your track" card linking to the user's chosen guided track.
 
-```sql
-CREATE OR REPLACE FUNCTION public.create_challenge_with_progress(
-  _challenger_id uuid,
-  _challenged_id uuid,
-  _challenge_type text,
-  _challenge_name text,
-  _target_value integer,
-  _end_date date,
-  _description text DEFAULT NULL
-)
-RETURNS uuid
-LANGUAGE plpgsql
-SECURITY DEFINER
-SET search_path TO 'public'
-AS $$
-DECLARE
-  _challenge_id uuid;
-BEGIN
-  -- Insert the challenge
-  INSERT INTO challenges (
-    challenger_id, challenged_id, challenge_type,
-    challenge_name, target_value, end_date, description, status
-  )
-  VALUES (
-    _challenger_id, _challenged_id, _challenge_type,
-    _challenge_name, _target_value, _end_date, _description, 'pending'
-  )
-  RETURNING id INTO _challenge_id;
+## 6. Navigation (`src/components/layout/Navigation.tsx`)
 
-  -- Create progress records for BOTH users
-  INSERT INTO challenge_progress (challenge_id, user_id, current_value)
-  VALUES 
-    (_challenge_id, _challenger_id, 0),
-    (_challenge_id, _challenged_id, 0);
+- Train → **Walk**
+- Trenches → **Community**
+- Squad → **Friends**
+- Keep Home, Bible
 
-  RETURN _challenge_id;
-END;
-$$;
-```
+## 7. Session / Daily Experience (`src/pages/Session.tsx`)
 
-**B. Fix Challenge Type Naming in Session.tsx**
+- Header: **Today's Walk** (not "Training Session")
+- Step names: Worship / Scripture / Prayer / Reflection (already correct) — soften surrounding copy, remove "set", "rep", "battle" language
+- Completion state: **"Well done. See you tomorrow."** (replace "Workout Complete! 💪")
 
-Change the call from `'session'` to `'sessions'` (plural) to match database values.
+## 8. Copy Sweep
 
-**C. Update useFriends.ts to Use the New RPC**
+Global search/replace pass across components for: workout → walk, training → time with God, grind → rhythm, battle mode → scripture for hard days, spiritual athlete → (remove), level up → grow, locked in → ready. Keep changes presentation-only; do not touch DB schema or hooks logic.
 
-Replace direct table inserts with the secure RPC call.
-
----
-
-### Part 2: Add Push Notifications (PWA Setup)
-
-**A. Install PWA Plugin**
-
-Add `vite-plugin-pwa` dependency for service worker generation.
-
-**B. Configure vite.config.ts**
-
-Add PWA configuration with:
-- Web app manifest (name, icons, theme colors)
-- Service worker with notification handling
-- Offline caching strategy
-
-**C. Create Service Worker Handler**
-
-Add notification click handling and background sync capabilities.
-
-**D. Update useNotifications Hook**
-
-Add service worker registration and push subscription management.
-
-**E. Add Install App Page**
-
-Create an `/install` route with instructions for adding to home screen.
-
----
-
-## Technical Implementation Details
-
-### Files to Create/Modify:
-
-| File | Action | Purpose |
-|------|--------|---------|
-| `supabase/migrations/*.sql` | Create | New RPC function for challenge creation |
-| `src/hooks/useFriends.ts` | Modify | Use RPC instead of direct inserts |
-| `src/pages/Session.tsx` | Modify | Fix challenge type from 'session' to 'sessions' |
-| `vite.config.ts` | Modify | Add PWA plugin configuration |
-| `public/manifest.json` | Create | PWA manifest |
-| `src/sw.ts` | Create | Service worker for push notifications |
-| `src/hooks/useNotifications.ts` | Modify | Add service worker registration |
-| `src/pages/Install.tsx` | Create | Install instructions page |
-| `src/App.tsx` | Modify | Add install route |
-
-### Challenge Type Mapping:
-| Challenge Preset | Database Type | Session Trigger |
-|-----------------|---------------|-----------------|
-| Session Sprint | `sessions` | Training completion |
-| Prayer Warrior | `prayers` | Prayer logged |
-| Scripture Showdown | `verses` | Verse saved |
-| 7-Day Streak | `streak` | Daily streak |
-
----
-
-## Expected Outcomes
-
-After implementation:
-1. Challenge progress will correctly track when either user completes activities
-2. The progress bars will update in real-time
-3. Users can enable push notifications that work even when the browser is closed
-4. The app can be installed to the home screen on mobile devices
-
+## Out of Scope
+- No database migrations (existing tables/streaks remain; only UI messaging changes)
+- No new backend logic
+- Keeps Faith Training Guide / book code flow as-is, just softened copy
+- Logo asset untouched
