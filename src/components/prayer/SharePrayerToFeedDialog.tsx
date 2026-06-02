@@ -42,7 +42,7 @@ export function SharePrayerToFeedDialog({ open, onOpenChange, prayer }: SharePra
       return;
     }
 
-    toast.success('Prayer shared to The Trenches! 🙏');
+    toast.success('Prayer shared with the community 🙏');
     setAdditionalContext('');
     onOpenChange(false);
   };
