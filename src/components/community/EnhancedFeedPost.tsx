@@ -72,7 +72,7 @@ export function EnhancedFeedPost({
   const hasPrayerData = contentData?.prayer_content;
 
   // Get display name - never show "Unknown"
-  const displayName = post.user_name && post.user_name !== 'Unknown' ? post.user_name : 'Soldier';
+  const displayName = post.user_name && post.user_name !== 'Unknown' ? post.user_name : 'Friend';
 
   const handleSubmitComment = async () => {
     if (!newComment.trim()) return;

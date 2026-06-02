@@ -43,7 +43,7 @@ export function AuthForm({ onSuccess }: AuthFormProps) {
         if (error) {
           toast.error(error.message);
         } else {
-          toast.success('Welcome back, soldier!');
+          toast.success('Welcome back.');
           onSuccess?.();
         }
       }
@@ -59,13 +59,13 @@ export function AuthForm({ onSuccess }: AuthFormProps) {
       {/* Logo */}
       <div className="mb-8 text-center">
       <div className="w-32 h-32 mx-auto mb-4">
-        <img src={logo} alt="Faith Training" className="w-full h-full object-contain" />
+        <img src={logo} alt="FaithFit" className="w-full h-full object-contain" />
       </div>
         <h1 className="font-display text-3xl uppercase tracking-wider text-foreground">
-          Faith Training
+          FaithFit
         </h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          {mode === 'signin' ? 'Welcome back, soldier' : 'Join the ranks'}
+        <p className="text-base text-muted-foreground mt-1">
+          {mode === 'signin' ? 'Welcome back.' : 'Create your account.'}
         </p>
       </div>
 

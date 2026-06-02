@@ -197,9 +197,9 @@ const Waitlist = () => {
                     <CheckCircle2 className="w-6 h-6 text-success" />
                   </div>
                 </div>
-                <h3 className="font-display text-2xl text-success mb-2">YOU'RE LOCKED IN.</h3>
-                <p className="text-muted-foreground font-body">
-                  We'll hit your inbox the moment doors open. Get ready to train.
+                <h3 className="font-display text-2xl text-success mb-2">You're on the list.</h3>
+                <p className="text-base text-muted-foreground font-body">
+                  We'll reach out the moment doors open. Talk soon.
                 </p>
               </div>
             )}

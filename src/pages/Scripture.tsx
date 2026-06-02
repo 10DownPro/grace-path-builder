@@ -81,11 +81,11 @@ export default function ScripturePage() {
 
   const handleGenerateDailyImage = async () => {
     if (!dailyVerse) return;
-    toast.info('Generating battle background...');
+    toast.info('Generating background...');
     const result = await generateImage(dailyVerse.text, dailyVerse.reference);
     if (result?.imageUrl) {
       setDailyVerseImage(result.imageUrl);
-      toast.success('Background generated! 💪');
+      toast.success('Background generated.');
     }
   };
 

@@ -159,7 +159,7 @@ export function CreateTestimonyDialog({
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="public">Public</SelectItem>
-                <SelectItem value="squad">My Squad Only</SelectItem>
+                <SelectItem value="squad">My Circle Only</SelectItem>
                 <SelectItem value="private">Private</SelectItem>
               </SelectContent>
             </Select>

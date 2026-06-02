@@ -13,7 +13,7 @@ export default function Privacy() {
         • Account information (email, display name)
         • Prayer requests and journal entries you create
         • Progress data (session completions, streaks, milestones)
-        • Social connections (friend codes, squad memberships)
+        • Social connections (friend codes, circle memberships)
         • Device information for app functionality`
     },
     {

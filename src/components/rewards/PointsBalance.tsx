@@ -8,12 +8,12 @@ interface PointsBalanceProps {
 
 export function PointsBalance({ points, className }: PointsBalanceProps) {
   const getLevel = (pts: number) => {
-    if (pts >= 5000) return { name: 'LEGEND', color: 'text-warning', bg: 'bg-warning/20' };
-    if (pts >= 2500) return { name: 'ELITE', color: 'text-primary', bg: 'bg-primary/20' };
-    if (pts >= 1000) return { name: 'VETERAN', color: 'text-success', bg: 'bg-success/20' };
-    if (pts >= 500) return { name: 'SOLDIER', color: 'text-blue-400', bg: 'bg-blue-400/20' };
-    if (pts >= 100) return { name: 'WARRIOR', color: 'text-purple-400', bg: 'bg-purple-400/20' };
-    return { name: 'RECRUIT', color: 'text-muted-foreground', bg: 'bg-muted' };
+    if (pts >= 5000) return { name: 'STEADFAST', color: 'text-warning', bg: 'bg-warning/20' };
+    if (pts >= 2500) return { name: 'DEVOTED', color: 'text-primary', bg: 'bg-primary/20' };
+    if (pts >= 1000) return { name: 'GROUNDED', color: 'text-success', bg: 'bg-success/20' };
+    if (pts >= 500) return { name: 'GROWING', color: 'text-blue-400', bg: 'bg-blue-400/20' };
+    if (pts >= 100) return { name: 'WALKING', color: 'text-purple-400', bg: 'bg-purple-400/20' };
+    return { name: 'STARTING', color: 'text-muted-foreground', bg: 'bg-muted' };
   };
 
   const level = getLevel(points);
@@ -45,7 +45,7 @@ export function PointsBalance({ points, className }: PointsBalanceProps) {
           <div className="flex items-center justify-between text-xs">
             <span className="text-muted-foreground flex items-center gap-1">
               <TrendingUp className="h-3 w-3" />
-              Progress to next rank
+              Progress to next level
             </span>
             <span className="text-foreground font-medium">
               {points.toLocaleString()} / {nextLevel.toLocaleString()}

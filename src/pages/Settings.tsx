@@ -248,21 +248,21 @@ export default function Settings() {
         items: [
           {
             icon: BookOpen,
-            label: 'Buy the Faith Training Guide',
+            label: 'Buy the FaithFit Guide',
             description: 'Get the companion book',
             type: 'link' as const,
             onClick: () => window.open('#', '_blank') // Placeholder
           },
           {
             icon: Share2,
-            label: 'Share Faith Training',
-            description: 'Invite friends to train',
+            label: 'Share FaithFit',
+            description: 'Invite a friend to walk with God',
             type: 'link' as const,
             onClick: () => {
               if (navigator.share) {
                 navigator.share({
-                  title: 'Faith Training',
-                  text: 'Your spiritual gym for building unshakeable faith',
+                  title: 'FaithFit',
+                  text: 'A calm companion for your walk with God.',
                   url: window.location.origin
                 });
               } else {
@@ -530,9 +530,9 @@ export default function Settings() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="starter">Starter - Just beginning</SelectItem>
-                  <SelectItem value="committed">Committed - Building consistency</SelectItem>
-                  <SelectItem value="warrior">Warrior - All in, every day</SelectItem>
+                  <SelectItem value="starter">Starter — Just beginning</SelectItem>
+                  <SelectItem value="committed">Committed — Building consistency</SelectItem>
+                  <SelectItem value="warrior">Devoted — Daily walk with God</SelectItem>
                 </SelectContent>
               </Select>
             </div>
