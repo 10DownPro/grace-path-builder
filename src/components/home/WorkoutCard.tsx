@@ -121,12 +121,12 @@ export function WorkoutCard({ steps, allCompleted }: WorkoutCardProps) {
                   {/* Text */}
                   <div className="text-center">
                     <p className={cn(
-                      "font-display text-sm uppercase tracking-wide",
+                      "font-display text-lg sm:text-xl uppercase tracking-wide font-semibold",
                       step.completed ? "text-success" : "text-foreground"
                     )}>
                       {step.name}
                     </p>
-                    <p className="text-xs text-muted-foreground uppercase mt-0.5">
+                    <p className="text-sm text-muted-foreground uppercase mt-1 font-medium">
                       {step.duration}
                     </p>
                   </div>
