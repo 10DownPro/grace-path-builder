@@ -3,6 +3,7 @@ import { PageLayout } from '@/components/layout/PageLayout';
 import { GraceStreakBadge } from '@/components/home/GraceStreakBadge';
 import { WorkoutCard } from '@/components/home/WorkoutCard';
 import { DailyCheckIn } from '@/components/home/DailyCheckIn';
+import { ScriptureGuidanceCard } from '@/components/home/ScriptureGuidanceCard';
 import { ContinueJourneyCard } from '@/components/home/ContinueJourneyCard';
 import { JourneyProgressCard } from '@/components/home/JourneyProgressCard';
 import { TodaysFocusCard } from '@/components/home/TodaysFocusCard';
@@ -225,6 +226,9 @@ export default function Index() {
 
           {/* 2. Daily Check-in */}
           <DailyCheckIn />
+
+          {/* 2b. Scripture for what you're facing */}
+          <ScriptureGuidanceCard />
 
           {/* 3. Today's Focus */}
           <TodaysFocusCard />

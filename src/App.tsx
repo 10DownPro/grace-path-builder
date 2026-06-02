@@ -22,6 +22,7 @@ import Help from "./pages/Help";
 import Install from "./pages/Install";
 import Tracks from "./pages/Tracks";
 import Bible from "./pages/Bible";
+import ScriptureGuidance from "./pages/ScriptureGuidance";
 
 const queryClient = new QueryClient();
 
@@ -62,6 +63,7 @@ const App = () => (
           <Route path="/journey" element={<ProtectedRoute><Tracks /></ProtectedRoute>} />
           <Route path="/scripture" element={<ProtectedRoute><Scripture /></ProtectedRoute>} />
           <Route path="/bible" element={<ProtectedRoute><Bible /></ProtectedRoute>} />
+          <Route path="/scripture-for" element={<ProtectedRoute><ScriptureGuidance /></ProtectedRoute>} />
           <Route path="/community" element={<ProtectedRoute><Community /></ProtectedRoute>} />
           <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
 
