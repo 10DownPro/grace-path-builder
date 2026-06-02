@@ -81,8 +81,8 @@ export default function Bible() {
         <header className="space-y-2">
           <div className="flex items-end justify-between gap-4">
             <div className="space-y-1">
-              <h1 className="font-display text-foreground">Bible</h1>
-              <p className="text-muted-foreground">Read God's Word at your pace.</p>
+              <h1 className="font-display text-foreground">Holy Bible</h1>
+              <p className="text-muted-foreground whitespace-pre-line">66 Clips ready to unload.{"\n"}Read God's Word at your pace.</p>
             </div>
             <Select value={translation} onValueChange={(v) => setTranslation(v as BibleTranslation)}>
               <SelectTrigger className="w-24">
