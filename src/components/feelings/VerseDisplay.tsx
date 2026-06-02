@@ -98,7 +98,7 @@ export function VerseDisplay({
 
   const handleReadInBible = (verse: FeelingVerse) => {
     // Navigate to Bible page - it will show book selector, user can find the chapter
-    navigate('/bible');
+    navigate('/scripture');
     toast.success(`Opening Bible to read ${verse.book} ${verse.chapter}`);
   };
 

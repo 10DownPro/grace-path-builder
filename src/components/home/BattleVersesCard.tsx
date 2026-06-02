@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 
 export function BattleVersesCard() {
   return (
-    <Link to="/battles" className="block">
+    <Link to="/community" className="block">
       <div className={cn(
         "relative overflow-hidden rounded-xl border-2 border-border",
         "bg-card hover:border-primary/50 transition-all duration-300",

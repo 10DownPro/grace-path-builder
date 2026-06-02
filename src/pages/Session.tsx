@@ -568,10 +568,10 @@ function ScriptureContent() {
     const parsed = parseReference(scripture.reference);
     if (parsed) {
       // Navigate to Bible page with book and chapter
-      navigate(`/bible?book=${encodeURIComponent(parsed.book)}&chapter=${parsed.chapter}`);
+      navigate(`/scripture?book=${encodeURIComponent(parsed.book)}&chapter=${parsed.chapter}`);
       toast.success(`Opening ${parsed.book} ${parsed.chapter} in Bible`);
     } else {
-      navigate('/bible');
+      navigate('/scripture');
       toast.success('Opening Bible');
     }
   };

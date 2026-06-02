@@ -94,7 +94,7 @@ export function MobileHeader() {
               <Link to="/profile">Profile</Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link to="/dashboard">Dashboard</Link>
+              <Link to="/home">Dashboard</Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
               <Link to="/settings">Settings</Link>

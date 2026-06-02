@@ -58,7 +58,7 @@ export function TestimonyOfTheWeekCard() {
         <Button 
           variant="outline" 
           className="w-full border-success/50 text-success hover:bg-success/10"
-          onClick={() => navigate('/feed?tab=testimonies')}
+          onClick={() => navigate('/community?tab=testimonies')}
         >
           Read Full Testimony
           <ChevronRight className="h-4 w-4 ml-1" />

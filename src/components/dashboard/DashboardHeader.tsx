@@ -44,7 +44,7 @@ export function DashboardHeader() {
       <SidebarTrigger className="md:hidden" />
 
       {/* Logo - visible on mobile */}
-      <Link to="/dashboard" className="flex items-center gap-2 md:hidden">
+      <Link to="/home" className="flex items-center gap-2 md:hidden">
         <img src={logo} alt="FaithFit" className="h-8 w-8" />
         <span className="font-display text-lg uppercase tracking-wider">FaithFit</span>
       </Link>

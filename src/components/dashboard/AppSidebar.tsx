@@ -1,18 +1,13 @@
 import { useLocation, Link } from 'react-router-dom';
 import { 
   LayoutDashboard, 
-  Dumbbell, 
-  Rss, 
-  Target, 
   Users, 
   Trophy, 
   BookOpen, 
   Settings, 
   HelpCircle, 
   LogOut,
-  Flame,
-  Sword,
-  MessageSquare
+  Footprints,
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
@@ -33,20 +28,14 @@ import {
 } from '@/components/ui/sidebar';
 
 const mainNavItems = [
-  { path: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-  { path: '/session', icon: Dumbbell, label: 'Training' },
-  { path: '/community', icon: MessageSquare, label: 'Trenches' },
-  { path: '/feed', icon: Rss, label: 'Feed' },
-  { path: '/prayer', icon: Target, label: 'Prayer' },
+  { path: '/home', icon: LayoutDashboard, label: 'Home' },
+  { path: '/journey', icon: Footprints, label: 'Journey' },
+  { path: '/scripture', icon: BookOpen, label: 'Scripture' },
   { path: '/community', icon: Users, label: 'Community' },
+  { path: '/profile', icon: Trophy, label: 'Profile' },
 ];
 
-const featureNavItems = [
-  { path: '/battles', icon: Sword, label: 'Battle Verses' },
-  { path: '/scripture', icon: BookOpen, label: 'Scripture' },
-  { path: '/rewards', icon: Trophy, label: 'Rewards' },
-  { path: '/progress', icon: Flame, label: 'Progress' },
-];
+const featureNavItems: { path: string; icon: typeof BookOpen; label: string }[] = [];
 
 const bottomNavItems = [
   { path: '/settings', icon: Settings, label: 'Settings' },
@@ -73,7 +62,7 @@ export function AppSidebar() {
   return (
     <Sidebar collapsible="icon" className="border-r border-border">
       <SidebarHeader className="p-4">
-        <Link to="/dashboard" className="flex items-center gap-3">
+        <Link to="/home" className="flex items-center gap-3">
           <div className="w-10 h-10 flex-shrink-0">
             <img src={logo} alt="FaithFit" className="w-full h-full object-contain" />
           </div>

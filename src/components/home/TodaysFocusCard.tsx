@@ -21,7 +21,7 @@ export function TodaysFocusCard() {
     : 'No pressure. He meets you here.';
 
   return (
-    <Link to={nextModule ? '/tracks' : '/session'} className="block">
+    <Link to={nextModule ? '/journey' : '/session'} className="block">
       <div className="rounded-2xl border border-secondary/30 bg-secondary/5 p-5 hover:border-secondary/60 transition-colors">
         <div className="flex items-center gap-2 mb-2">
           <Target className="h-4 w-4 text-secondary" />

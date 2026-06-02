@@ -168,7 +168,7 @@ export function StudySessionCard({
         {expanded && (
           <div className="space-y-4 mt-4 pt-4 border-t">
             {/* Open in Bible Reader */}
-            <Link to="/bible">
+            <Link to="/scripture">
               <Button variant="outline" size="sm" className="w-full gap-2 mb-2">
                 <ExternalLink className="h-4 w-4" />
                 Open {session.book} {session.chapter} in Bible

@@ -8,7 +8,7 @@ export function JourneyProgressCard() {
   if (!active) return null;
 
   return (
-    <Link to="/tracks" className="block">
+    <Link to="/journey" className="block">
       <div className="rounded-2xl border border-border bg-card p-5 hover:border-primary/50 transition-colors">
         <div className="flex items-start justify-between gap-4 mb-3">
           <div className="flex items-center gap-3">
