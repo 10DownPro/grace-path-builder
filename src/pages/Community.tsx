@@ -75,11 +75,11 @@ export default function Community() {
 
         {/* Section Tabs */}
         <Tabs value={section} onValueChange={(v) => setSection(v as Section)} className="mb-6">
-          <TabsList className="grid grid-cols-4 w-full h-auto">
-            <TabsTrigger value="walking" className="py-2.5 text-sm">Walking Together</TabsTrigger>
-            <TabsTrigger value="prayer" className="py-2.5 text-sm">Prayer Requests</TabsTrigger>
-            <TabsTrigger value="circles" className="py-2.5 text-sm">Faith Circles</TabsTrigger>
-            <TabsTrigger value="partners" className="py-2.5 text-sm">Prayer Partners</TabsTrigger>
+          <TabsList className="grid grid-cols-4 w-full h-auto gap-1 p-1">
+            <TabsTrigger value="walking" className="py-2 px-1 text-xs sm:text-sm whitespace-normal leading-tight">Walking<br className="sm:hidden" /> Together</TabsTrigger>
+            <TabsTrigger value="prayer" className="py-2 px-1 text-xs sm:text-sm whitespace-normal leading-tight">Prayer<br className="sm:hidden" /> Requests</TabsTrigger>
+            <TabsTrigger value="circles" className="py-2 px-1 text-xs sm:text-sm whitespace-normal leading-tight">Faith<br className="sm:hidden" /> Circles</TabsTrigger>
+            <TabsTrigger value="partners" className="py-2 px-1 text-xs sm:text-sm whitespace-normal leading-tight">Prayer<br className="sm:hidden" /> Partners</TabsTrigger>
           </TabsList>
 
           {/* Walking Together */}
