@@ -89,29 +89,54 @@ export default function Tracks() {
               <h1 className="font-display text-3xl sm:text-4xl">{journey.title}</h1>
             </div>
           </div>
-          <p className="text-lg text-muted-foreground mb-6">{journey.tagline}</p>
+          <p className="text-lg text-muted-foreground mb-5">{journey.tagline}</p>
 
-          {/* Progress summary */}
-          <div className="rounded-2xl border border-border bg-card p-5 mb-6">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-base text-muted-foreground">
-                {journeyCompleted.length} of {allLessons.length} lessons
-              </span>
-              <span className="text-base font-semibold text-foreground">{pct}%</span>
-            </div>
-            <Progress value={pct} className="h-2" />
-            <div className="grid grid-cols-3 gap-3 mt-5">
-              <Stat icon={<BookOpen className="h-4 w-4" />} label="Lessons" value={journeyCompleted.length} />
-              <Stat icon={<Heart className="h-4 w-4" />} label="Reflections" value={reflectionsWritten} />
-              <Stat icon={<MessageSquare className="h-4 w-4" />} label="Prayers" value={journeyCompleted.length} />
-            </div>
-          </div>
+          <TrackMeta
+            modules={journey.modules.length}
+            lessons={allLessons.length}
+            weeks={estimateWeeks(allLessons.length)}
+            className="mb-6"
+          />
 
-          {activeId !== journey.id && (
-            <Button onClick={() => setActive(journey.id)} variant="outline" className="w-full mb-6">
-              Make this my active track
-            </Button>
-          )}
+          {(() => {
+            const hasStarted = journeyCompleted.length > 0;
+            if (!hasStarted) return null;
+            const currentModIdx = journey.modules.findIndex((m) => m.lessons.some((l) => !journeyCompleted.includes(l.id)));
+            const currentLessonIdx = sequentialLessons.findIndex((l) => !journeyCompleted.includes(l.id));
+            return (
+              <div className="rounded-2xl border border-border bg-card p-5 mb-6">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-base text-muted-foreground">
+                    Module {Math.max(1, currentModIdx + 1)} of {journey.modules.length} · Lesson {Math.max(1, currentLessonIdx + 1)} of {allLessons.length}
+                  </span>
+                  <span className="text-base font-semibold text-foreground">{pct}%</span>
+                </div>
+                <Progress value={pct} className="h-2" />
+                <div className="grid grid-cols-3 gap-3 mt-5">
+                  <Stat icon={<BookOpen className="h-4 w-4" />} label="Lessons" value={journeyCompleted.length} />
+                  <Stat icon={<Heart className="h-4 w-4" />} label="Reflections" value={reflectionsWritten} />
+                  <Stat icon={<MessageSquare className="h-4 w-4" />} label="Prayers" value={journeyCompleted.length} />
+                </div>
+              </div>
+            );
+          })()}
+
+          {(() => {
+            const hasStarted = journeyCompleted.length > 0;
+            const label = hasStarted ? 'Continue Journey' : 'Start Journey';
+            const onClick = () => {
+              if (activeId !== journey.id) setActive(journey.id);
+              const target = sequentialLessons.find((l) => !journeyCompleted.includes(l.id)) || sequentialLessons[0];
+              if (!target) return;
+              const mod = journey.modules.find((m) => m.lessons.some((l) => l.id === target.id));
+              if (mod) setOpenLesson({ journey, module: mod, lesson: target });
+            };
+            return (
+              <Button onClick={onClick} size="lg" className="w-full mb-6">
+                {label} <ChevronRight className="h-4 w-4 ml-2" />
+              </Button>
+            );
+          })()}
 
           {/* Modules → Lessons */}
           <div className="space-y-6">
@@ -197,34 +222,27 @@ export default function Tracks() {
           </p>
         </div>
 
-        {active && (
+        {active && completedCount > 0 && (
           <div className="rounded-2xl border border-primary/30 bg-primary/5 p-5 mb-6">
             <p className="text-base uppercase tracking-[0.2em] text-primary mb-1.5 font-semibold">
-              Continue where you left off
+              Continue Journey
             </p>
-            <h2 className="font-display text-2xl mb-1">{active.title}</h2>
-            {currentModule && (
-              <p className="text-base text-foreground/90 mb-1">
-                Module: <span className="font-semibold">{currentModule.title}</span>
-              </p>
-            )}
-            {nextLesson && (
-              <p className="text-base text-foreground mb-1">
-                Next lesson: <span className="font-semibold">{nextLesson.title}</span>
-              </p>
-            )}
-            <p className="text-base text-muted-foreground mb-3">
-              {completedCount} of {totalLessons} lessons · {percent}%
-            </p>
+            <h2 className="font-display text-2xl mb-2">{active.title}</h2>
+            <div className="space-y-1 mb-3">
+              {currentModule && (
+                <p className="text-base text-foreground/90">
+                  Module {Math.max(1, active.modules.findIndex(m => m.id === currentModule.id) + 1)} of {active.modules.length} — <span className="font-semibold">{currentModule.title}</span>
+                </p>
+              )}
+              {nextLesson && (
+                <p className="text-base text-foreground/90">
+                  Lesson {completedCount + 1} of {totalLessons} — <span className="font-semibold">{nextLesson.title}</span>
+                </p>
+              )}
+            </div>
             <Progress value={percent} className="h-1.5 mb-3" />
-            {estimatedMinutesRemaining > 0 && (
-              <p className="flex items-center gap-1.5 text-base text-muted-foreground mb-4">
-                <Clock className="h-4 w-4" />
-                About {estimatedMinutesRemaining} min of lessons remaining
-              </p>
-            )}
             <Button onClick={() => setViewing(active)} className="w-full">
-              Open track <ChevronRight className="h-4 w-4 ml-2" />
+              Continue Journey <ChevronRight className="h-4 w-4 ml-2" />
             </Button>
           </div>
         )}
@@ -234,7 +252,9 @@ export default function Tracks() {
             const isActive = activeId === j.id;
             const lessonsInJ = getAllLessons(j);
             const done = (progress[j.id] || []).length;
+            const hasStarted = done > 0;
             const pct = lessonsInJ.length ? Math.round((done / lessonsInJ.length) * 100) : 0;
+            const weeks = estimateWeeks(lessonsInJ.length);
             return (
               <button
                 key={j.id}
@@ -249,22 +269,25 @@ export default function Tracks() {
                     {j.emoji}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1 flex-wrap">
-                      <h2 className="font-display text-xl sm:text-2xl">{j.title}</h2>
+                    <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                      <h2 className="font-display text-2xl leading-tight">{j.title}</h2>
                       {isActive && (
                         <span className="text-xs uppercase tracking-wider px-2 py-0.5 rounded-full bg-primary/15 text-primary font-semibold">
                           Active
                         </span>
                       )}
                     </div>
-                    <p className="text-base text-muted-foreground mb-3">{j.tagline}</p>
-                    <div className="flex items-center justify-between text-base text-muted-foreground">
-                      <span>
-                        {j.modules.length} module{j.modules.length === 1 ? '' : 's'} · {done}/{lessonsInJ.length} lessons
-                      </span>
-                      <span>{pct}%</span>
-                    </div>
-                    <Progress value={pct} className="h-1.5 mt-1.5" />
+                    <p className="text-base text-muted-foreground mb-3 leading-snug">{j.tagline}</p>
+                    <TrackMeta modules={j.modules.length} lessons={lessonsInJ.length} weeks={weeks} />
+                    {hasStarted && (
+                      <div className="mt-3">
+                        <div className="flex items-center justify-between text-sm text-muted-foreground mb-1">
+                          <span>{done} of {lessonsInJ.length} lessons</span>
+                          <span>{pct}%</span>
+                        </div>
+                        <Progress value={pct} className="h-1.5" />
+                      </div>
+                    )}
                   </div>
                 </div>
               </button>
@@ -292,6 +315,41 @@ function Stat({ icon, label, value }: { icon: React.ReactNode; label: string; va
       <p className="text-sm text-muted-foreground mt-1">{label}</p>
     </div>
   );
+}
+
+function estimateWeeks(lessonCount: number): number {
+  // ~5 lessons per week of guided pace; minimum 1 week.
+  return Math.max(1, Math.round(lessonCount / 5));
+}
+
+function TrackMeta({
+  modules,
+  lessons,
+  weeks,
+  className,
+}: { modules: number; lessons: number; weeks: number; className?: string }) {
+  return (
+    <div className={cn('flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm', className)}>
+      <MetaItem value={modules} label={modules === 1 ? 'Module' : 'Modules'} />
+      <Dot />
+      <MetaItem value={lessons} label={lessons === 1 ? 'Lesson' : 'Lessons'} />
+      <Dot />
+      <MetaItem value={`~${weeks}`} label={weeks === 1 ? 'Week' : 'Weeks'} />
+    </div>
+  );
+}
+
+function MetaItem({ value, label }: { value: number | string; label: string }) {
+  return (
+    <span className="inline-flex items-baseline gap-1.5">
+      <span className="font-display text-lg text-foreground leading-none">{value}</span>
+      <span className="text-sm text-muted-foreground uppercase tracking-wide">{label}</span>
+    </span>
+  );
+}
+
+function Dot() {
+  return <span className="text-muted-foreground/40">·</span>;
 }
 
 function countReflections(journeyId: string): number {
