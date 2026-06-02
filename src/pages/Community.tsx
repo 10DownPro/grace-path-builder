@@ -190,22 +190,31 @@ export default function Community() {
               subtitle="Small, themed groups where you can walk with others on the same path."
             />
             <div className="grid gap-3">
-              {CIRCLES.map((c) => (
-                <button
-                  key={c.id}
-                  onClick={openGeneralComposer}
-                  className="w-full p-5 rounded-2xl border border-border bg-card text-left flex items-center gap-4 hover:border-primary/40 transition-all"
-                >
-                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-2xl shrink-0">
-                    {c.emoji}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-display text-xl text-foreground leading-tight">{c.title}</h3>
-                    <p className="text-base text-muted-foreground mt-0.5">{c.description}</p>
-                  </div>
-                  <ChevronRight className="h-5 w-5 text-muted-foreground shrink-0" />
-                </button>
-              ))}
+              {CIRCLES.map((c) => {
+                const joined = joinedCircles.includes(c.id);
+                return (
+                  <button
+                    key={c.id}
+                    onClick={() => toggleCircle(c.id, c.title)}
+                    className="w-full p-5 rounded-2xl border border-border bg-card text-left flex items-center gap-4 hover:border-primary/40 transition-all"
+                  >
+                    <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-2xl shrink-0">
+                      {c.emoji}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-display text-xl text-foreground leading-tight">{c.title}</h3>
+                      <p className="text-base text-muted-foreground mt-0.5">{c.description}</p>
+                    </div>
+                    {joined ? (
+                      <span className="inline-flex items-center gap-1 text-sm font-medium text-primary shrink-0">
+                        <Check className="h-4 w-4" /> Joined
+                      </span>
+                    ) : (
+                      <ChevronRight className="h-5 w-5 text-muted-foreground shrink-0" />
+                    )}
+                  </button>
+                );
+              })}
             </div>
           </TabsContent>
 
@@ -222,11 +231,18 @@ export default function Community() {
                 Get paired with one other person who's also walking with God. Check in weekly. Pray for each other.
                 No pressure, no performance — just a quiet partnership.
               </p>
-              <Button size="lg" className="w-full sm:w-auto">
-                Opt in to Prayer Partners
+              <Button
+                size="lg"
+                className="w-full sm:w-auto"
+                onClick={handleOptInPartners}
+                disabled={optedInPartners}
+              >
+                {optedInPartners ? (<><Check className="h-5 w-5 mr-2" /> You're on the list</>) : 'Opt in to Prayer Partners'}
               </Button>
-              <p className="text-sm text-muted-foreground mt-3">
-                Pairing will open soon. We'll let you know when your partner is ready.
+              <p className="text-base text-muted-foreground mt-3">
+                {optedInPartners
+                  ? "We'll email you the moment a partner is ready."
+                  : "Pairing will open soon. We'll let you know when your partner is ready."}
               </p>
             </div>
           </TabsContent>
