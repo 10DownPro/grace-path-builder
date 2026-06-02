@@ -34,10 +34,10 @@ export function CommunityGuidelines() {
           <Shield className="h-4 w-4 text-primary" />
         </div>
         <div>
-          <h3 className="font-bold text-sm text-foreground mb-2">THE TRENCHES GUIDELINES</h3>
+          <h3 className="font-bold text-sm text-foreground mb-2">Community Guidelines</h3>
           <ul className="space-y-1 text-sm text-muted-foreground">
-            <li>💪 <span className="font-medium text-foreground">Disagree strongly.</span> Attack ideas, not people.</li>
-            <li>📖 <span className="font-medium text-foreground">Cite Scripture</span> when you can.</li>
+            <li>❤️ <span className="font-medium text-foreground">Speak with kindness.</span> Disagree about ideas, never people.</li>
+            <li>📖 <span className="font-medium text-foreground">Anchor in Scripture</span> whenever you can.</li>
             <li>🙏 <span className="font-medium text-foreground">Grace {'>'} being right.</span></li>
           </ul>
         </div>

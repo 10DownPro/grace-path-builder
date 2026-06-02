@@ -279,7 +279,7 @@ export function SpinWheelDialog({ open, onOpenChange, onComplete }: SpinWheelDia
 
               {!canSpinToday && (
                 <p className="text-center text-sm text-muted-foreground">
-                  Complete a training session to earn another spin!
+                  Complete today's walk to earn another spin.
                 </p>
               )}
             </>

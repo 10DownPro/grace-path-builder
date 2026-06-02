@@ -83,7 +83,7 @@ export default function Install() {
               </div>
               <h3 className="font-display text-xl text-success">App Installed!</h3>
               <p className="text-sm text-muted-foreground mt-2">
-                You're running Grace Training as an app
+                You're running FaithFit as an app
               </p>
             </CardContent>
           </Card>
@@ -104,7 +104,7 @@ export default function Install() {
                 <CardContent>
                   <Button onClick={handleInstall} className="w-full btn-gym">
                     <Plus className="h-4 w-4 mr-2" />
-                    Install Grace Training
+                    Install FaithFit
                   </Button>
                 </CardContent>
               </Card>
@@ -177,7 +177,7 @@ export default function Install() {
               Push Notifications
             </CardTitle>
             <CardDescription>
-              Get daily reminders to keep your training streak going
+              Gentle daily reminders to walk with God
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -207,12 +207,12 @@ export default function Install() {
               Offline Access
             </CardTitle>
             <CardDescription>
-              Access your training even without internet connection
+              Stay in the Word even without an internet connection
             </CardDescription>
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground">
-              Once installed, Grace Training works offline. Your progress syncs when you're back online.
+              Once installed, FaithFit works offline. Your progress syncs when you're back online.
             </p>
           </CardContent>
         </Card>

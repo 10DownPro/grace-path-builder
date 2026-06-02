@@ -67,7 +67,7 @@ export function FollowButton({ userId, userName, size = 'sm', variant = 'outline
         currentUsage={paywallData?.current_usage}
         limit={paywallData?.limit}
         title="FOLLOW LIMIT REACHED"
-        message={`You're following ${paywallData?.current_usage || 0}/${paywallData?.limit || 25} users (free limit). Upgrade to Premium to follow unlimited training partners.`}
+        message={`You're following ${paywallData?.current_usage || 0}/${paywallData?.limit || 25} users (free limit). Upgrade to Premium to follow unlimited friends on the walk.`}
       />
     </>
   );

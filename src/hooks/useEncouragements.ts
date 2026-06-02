@@ -14,12 +14,12 @@ export interface Encouragement {
 }
 
 const QUICK_ENCOURAGEMENTS = [
-  { emoji: '🔥', message: 'Keep pushing!' },
-  { emoji: '💪', message: 'You got this, warrior!' },
-  { emoji: '🙏', message: 'Praying for you!' },
-  { emoji: '⚔️', message: 'Stay in the fight!' },
-  { emoji: '👑', message: 'You\'re royalty. Act like it.' },
-  { emoji: '🎯', message: 'Stay locked in!' },
+  { emoji: '❤️', message: 'Walking with you today.' },
+  { emoji: '🙏', message: 'Praying for you.' },
+  { emoji: '🌱', message: 'One step at a time. He sees you.' },
+  { emoji: '📖', message: 'God is faithful — keep going.' },
+  { emoji: '🕊️', message: 'Grace and peace to you.' },
+  { emoji: '✨', message: 'You are deeply loved.' },
 ];
 
 export function useEncouragements() {

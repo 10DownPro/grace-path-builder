@@ -295,7 +295,7 @@ export default function Settings() {
           label: 'About',
           description: 'Version 1.0.0',
           type: 'link' as const,
-          onClick: () => toast.info('Faith Training v1.0.0 - Made with 💪 for believers putting in the work')
+          onClick: () => toast.info('FaithFit v1.0.0 — Made with grace for those walking with God')
         },
         ...(!isPremium ? [{
           icon: ExternalLink,
@@ -558,7 +558,7 @@ export default function Settings() {
           </DialogHeader>
           <div className="space-y-4 py-4">
             <p className="text-muted-foreground">
-              Enter the unique code from your Faith Training Guide book to unlock lifetime premium features.
+              Enter the unique code from your FaithFit Companion Guide to unlock lifetime premium features.
             </p>
             <div className="space-y-2">
               <Label>Book Code</Label>

@@ -165,7 +165,7 @@ export function useSquads() {
 
       const enriched = memberData.map(m => ({
         ...m,
-        name: profileMap.get(m.user_id) || 'Soldier',
+        name: profileMap.get(m.user_id) || 'Friend',
         current_streak: progressMap.get(m.user_id)?.current_streak || 0,
         total_sessions: progressMap.get(m.user_id)?.total_sessions || 0
       }));
@@ -193,7 +193,7 @@ export function useSquads() {
 
       const enriched = activityData.map(a => ({
         ...a,
-        user_name: profileMap.get(a.user_id) || 'Soldier'
+        user_name: profileMap.get(a.user_id) || 'Friend'
       }));
 
       setActivities(enriched);

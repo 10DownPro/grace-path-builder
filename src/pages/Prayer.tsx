@@ -115,7 +115,7 @@ export default function Prayer() {
               <Info className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
               <div className="space-y-2">
                 <h3 className="font-display text-sm uppercase tracking-wider text-foreground">
-                  How Prayer Armory Works
+                  How the Prayer Journal Works
                 </h3>
                 <ul className="text-xs text-muted-foreground space-y-1">
                   <li><span className="text-orange-400 font-bold">A</span>doration — Praise God for who He is</li>
@@ -124,7 +124,7 @@ export default function Prayer() {
                   <li><span className="text-blue-400 font-bold">S</span>upplication — Bring your requests to God</li>
                 </ul>
                 <p className="text-xs text-muted-foreground">
-                  Log prayers, track answers, and watch God work! Your recent prayers appear in Training sessions.
+                  Log prayers, see how God answers, and carry them into your daily walk.
                 </p>
               </div>
             </div>
@@ -147,11 +147,11 @@ export default function Prayer() {
                 <Target className="h-6 w-6 text-primary" />
               </div>
               <div>
-                <h1 className="font-display text-2xl uppercase tracking-wider text-foreground">
-                  Prayer Armory
+                <h1 className="font-display text-2xl text-foreground">
+                  Prayer Journal
                 </h1>
                 <p className="text-sm text-muted-foreground">
-                  Your spiritual warfare headquarters
+                  A quiet place to talk with God
                 </p>
               </div>
             </div>
