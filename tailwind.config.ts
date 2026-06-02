@@ -14,9 +14,10 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['Oswald', 'Roboto Condensed', 'sans-serif'],
-        display: ['Bebas Neue', 'Oswald', 'sans-serif'],
-        body: ['Oswald', 'Roboto Condensed', 'sans-serif'],
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        display: ['Fraunces', 'Inter', 'serif'],
+        body: ['Inter', 'system-ui', 'sans-serif'],
+        wordmark: ['Bebas Neue', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
