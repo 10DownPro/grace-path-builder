@@ -42,7 +42,7 @@ export function NotificationsList({
     if (notification.reference_type === 'post' && notification.reference_id) {
       navigate('/feed');
     } else if (notification.notification_type === 'follow') {
-      navigate('/friends');
+      navigate('/community');
     }
   };
 

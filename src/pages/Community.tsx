@@ -1,37 +1,33 @@
-import { useState, useRef } from 'react';
+import { useMemo, useState } from 'react';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
-import { DailyTopicCard } from '@/components/community/DailyTopicCard';
-import { CommunityGuidelines } from '@/components/community/CommunityGuidelines';
-import { CommentThread } from '@/components/community/CommentThread';
-import { CommentComposer } from '@/components/community/CommentComposer';
 import { EnhancedFeedPost } from '@/components/community/EnhancedFeedPost';
 import { CreateCommunityPostDialog } from '@/components/community/CreateCommunityPostDialog';
-import { useCommunityTrenches, SortOption } from '@/hooks/useCommunityTrenches';
 import { useCommunityPosts } from '@/hooks/useCommunityPosts';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Loader2, TrendingUp, Clock, Zap, MessageSquare, Plus, Filter } from 'lucide-react';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Loader2, Plus, HandHeart, Users, Sparkles, MessageCircle, ChevronRight } from 'lucide-react';
+
+type Section = 'walking' | 'prayer' | 'circles' | 'partners';
+
+interface CircleOption {
+  id: string;
+  title: string;
+  description: string;
+  emoji: string;
+}
+
+const CIRCLES: CircleOption[] = [
+  { id: 'starting-faith', title: 'Starting Faith', emoji: '🌱', description: 'For people taking their first steps with God.' },
+  { id: 'coming-back', title: 'Coming Back', emoji: '🏠', description: 'No catching up. No condemnation. Just home.' },
+  { id: 'consistency', title: 'Consistency', emoji: '🌿', description: 'Small, sustainable rhythms with God.' },
+  { id: 'healing', title: 'Healing', emoji: '🤍', description: 'Space for wounds, weariness, and weight.' },
+  { id: 'prayer', title: 'Prayer', emoji: '🙏', description: 'Learning to talk and listen to God together.' },
+];
 
 export default function Community() {
   const {
-    topic,
-    comments,
-    loading: topicLoading,
-    commentsLoading,
-    sortBy,
-    setSortBy,
-    addComment,
-    voteComment,
-    addReaction: addTopicReaction,
-    reportComment,
-    editComment,
-    getCategoryLabel
-  } = useCommunityTrenches();
-
-  const {
     posts,
-    loading: postsLoading,
+    loading,
     filter,
     setFilter,
     addReaction,
@@ -39,149 +35,252 @@ export default function Community() {
     votePoll,
     markPrayerAnswered,
     loadMore,
-    hasMore
+    hasMore,
   } = useCommunityPosts();
 
-  const discussionRef = useRef<HTMLDivElement>(null);
-  const [showComments, setShowComments] = useState(false);
+  const [section, setSection] = useState<Section>('walking');
   const [showCreatePost, setShowCreatePost] = useState(false);
-  const [activeView, setActiveView] = useState<'feed' | 'topic'>('feed');
 
-  const scrollToDiscussion = () => {
-    setShowComments(true);
-    setActiveView('topic');
-    setTimeout(() => {
-      discussionRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, 100);
-  };
+  const handleComment = async (_id: string, _t: string) => ({ error: null });
 
-  const handleComment = async (_postId: string, _text: string) => {
-    return { error: null };
-  };
+  const openPrayerComposer = () => setShowCreatePost(true);
+  const openGeneralComposer = () => setShowCreatePost(true);
+
+  // Switch feed filter when prayer tab is selected
+  const visiblePosts = useMemo(() => posts, [posts]);
+  const noPostsAtAll = !loading && posts.length === 0;
 
   return (
     <DashboardLayout>
-      <div className="max-w-3xl mx-auto space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="font-display text-3xl md:text-4xl uppercase tracking-wider text-foreground">
-              THE TRENCHES
-            </h1>
-            <p className="text-muted-foreground mt-1">Daily discussions. Real faith. No fluff.</p>
+      <div className="max-w-3xl mx-auto pb-12">
+        {/* Header */}
+        <header className="mb-8">
+          <p className="text-sm uppercase tracking-[0.2em] text-primary font-semibold mb-2">Community</p>
+          <h1 className="font-display text-4xl md:text-5xl text-foreground leading-tight mb-3">
+            You're not walking alone.
+          </h1>
+          <p className="text-lg text-muted-foreground max-w-xl">
+            Share prayer requests, encourage others, and connect with people who are starting or restarting their walk with God.
+          </p>
+          <div className="flex flex-wrap gap-3 mt-6">
+            <Button size="lg" onClick={openPrayerComposer} className="gap-2">
+              <HandHeart className="h-5 w-5" /> Share a Prayer Request
+            </Button>
+            <Button size="lg" variant="outline" onClick={() => setSection('circles')} className="gap-2">
+              <Users className="h-5 w-5" /> Join a Faith Circle
+            </Button>
           </div>
-          <Button onClick={() => setShowCreatePost(true)} className="gap-2">
-            <Plus className="h-4 w-4" />
-            New Post
-          </Button>
-        </div>
+        </header>
 
-        <Tabs value={activeView} onValueChange={(v) => setActiveView(v as 'feed' | 'topic')}>
-          <TabsList>
-            <TabsTrigger value="feed">Community Feed</TabsTrigger>
-            <TabsTrigger value="topic">Daily Topic</TabsTrigger>
+        {/* Section Tabs */}
+        <Tabs value={section} onValueChange={(v) => setSection(v as Section)} className="mb-6">
+          <TabsList className="grid grid-cols-4 w-full h-auto">
+            <TabsTrigger value="walking" className="py-2.5 text-sm">Walking Together</TabsTrigger>
+            <TabsTrigger value="prayer" className="py-2.5 text-sm">Prayer Requests</TabsTrigger>
+            <TabsTrigger value="circles" className="py-2.5 text-sm">Faith Circles</TabsTrigger>
+            <TabsTrigger value="partners" className="py-2.5 text-sm">Prayer Partners</TabsTrigger>
           </TabsList>
+
+          {/* Walking Together */}
+          <TabsContent value="walking" className="mt-6 space-y-4">
+            <SectionHeader
+              icon={<Sparkles className="h-5 w-5 text-primary" />}
+              title="Walking Together"
+              subtitle="Recent encouragement, prayers, and reflections from the community."
+              action={
+                <Button size="sm" onClick={openGeneralComposer} className="gap-1.5">
+                  <Plus className="h-4 w-4" /> Share
+                </Button>
+              }
+            />
+            <FeedList
+              loading={loading}
+              empty={noPostsAtAll}
+              posts={visiblePosts}
+              filter={filter}
+              setFilter={(t) => setFilter({ ...filter, type: t as any })}
+              addReaction={addReaction}
+              prayForPost={prayForPost}
+              votePoll={votePoll}
+              markPrayerAnswered={markPrayerAnswered}
+              loadMore={loadMore}
+              hasMore={hasMore}
+              handleComment={handleComment}
+              emptyCta={
+                <EmptyState
+                  title="No posts yet."
+                  body="Be the first to share an encouragement, reflection, or prayer with the community."
+                  primary={{ label: 'Share a Prayer Request', onClick: openPrayerComposer }}
+                  secondary={{ label: 'Post an Encouragement', onClick: openGeneralComposer }}
+                />
+              }
+              presetFilter="all"
+            />
+          </TabsContent>
+
+          {/* Prayer Requests */}
+          <TabsContent value="prayer" className="mt-6 space-y-4">
+            <SectionHeader
+              icon={<HandHeart className="h-5 w-5 text-primary" />}
+              title="Prayer Requests"
+              subtitle="View what others are walking through. Pray for someone today."
+              action={
+                <Button size="sm" onClick={openPrayerComposer} className="gap-1.5">
+                  <Plus className="h-4 w-4" /> Share Request
+                </Button>
+              }
+            />
+            <FeedList
+              loading={loading}
+              empty={noPostsAtAll}
+              posts={visiblePosts.filter((p) => p.post_type === 'prayer_request' || (p as any).content_data?.is_prayer_request)}
+              filter={filter}
+              setFilter={() => {}}
+              addReaction={addReaction}
+              prayForPost={prayForPost}
+              votePoll={votePoll}
+              markPrayerAnswered={markPrayerAnswered}
+              loadMore={loadMore}
+              hasMore={hasMore}
+              handleComment={handleComment}
+              emptyCta={
+                <EmptyState
+                  title="No prayer requests yet."
+                  body="When someone shares a request, you'll be able to lift them up in prayer right here."
+                  primary={{ label: 'Share a Prayer Request', onClick: openPrayerComposer }}
+                />
+              }
+              presetFilter="prayer_requests"
+            />
+          </TabsContent>
+
+          {/* Faith Circles */}
+          <TabsContent value="circles" className="mt-6 space-y-4">
+            <SectionHeader
+              icon={<Users className="h-5 w-5 text-primary" />}
+              title="Faith Circles"
+              subtitle="Small, themed groups where you can walk with others on the same path."
+            />
+            <div className="grid gap-3">
+              {CIRCLES.map((c) => (
+                <button
+                  key={c.id}
+                  onClick={openGeneralComposer}
+                  className="w-full p-5 rounded-2xl border border-border bg-card text-left flex items-center gap-4 hover:border-primary/40 transition-all"
+                >
+                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-2xl shrink-0">
+                    {c.emoji}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-display text-xl text-foreground leading-tight">{c.title}</h3>
+                    <p className="text-base text-muted-foreground mt-0.5">{c.description}</p>
+                  </div>
+                  <ChevronRight className="h-5 w-5 text-muted-foreground shrink-0" />
+                </button>
+              ))}
+            </div>
+          </TabsContent>
+
+          {/* Prayer Partners */}
+          <TabsContent value="partners" className="mt-6">
+            <SectionHeader
+              icon={<MessageCircle className="h-5 w-5 text-primary" />}
+              title="Prayer Partners"
+              subtitle="One-on-one encouragement. Optional — opt in when you're ready."
+            />
+            <div className="rounded-2xl border border-border bg-card p-6 mt-4">
+              <h3 className="font-display text-2xl text-foreground mb-2">Walk with someone, one-on-one.</h3>
+              <p className="text-base text-muted-foreground mb-5">
+                Get paired with one other person who's also walking with God. Check in weekly. Pray for each other.
+                No pressure, no performance — just a quiet partnership.
+              </p>
+              <Button size="lg" className="w-full sm:w-auto">
+                Opt in to Prayer Partners
+              </Button>
+              <p className="text-sm text-muted-foreground mt-3">
+                Pairing will open soon. We'll let you know when your partner is ready.
+              </p>
+            </div>
+          </TabsContent>
         </Tabs>
 
-        <CommunityGuidelines />
-
-        {activeView === 'feed' ? (
-          <>
-            <div className="flex items-center gap-3 flex-wrap">
-              <Select value={filter.type} onValueChange={(v) => setFilter({ ...filter, type: v as typeof filter.type })}>
-                <SelectTrigger className="w-40">
-                  <Filter className="h-4 w-4 mr-2" />
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Posts</SelectItem>
-                  <SelectItem value="prayer_requests">Prayer Requests</SelectItem>
-                  <SelectItem value="testimonies">Testimonies</SelectItem>
-                  <SelectItem value="polls">Polls</SelectItem>
-                  <SelectItem value="music">Worship/Music</SelectItem>
-                  <SelectItem value="following">Following</SelectItem>
-                  <SelectItem value="my_posts">My Posts</SelectItem>
-                </SelectContent>
-              </Select>
-
-              <Select value={filter.sort} onValueChange={(v) => setFilter({ ...filter, sort: v as typeof filter.sort })}>
-                <SelectTrigger className="w-32">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="recent">Recent</SelectItem>
-                  <SelectItem value="top">Top</SelectItem>
-                  <SelectItem value="trending">Trending</SelectItem>
-                  <SelectItem value="unanswered_prayers">Needs Prayer</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            {topic && (
-              <div className="border-l-4 border-primary pl-2">
-                <DailyTopicCard topic={topic} loading={topicLoading} getCategoryLabel={getCategoryLabel} onJoinDiscussion={scrollToDiscussion} />
-              </div>
-            )}
-
-            <div className="space-y-4">
-              {postsLoading && posts.length === 0 ? (
-                <div className="p-8 flex justify-center"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
-              ) : posts.length === 0 ? (
-                <div className="p-8 text-center bg-card border-2 border-border rounded-lg">
-                  <MessageSquare className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
-                  <p className="text-muted-foreground">No posts yet. Be the first!</p>
-                  <Button className="mt-4" onClick={() => setShowCreatePost(true)}>Create Post</Button>
-                </div>
-              ) : (
-                <>
-                  {posts.map((post) => (
-                    <EnhancedFeedPost key={post.id} post={post} onReaction={addReaction} onPray={prayForPost} onVotePoll={votePoll} onComment={handleComment} onMarkAnswered={markPrayerAnswered} />
-                  ))}
-                  {hasMore && <Button variant="outline" className="w-full" onClick={loadMore} disabled={postsLoading}>{postsLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Load More'}</Button>}
-                </>
-              )}
-            </div>
-          </>
-        ) : (
-          <div className="space-y-4">
-            <DailyTopicCard topic={topic} loading={topicLoading} getCategoryLabel={getCategoryLabel} onJoinDiscussion={() => setShowComments(true)} />
-            {showComments && topic && (
-              <div ref={discussionRef} className="space-y-4 pt-4">
-                <div className="bg-card border-2 border-border rounded-lg p-4">
-                  <h3 className="font-bold text-foreground mb-3 flex items-center gap-2"><MessageSquare className="h-5 w-5" />Add Your Voice</h3>
-                  <CommentComposer onSubmit={(text) => addComment(text)} placeholder="Share your thoughts..." />
-                </div>
-                <div className="flex items-center justify-between">
-                  <h3 className="font-bold">{topic.comment_count} Comments</h3>
-                  <Tabs value={sortBy} onValueChange={(v) => setSortBy(v as SortOption)}>
-                    <TabsList className="h-8">
-                      <TabsTrigger value="top" className="text-xs h-7 px-2"><TrendingUp className="h-3 w-3 mr-1" />Top</TabsTrigger>
-                      <TabsTrigger value="recent" className="text-xs h-7 px-2"><Clock className="h-3 w-3 mr-1" />Recent</TabsTrigger>
-                      <TabsTrigger value="controversial" className="text-xs h-7 px-2"><Zap className="h-3 w-3 mr-1" />Hot</TabsTrigger>
-                    </TabsList>
-                  </Tabs>
-                </div>
-                <div className="bg-card border-2 border-border rounded-lg divide-y divide-border">
-                  {commentsLoading ? (
-                    <div className="p-8 flex justify-center"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
-                  ) : comments.length === 0 ? (
-                    <div className="p-8 text-center"><MessageSquare className="h-12 w-12 text-muted-foreground mx-auto mb-3" /><p className="text-muted-foreground">No comments yet.</p></div>
-                  ) : (
-                    <div className="divide-y divide-border">
-                      {comments.map((comment) => (
-                        <div key={comment.id} className="px-4">
-                          <CommentThread comment={comment} onVote={voteComment} onReply={addComment} onReact={addTopicReaction} onReport={reportComment} onEdit={editComment} />
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-
-        <CreateCommunityPostDialog open={showCreatePost} onOpenChange={setShowCreatePost} />
+        <CreateCommunityPostDialog
+          open={showCreatePost}
+          onOpenChange={setShowCreatePost}
+        />
       </div>
     </DashboardLayout>
+  );
+}
+
+function SectionHeader({
+  icon, title, subtitle, action,
+}: { icon: React.ReactNode; title: string; subtitle: string; action?: React.ReactNode }) {
+  return (
+    <div className="flex items-start justify-between gap-4">
+      <div className="flex-1">
+        <div className="flex items-center gap-2 mb-1.5">
+          {icon}
+          <h2 className="font-display text-2xl text-foreground">{title}</h2>
+        </div>
+        <p className="text-base text-muted-foreground">{subtitle}</p>
+      </div>
+      {action}
+    </div>
+  );
+}
+
+function EmptyState({
+  title, body, primary, secondary,
+}: {
+  title: string;
+  body: string;
+  primary: { label: string; onClick: () => void };
+  secondary?: { label: string; onClick: () => void };
+}) {
+  return (
+    <div className="rounded-2xl border border-border bg-card p-8 text-center">
+      <h3 className="font-display text-2xl text-foreground mb-2">{title}</h3>
+      <p className="text-base text-muted-foreground max-w-md mx-auto mb-6">{body}</p>
+      <div className="flex flex-col sm:flex-row gap-3 justify-center">
+        <Button size="lg" onClick={primary.onClick}>{primary.label}</Button>
+        {secondary && (
+          <Button size="lg" variant="outline" onClick={secondary.onClick}>{secondary.label}</Button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function FeedList({
+  loading, empty, posts, addReaction, prayForPost, votePoll, markPrayerAnswered, loadMore, hasMore, handleComment, emptyCta,
+}: any) {
+  if (loading && posts.length === 0) {
+    return (
+      <div className="p-8 flex justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+  if (empty || posts.length === 0) return emptyCta;
+  return (
+    <div className="space-y-4">
+      {posts.map((post: any) => (
+        <EnhancedFeedPost
+          key={post.id}
+          post={post}
+          onReaction={addReaction}
+          onPray={prayForPost}
+          onVotePoll={votePoll}
+          onComment={handleComment}
+          onMarkAnswered={markPrayerAnswered}
+        />
+      ))}
+      {hasMore && (
+        <Button variant="outline" className="w-full" onClick={loadMore} disabled={loading}>
+          {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Load more'}
+        </Button>
+      )}
+    </div>
   );
 }

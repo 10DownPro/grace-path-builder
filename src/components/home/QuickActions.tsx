@@ -6,7 +6,7 @@ const actions = [
   { path: '/session', icon: Heart, label: 'Train', color: 'text-primary', bg: 'bg-primary/10' },
   { path: '/scripture', icon: BookOpen, label: 'Scripture', color: 'text-accent', bg: 'bg-accent/10' },
   { path: '/prayer', icon: PenLine, label: 'Prayer', color: 'text-sage', bg: 'bg-sage/10' },
-  { path: '/friends', icon: Music, label: 'Squad', color: 'text-navy', bg: 'bg-navy/10' },
+  { path: '/community', icon: Music, label: 'Community', color: 'text-navy', bg: 'bg-navy/10' },
 ];
 
 export function QuickActions() {

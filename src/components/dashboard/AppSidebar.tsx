@@ -38,7 +38,7 @@ const mainNavItems = [
   { path: '/community', icon: MessageSquare, label: 'Trenches' },
   { path: '/feed', icon: Rss, label: 'Feed' },
   { path: '/prayer', icon: Target, label: 'Prayer' },
-  { path: '/friends', icon: Users, label: 'Squad' },
+  { path: '/community', icon: Users, label: 'Community' },
 ];
 
 const featureNavItems = [

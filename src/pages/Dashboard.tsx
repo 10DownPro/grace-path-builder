@@ -148,7 +148,7 @@ const Dashboard = () => {
               title="View Squad"
               description="Train with friends"
               icon={<Users className="h-6 w-6" />}
-              to="/friends"
+              to="/community"
             />
           </div>
         </div>

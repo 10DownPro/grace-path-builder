@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import Landing from "./pages/Landing";
 import Auth from "./pages/Auth";
@@ -14,8 +14,8 @@ import Scripture from "./pages/Scripture";
 import Prayer from "./pages/Prayer";
 import Progress from "./pages/Progress";
 import Settings from "./pages/Settings";
-import Battles from "./pages/Battles";
-import Friends from "./pages/Friends";
+// Battles + Friends pages removed — redirected to Home / Community
+
 import NotFound from "./pages/NotFound";
 import Rewards from "./pages/Rewards";
 import Feed from "./pages/Feed";
@@ -74,8 +74,9 @@ const App = () => (
           <Route path="/prayer" element={<ProtectedRoute><Prayer /></ProtectedRoute>} />
           <Route path="/progress" element={<ProtectedRoute><Progress /></ProtectedRoute>} />
           <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
-          <Route path="/battles" element={<ProtectedRoute><Battles /></ProtectedRoute>} />
-          <Route path="/friends" element={<ProtectedRoute><Friends /></ProtectedRoute>} />
+          {/* Deprecated routes — redirect to current homes */}
+          <Route path="/battles" element={<Navigate to="/home" replace />} />
+          <Route path="/friends" element={<Navigate to="/community" replace />} />
           <Route path="/rewards" element={<ProtectedRoute><Rewards /></ProtectedRoute>} />
           <Route path="/feed" element={<ProtectedRoute><Feed /></ProtectedRoute>} />
           <Route path="/community" element={<ProtectedRoute><Community /></ProtectedRoute>} />
