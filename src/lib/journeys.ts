@@ -535,14 +535,36 @@ const healingRestoration: JourneyModule[] = [
   enrich({ id: 'restored-purpose', title: 'Restored purpose', minutes: 8, summary: 'You are not too broken to be used.', scripture: { reference: 'Joel 2:25', text: 'I will repay you for the years the locusts have eaten.' }, reflection: 'What hope feels possible again, even just a little?', prayer: 'Restore what I cannot, Lord. Amen.', questions: ['What hope feels possible again, even faintly?', 'Where would you most like to see restoration?'] }),
 ];
 
+// ---------- Wrap existing lessons into Modules ----------
+// Phase 1 grouping: each track has one starting Module ("Foundations") containing
+// all currently authored lessons. Phase 2 will reorganize into the full module map
+// (Who Is God?, Who Is Jesus?, etc.) and grow each track to its target lesson count.
+function foundationsModule(trackTitle: string, lessons: Lesson[]): Module {
+  return {
+    id: 'foundations',
+    title: 'Foundations',
+    summary: `Starting lessons for ${trackTitle}.`,
+    lessons,
+  };
+}
+
 export const journeys: Journey[] = [
-  { id: 'starting-faith', title: 'Starting Faith', tagline: 'Begin at the beginning — one honest step.', emoji: '🌱', forStages: ['new', 'curious'], modules: startingFaith },
-  { id: 'coming-back', title: 'Coming Back', tagline: 'No catching up. No condemnation. Just home.', emoji: '🏠', forStages: ['returning', 'longtime'], modules: comingBack },
-  { id: 'learning-prayer', title: 'Learning Prayer', tagline: 'How to actually talk with God.', emoji: '🙏', forStages: ['new', 'curious', 'returning', 'longtime'], modules: learningPrayer },
-  { id: 'understanding-jesus', title: 'Understanding Jesus', tagline: 'Get to know who he actually is.', emoji: '✝️', forStages: ['new', 'curious', 'returning', 'longtime'], modules: understandingJesus },
-  { id: 'building-consistency', title: 'Building Consistency', tagline: 'Small, sustainable rhythms with God.', emoji: '🌿', forStages: ['returning', 'longtime', 'curious'], modules: buildingConsistency },
-  { id: 'healing-restoration', title: 'Healing & Restoration', tagline: 'For wounds, weariness, and weight.', emoji: '🤍', forStages: ['returning', 'longtime', 'curious'], modules: healingRestoration },
+  { id: 'starting-faith', title: 'Starting Faith', tagline: 'Begin at the beginning — one honest step.', emoji: '🌱', forStages: ['new', 'curious'], modules: [foundationsModule('Starting Faith', startingFaith)] },
+  { id: 'coming-back', title: 'Coming Back', tagline: 'No catching up. No condemnation. Just home.', emoji: '🏠', forStages: ['returning', 'longtime'], modules: [foundationsModule('Coming Back', comingBack)] },
+  { id: 'learning-prayer', title: 'Learning Prayer', tagline: 'How to actually talk with God.', emoji: '🙏', forStages: ['new', 'curious', 'returning', 'longtime'], modules: [foundationsModule('Learning Prayer', learningPrayer)] },
+  { id: 'understanding-jesus', title: 'Understanding Jesus', tagline: 'Get to know who he actually is.', emoji: '✝️', forStages: ['new', 'curious', 'returning', 'longtime'], modules: [foundationsModule('Understanding Jesus', understandingJesus)] },
+  { id: 'building-consistency', title: 'Building Consistency', tagline: 'Small, sustainable rhythms with Jesus.', emoji: '🌿', forStages: ['returning', 'longtime', 'curious'], modules: [foundationsModule('Building Consistency', buildingConsistency)] },
+  { id: 'healing-restoration', title: 'Healing & Restoration', tagline: 'For wounds, weariness, and weight.', emoji: '🤍', forStages: ['returning', 'longtime', 'curious'], modules: [foundationsModule('Healing & Restoration', healingRestoration)] },
 ];
+
+// Normalize every lesson's prayer to end with the required ending.
+for (const journey of journeys) {
+  for (const mod of journey.modules) {
+    for (const lesson of mod.lessons) {
+      lesson.prayer = ensurePrayerEnding(lesson.prayer);
+    }
+  }
+}
 
 export function getJourney(id: JourneyId): Journey | undefined {
   return journeys.find((j) => j.id === id);
@@ -553,23 +575,48 @@ export function getRecommendedJourney(stage: 'new' | 'curious' | 'returning' | '
   return journeys.find((j) => j.id === 'starting-faith')!;
 }
 
+/** Flatten all lessons in a journey, in order. */
+export function getAllLessons(journey: Journey): Lesson[] {
+  return journey.modules.flatMap((m) => m.lessons);
+}
+
+/** Find the module that contains a given lesson id. */
+export function findModuleForLesson(journey: Journey, lessonId: string): Module | undefined {
+  return journey.modules.find((m) => m.lessons.some((l) => l.id === lessonId));
+}
+
+/** Locate a lesson + its module within a journey. */
+export function findLesson(journeyId: JourneyId, lessonId: string):
+  | { journey: Journey; module: Module; lesson: Lesson }
+  | undefined {
+  const journey = getJourney(journeyId);
+  if (!journey) return undefined;
+  for (const mod of journey.modules) {
+    const lesson = mod.lessons.find((l) => l.id === lessonId);
+    if (lesson) return { journey, module: mod, lesson };
+  }
+  return undefined;
+}
+
 // Find the next lesson recommendation across all journeys.
-// Preference: next module in active journey → first module of a recommended sibling journey.
+// Preference: next lesson in active journey → first lesson of a recommended sibling journey.
 export function findNextRecommendation(
   activeId: JourneyId,
   completedByJourney: Record<string, string[]>,
-): { journey: Journey; module: JourneyModule } | null {
+): { journey: Journey; module: Lesson } | null {
   const active = getJourney(activeId);
   if (active) {
     const done = completedByJourney[active.id] || [];
-    const next = active.modules.find((m) => !done.includes(m.id));
-    if (next) return { journey: active, module: next };
+    for (const lesson of getAllLessons(active)) {
+      if (!done.includes(lesson.id)) return { journey: active, module: lesson };
+    }
   }
   for (const j of journeys) {
     if (j.id === activeId) continue;
     const done = completedByJourney[j.id] || [];
-    const next = j.modules.find((m) => !done.includes(m.id));
-    if (next) return { journey: j, module: next };
+    for (const lesson of getAllLessons(j)) {
+      if (!done.includes(lesson.id)) return { journey: j, module: lesson };
+    }
   }
   return null;
 }
