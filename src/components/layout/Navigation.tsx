@@ -40,7 +40,7 @@ export function Navigation() {
                 )}
               >
                 <Icon className="h-5 w-5 sm:h-6 sm:w-6 flex-shrink-0" strokeWidth={2} />
-                <span className="text-[10px] sm:text-xs font-medium tracking-wide truncate">
+                <span className="text-sm font-medium tracking-wide truncate">
                   {label}
                 </span>
               </Link>
