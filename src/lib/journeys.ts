@@ -1,5 +1,7 @@
 // FaithFit Journeys — guided discipleship paths.
-// Each journey contains multiple lessons. Each lesson teaches, not just checks a box.
+// Hierarchy: Track (Journey) → Module → Lesson → Session view.
+// Each lesson teaches, not just checks a box. Every prayer ends:
+//   "In Jesus' name, Amen. 🙏🏽"
 
 export type JourneyId =
   | 'starting-faith'
@@ -14,7 +16,8 @@ export interface LessonScripture {
   text: string;
   context: string;      // Who, when, why was this written
   meaning: string;      // What it actually says
-  application: string;  // How it touches your life
+  application: string;  // How it touches your life today
+  aboutJesus?: string;  // How this passage points us to Jesus (when applicable)
 }
 
 export interface ReflectionQuestion {
@@ -22,18 +25,45 @@ export interface ReflectionQuestion {
   prompt: string;
 }
 
-export interface JourneyModule {
+// A single lesson — the 7-part discipleship structure:
+// Teaching → Scripture → Understanding → Reflection → Prayer → Action Step → Completion.
+export interface Lesson {
   id: string;
   title: string;
   summary: string;
   estimatedMinutes: number;
-  introduction: string[];           // paragraphs, conversational
-  scripture: LessonScripture;
+  introduction: string[];           // Teaching paragraphs, conversational
+  scripture: LessonScripture;       // Scripture + Understanding
   reflectionQuestions: ReflectionQuestion[];
-  applicationStep: string;          // one practical thing today
-  prayer: string;                   // a written prayer to read
-  // legacy single-field reflection kept for any consumer; not required
+  applicationStep: string;          // One practical thing today
+  prayer: string;                   // Always ends with PRAYER_ENDING
+  completion?: string;              // Encouragement after completing
+  // Legacy single-field reflection kept for any consumer; not required
   reflection?: string;
+}
+
+/** Required prayer ending across the entire app. */
+export const PRAYER_ENDING = "In Jesus' name, Amen. 🙏🏽";
+
+/** Append PRAYER_ENDING to a prayer if it does not already end with it. */
+export function ensurePrayerEnding(prayer: string): string {
+  const trimmed = (prayer || '').trim();
+  if (!trimmed) return PRAYER_ENDING;
+  if (trimmed.endsWith(PRAYER_ENDING)) return trimmed;
+  // Strip any trailing "Amen." or "Amen" so we don't double up.
+  const withoutAmen = trimmed.replace(/\s*Amen\.?\s*$/i, '').trim();
+  return `${withoutAmen} ${PRAYER_ENDING}`;
+}
+
+// Back-compat alias — older code referred to lessons as "modules".
+export type JourneyModule = Lesson;
+
+// A module groups several lessons under a shared theme.
+export interface Module {
+  id: string;
+  title: string;
+  summary: string;
+  lessons: Lesson[];
 }
 
 export interface Journey {
@@ -42,7 +72,7 @@ export interface Journey {
   tagline: string;
   emoji: string;
   forStages: Array<'new' | 'curious' | 'returning' | 'longtime'>;
-  modules: JourneyModule[];
+  modules: Module[];
 }
 
 // ---------- Helpers to enrich legacy minimal modules ----------
