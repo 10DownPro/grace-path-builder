@@ -1,11 +1,12 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { EnhancedFeedPost } from '@/components/community/EnhancedFeedPost';
 import { CreateCommunityPostDialog } from '@/components/community/CreateCommunityPostDialog';
 import { useCommunityPosts } from '@/hooks/useCommunityPosts';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { Loader2, Plus, HandHeart, Users, Sparkles, MessageCircle, ChevronRight } from 'lucide-react';
+import { Loader2, Plus, HandHeart, Users, Sparkles, MessageCircle, ChevronRight, Check } from 'lucide-react';
+import { toast } from 'sonner';
 
 type Section = 'walking' | 'prayer' | 'circles' | 'partners';
 
