@@ -215,14 +215,14 @@ export default function Index() {
               <div className="flex items-start gap-3 pr-6">
                 <Info className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
                 <div className="space-y-2">
-                  <h3 className="font-display text-base text-foreground">
+                  <h3 className="font-display text-xl text-foreground">
                     Welcome home.
                   </h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    Each day, FaithFit guides you through four short, quiet steps: worship, scripture, prayer, and reflection.
+                  <p className="text-base text-muted-foreground leading-relaxed">
+                    Each day, FaithFit guides you through four short steps: worship, scripture, prayer, and reflection.
                     Take them at your pace — five minutes is plenty.
                   </p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-base text-muted-foreground">
                     Ready when you are. Tap <strong className="text-foreground">Walk</strong> below to begin today.
                   </p>
                 </div>
