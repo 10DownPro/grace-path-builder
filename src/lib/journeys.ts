@@ -106,7 +106,8 @@ function enrich(
     },
     reflectionQuestions: (base.questions ?? [base.reflection]).map((q, i) => ({ id: `q${i + 1}`, prompt: q })),
     applicationStep: base.applicationStep ?? 'Take 60 seconds today to repeat the verse out loud and notice what you feel.',
-    prayer: base.prayer,
+    // Enforce Jesus-centered prayer ending across every lesson.
+    prayer: ensurePrayerEnding(base.prayer),
     reflection: base.reflection,
   };
 }
