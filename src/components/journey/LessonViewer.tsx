@@ -4,16 +4,17 @@ import { Textarea } from '@/components/ui/textarea';
 import { Progress } from '@/components/ui/progress';
 import { ChevronLeft, ChevronRight, BookOpen, Heart, Sparkles, MessageCircle, CheckCircle2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import type { Journey, JourneyModule } from '@/lib/journeys';
+import type { Journey, Lesson, Module } from '@/lib/journeys';
+import { ensurePrayerEnding, getAllLessons } from '@/lib/journeys';
 import { useLesson, REACTIONS } from '@/hooks/useLesson';
 
 type Step = 'intro' | 'scripture' | 'reflection' | 'application' | 'prayer' | 'community' | 'complete';
 
 const STEPS: { key: Step; label: string }[] = [
-  { key: 'intro', label: 'Introduction' },
+  { key: 'intro', label: 'Teaching' },
   { key: 'scripture', label: 'Scripture' },
   { key: 'reflection', label: 'Reflection' },
-  { key: 'application', label: 'Application' },
+  { key: 'application', label: 'Action Step' },
   { key: 'prayer', label: 'Prayer' },
   { key: 'community', label: 'Community' },
 ];
@@ -22,21 +23,31 @@ type PrayerMode = 'read' | 'listen' | 'own';
 
 interface Props {
   journey: Journey;
-  module: JourneyModule;
-  nextRecommendation: { journey: Journey; module: JourneyModule } | null;
+  /** The lesson being viewed. Named `module` for backward compatibility. */
+  module: Lesson;
+  /** The parent Module that contains this lesson (optional during transition). */
+  parentModule?: Module;
+  nextRecommendation: { journey: Journey; module: Lesson } | null;
   onExit: () => void;
   onComplete: () => void; // marks complete in journey progress
-  onStartNext: (journey: Journey, module: JourneyModule) => void;
+  onStartNext: (journey: Journey, lesson: Lesson) => void;
 }
 
-export function LessonViewer({ journey, module, nextRecommendation, onExit, onComplete, onStartNext }: Props) {
+export function LessonViewer({ journey, module, parentModule, nextRecommendation, onExit, onComplete, onStartNext }: Props) {
   const [step, setStep] = useState<Step>('intro');
   const [prayerMode, setPrayerMode] = useState<PrayerMode>('read');
   const { reflections, saveReflection, counts, userReaction, toggleReaction } = useLesson(journey.id, module.id);
 
-  const moduleIndex = journey.modules.findIndex((m) => m.id === module.id);
+  // Index within the parent module (if known) for the "Lesson Y of Z" header.
+  const moduleLessons = parentModule?.lessons ?? [];
+  const lessonIndexInModule = moduleLessons.findIndex((l) => l.id === module.id);
+  const allLessons = useMemo(() => getAllLessons(journey), [journey]);
+  const lessonIndexGlobal = allLessons.findIndex((l) => l.id === module.id);
   const stepIndex = STEPS.findIndex((s) => s.key === step);
   const totalReactions = useMemo(() => Object.values(counts).reduce((a, b) => a + b, 0), [counts]);
+
+  // Always render prayers with the required ending.
+  const prayerText = ensurePrayerEnding(module.prayer);
 
   const goNext = () => {
     const i = STEPS.findIndex((s) => s.key === step);
@@ -104,8 +115,14 @@ export function LessonViewer({ journey, module, nextRecommendation, onExit, onCo
         <Button variant="ghost" onClick={onExit} className="mb-3 text-muted-foreground -ml-2">
           <ChevronLeft className="h-4 w-4 mr-1" /> Exit lesson
         </Button>
-        <p className="text-xs uppercase tracking-[0.2em] text-primary mb-2 font-semibold">
-          {journey.title} · Lesson {moduleIndex + 1} of {journey.modules.length}
+        <p className="text-base uppercase tracking-[0.18em] text-primary mb-2 font-semibold">
+          {journey.title}
+          {parentModule && (
+            <> · {parentModule.title}{moduleLessons.length > 1 && <> · Lesson {lessonIndexInModule + 1} of {moduleLessons.length}</>}</>
+          )}
+          {!parentModule && allLessons.length > 0 && (
+            <> · Lesson {lessonIndexGlobal + 1} of {allLessons.length}</>
+          )}
         </p>
         <h1 className="font-display text-3xl sm:text-4xl leading-tight text-balance">{module.title}</h1>
         <p className="text-base text-muted-foreground mt-2">~{module.estimatedMinutes} min · {STEPS[stepIndex].label}</p>
@@ -117,7 +134,7 @@ export function LessonViewer({ journey, module, nextRecommendation, onExit, onCo
         {step === 'intro' && (
           <section className="animate-fade-in space-y-5">
             <div className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-muted-foreground">
-              <Sparkles className="h-3.5 w-3.5" /> Introduction
+              <Sparkles className="h-3.5 w-3.5" /> Teaching
             </div>
             {module.introduction.map((p, i) => (
               <p key={i} className="text-lg leading-relaxed text-foreground">{p}</p>
@@ -212,13 +229,13 @@ export function LessonViewer({ journey, module, nextRecommendation, onExit, onCo
             </div>
             {prayerMode === 'read' && (
               <div className="rounded-xl border border-border bg-card p-6 border-l-2 border-l-accent-warm">
-                <p className="text-lg leading-relaxed italic text-foreground">{module.prayer}</p>
+                <p className="text-lg leading-relaxed italic text-foreground">{prayerText}</p>
               </div>
             )}
             {prayerMode === 'listen' && (
               <div className="rounded-xl border border-border bg-card p-6 text-center">
                 <p className="text-base text-muted-foreground mb-3">Audio prayers coming soon. For now, read the prayer slowly out loud.</p>
-                <p className="text-base italic text-foreground">"{module.prayer}"</p>
+                <p className="text-base italic text-foreground">"{prayerText}"</p>
               </div>
             )}
             {prayerMode === 'own' && (

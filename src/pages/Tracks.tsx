@@ -2,46 +2,66 @@ import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PageLayout } from '@/components/layout/PageLayout';
 import { useJourney } from '@/hooks/useJourney';
-import { findNextRecommendation, type Journey, type JourneyModule } from '@/lib/journeys';
+import { findNextRecommendation, getAllLessons, type Journey, type Lesson, type Module } from '@/lib/journeys';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { ChevronLeft, ChevronRight, Check, Lock, BookOpen, Heart, MessageSquare } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Check, Lock, BookOpen, Heart, MessageSquare, Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { LessonViewer } from '@/components/journey/LessonViewer';
 
 export default function Tracks() {
   const navigate = useNavigate();
-  const { journeys, active, activeId, setActive, progress, completed, completedCount, totalModules, percent, markModuleComplete } = useJourney();
+  const {
+    journeys,
+    active,
+    activeId,
+    setActive,
+    progress,
+    completedCount,
+    totalLessons,
+    percent,
+    nextLesson,
+    currentModule,
+    estimatedMinutesRemaining,
+    markLessonComplete,
+  } = useJourney();
   const [viewing, setViewing] = useState<Journey | null>(null);
-  const [openModule, setOpenModule] = useState<{ journey: Journey; module: JourneyModule } | null>(null);
+  const [openLesson, setOpenLesson] = useState<{ journey: Journey; module: Module; lesson: Lesson } | null>(null);
 
   const journey = viewing || active;
   const journeyCompleted = journey ? progress[journey.id] || [] : [];
 
-  const nextIndex = useMemo(() => {
-    if (!journey) return 0;
-    const i = journey.modules.findIndex((m) => !journeyCompleted.includes(m.id));
-    return i === -1 ? journey.modules.length : i;
-  }, [journey, journeyCompleted]);
+  // Flat sequential order for unlocking logic.
+  const sequentialLessons = useMemo(
+    () => (journey ? getAllLessons(journey) : []),
+    [journey],
+  );
+  const nextLessonIndex = useMemo(() => {
+    const i = sequentialLessons.findIndex((l) => !journeyCompleted.includes(l.id));
+    return i === -1 ? sequentialLessons.length : i;
+  }, [sequentialLessons, journeyCompleted]);
 
   // ----- Lesson view (multi-section) -----
-  if (openModule) {
-    const recommendation = findNextRecommendation(openModule.journey.id, {
+  if (openLesson) {
+    const recommendation = findNextRecommendation(openLesson.journey.id, {
       ...progress,
-      [openModule.journey.id]: Array.from(new Set([...(progress[openModule.journey.id] || []), openModule.module.id])),
+      [openLesson.journey.id]: Array.from(new Set([...(progress[openLesson.journey.id] || []), openLesson.lesson.id])),
     });
     return (
       <PageLayout>
         <LessonViewer
-          journey={openModule.journey}
-          module={openModule.module}
-          nextRecommendation={recommendation && recommendation.module.id !== openModule.module.id ? recommendation : null}
-          onExit={() => setOpenModule(null)}
-          onComplete={() => markModuleComplete(openModule.journey.id, openModule.module.id)}
-          onStartNext={(j, m) => {
+          journey={openLesson.journey}
+          module={openLesson.lesson}
+          parentModule={openLesson.module}
+          nextRecommendation={recommendation && recommendation.module.id !== openLesson.lesson.id ? recommendation : null}
+          onExit={() => setOpenLesson(null)}
+          onComplete={() => markLessonComplete(openLesson.journey.id, openLesson.lesson.id)}
+          onStartNext={(j, lesson) => {
             if (j.id !== activeId) setActive(j.id);
             setViewing(null);
-            setOpenModule({ journey: j, module: m });
+            // Find the module for the recommended lesson within its journey.
+            const mod = j.modules.find((m) => m.lessons.some((l) => l.id === lesson.id));
+            if (mod) setOpenLesson({ journey: j, module: mod, lesson });
           }}
         />
       </PageLayout>
@@ -50,13 +70,14 @@ export default function Tracks() {
 
   // ----- Journey detail view -----
   if (journey && viewing) {
-    const pct = Math.round((journeyCompleted.length / journey.modules.length) * 100);
+    const allLessons = sequentialLessons;
+    const pct = allLessons.length ? Math.round((journeyCompleted.length / allLessons.length) * 100) : 0;
     const reflectionsWritten = countReflections(journey.id);
     return (
       <PageLayout>
         <div className="max-w-2xl mx-auto pb-12">
           <Button variant="ghost" onClick={() => setViewing(null)} className="mb-4 text-muted-foreground -ml-2">
-            <ChevronLeft className="h-4 w-4 mr-1" /> All journeys
+            <ChevronLeft className="h-4 w-4 mr-1" /> All tracks
           </Button>
 
           <div className="flex items-center gap-4 mb-3">
@@ -64,7 +85,7 @@ export default function Tracks() {
               {journey.emoji}
             </div>
             <div>
-              <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground font-semibold">Journey</p>
+              <p className="text-base uppercase tracking-[0.2em] text-muted-foreground font-semibold">Track</p>
               <h1 className="font-display text-3xl sm:text-4xl">{journey.title}</h1>
             </div>
           </div>
@@ -73,7 +94,9 @@ export default function Tracks() {
           {/* Progress summary */}
           <div className="rounded-2xl border border-border bg-card p-5 mb-6">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-muted-foreground">{journeyCompleted.length} of {journey.modules.length} lessons</span>
+              <span className="text-base text-muted-foreground">
+                {journeyCompleted.length} of {allLessons.length} lessons
+              </span>
               <span className="text-base font-semibold text-foreground">{pct}%</span>
             </div>
             <Progress value={pct} className="h-2" />
@@ -86,46 +109,72 @@ export default function Tracks() {
 
           {activeId !== journey.id && (
             <Button onClick={() => setActive(journey.id)} variant="outline" className="w-full mb-6">
-              Make this my active journey
+              Make this my active track
             </Button>
           )}
 
-          <div className="space-y-3">
-            {journey.modules.map((m, i) => {
-              const isDone = journeyCompleted.includes(m.id);
-              const isLocked = i > nextIndex;
+          {/* Modules → Lessons */}
+          <div className="space-y-6">
+            {journey.modules.map((mod, mIdx) => {
+              const modLessonIds = mod.lessons.map((l) => l.id);
+              const modCompleted = modLessonIds.filter((id) => journeyCompleted.includes(id)).length;
+              const modPct = mod.lessons.length ? Math.round((modCompleted / mod.lessons.length) * 100) : 0;
               return (
-                <button
-                  key={m.id}
-                  onClick={() => !isLocked && setOpenModule({ journey, module: m })}
-                  disabled={isLocked}
-                  className={cn(
-                    'w-full p-5 rounded-xl border text-left flex items-center gap-4 transition-all',
-                    isDone && 'border-secondary/40 bg-secondary/5',
-                    !isDone && !isLocked && 'border-border hover:border-primary/40',
-                    isLocked && 'border-border opacity-50 cursor-not-allowed'
-                  )}
-                >
-                  <div
-                    className={cn(
-                      'w-11 h-11 rounded-full flex items-center justify-center shrink-0 font-display text-lg',
-                      isDone && 'bg-secondary/20 text-secondary',
-                      !isDone && !isLocked && 'bg-primary/15 text-primary',
-                      isLocked && 'bg-muted text-muted-foreground'
-                    )}
-                  >
-                    {isDone ? <Check className="h-5 w-5" /> : isLocked ? <Lock className="h-4 w-4" /> : i + 1}
+                <section key={mod.id}>
+                  <div className="mb-3 flex items-end justify-between gap-3">
+                    <div>
+                      <p className="text-base uppercase tracking-[0.18em] text-primary font-semibold">
+                        Module {mIdx + 1}
+                      </p>
+                      <h2 className="font-display text-2xl text-foreground leading-tight">{mod.title}</h2>
+                    </div>
+                    <span className="text-base text-muted-foreground whitespace-nowrap">
+                      {modCompleted}/{mod.lessons.length}
+                    </span>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-display text-lg text-foreground leading-tight">{m.title}</p>
-                    <p className="text-sm text-muted-foreground line-clamp-1 mt-0.5">
-                      {isLocked
-                        ? `Complete "${journey.modules[i - 1].title}" to open.`
-                        : `${m.summary} · ${m.estimatedMinutes} min`}
-                    </p>
+                  <Progress value={modPct} className="h-1.5 mb-3" />
+                  <div className="space-y-3">
+                    {mod.lessons.map((lesson) => {
+                      const globalIndex = sequentialLessons.findIndex((l) => l.id === lesson.id);
+                      const isDone = journeyCompleted.includes(lesson.id);
+                      const isLocked = globalIndex > nextLessonIndex;
+                      const localIndex = mod.lessons.findIndex((l) => l.id === lesson.id);
+                      return (
+                        <button
+                          key={lesson.id}
+                          onClick={() => !isLocked && setOpenLesson({ journey, module: mod, lesson })}
+                          disabled={isLocked}
+                          className={cn(
+                            'w-full p-5 rounded-xl border text-left flex items-center gap-4 transition-all',
+                            isDone && 'border-secondary/40 bg-secondary/5',
+                            !isDone && !isLocked && 'border-border hover:border-primary/40',
+                            isLocked && 'border-border opacity-50 cursor-not-allowed',
+                          )}
+                        >
+                          <div
+                            className={cn(
+                              'w-11 h-11 rounded-full flex items-center justify-center shrink-0 font-display text-lg',
+                              isDone && 'bg-secondary/20 text-secondary',
+                              !isDone && !isLocked && 'bg-primary/15 text-primary',
+                              isLocked && 'bg-muted text-muted-foreground',
+                            )}
+                          >
+                            {isDone ? <Check className="h-5 w-5" /> : isLocked ? <Lock className="h-4 w-4" /> : localIndex + 1}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="font-display text-lg text-foreground leading-tight">{lesson.title}</p>
+                            <p className="text-base text-muted-foreground line-clamp-1 mt-0.5">
+                              {isLocked
+                                ? 'Complete the previous lesson to open.'
+                                : `${lesson.summary} · ${lesson.estimatedMinutes} min`}
+                            </p>
+                          </div>
+                          {!isLocked && <ChevronRight className="h-5 w-5 text-muted-foreground" />}
+                        </button>
+                      );
+                    })}
                   </div>
-                  {!isLocked && <ChevronRight className="h-5 w-5 text-muted-foreground" />}
-                </button>
+                </section>
               );
             })}
           </div>
@@ -134,24 +183,48 @@ export default function Tracks() {
     );
   }
 
-  // ----- Journey list -----
+  // ----- Track list -----
   return (
     <PageLayout>
       <div className="max-w-2xl mx-auto pb-12">
         <div className="mb-8">
-          <p className="text-xs uppercase tracking-[0.2em] text-primary mb-2 font-semibold">Your Journey</p>
-          <h1 className="font-display text-4xl sm:text-5xl mb-2 leading-tight">What's next in your walk with God?</h1>
-          <p className="text-lg text-muted-foreground">Guided paths to help you grow — one honest lesson at a time.</p>
+          <p className="text-base uppercase tracking-[0.2em] text-primary mb-2 font-semibold">Your Journey</p>
+          <h1 className="font-display text-4xl sm:text-5xl mb-2 leading-tight">
+            What's next in your walk with Jesus?
+          </h1>
+          <p className="text-lg text-muted-foreground">
+            Guided tracks to help you grow — one honest lesson at a time.
+          </p>
         </div>
 
         {active && (
           <div className="rounded-2xl border border-primary/30 bg-primary/5 p-5 mb-6">
-            <p className="text-xs uppercase tracking-[0.2em] text-primary mb-1.5 font-semibold">Continue where you left off</p>
+            <p className="text-base uppercase tracking-[0.2em] text-primary mb-1.5 font-semibold">
+              Continue where you left off
+            </p>
             <h2 className="font-display text-2xl mb-1">{active.title}</h2>
-            <p className="text-sm text-muted-foreground mb-3">{completedCount} of {totalModules} lessons · {percent}%</p>
-            <Progress value={percent} className="h-1.5 mb-4" />
+            {currentModule && (
+              <p className="text-base text-foreground/90 mb-1">
+                Module: <span className="font-semibold">{currentModule.title}</span>
+              </p>
+            )}
+            {nextLesson && (
+              <p className="text-base text-foreground mb-1">
+                Next lesson: <span className="font-semibold">{nextLesson.title}</span>
+              </p>
+            )}
+            <p className="text-base text-muted-foreground mb-3">
+              {completedCount} of {totalLessons} lessons · {percent}%
+            </p>
+            <Progress value={percent} className="h-1.5 mb-3" />
+            {estimatedMinutesRemaining > 0 && (
+              <p className="flex items-center gap-1.5 text-base text-muted-foreground mb-4">
+                <Clock className="h-4 w-4" />
+                About {estimatedMinutesRemaining} min of lessons remaining
+              </p>
+            )}
             <Button onClick={() => setViewing(active)} className="w-full">
-              Open journey <ChevronRight className="h-4 w-4 ml-2" />
+              Open track <ChevronRight className="h-4 w-4 ml-2" />
             </Button>
           </div>
         )}
@@ -159,15 +232,16 @@ export default function Tracks() {
         <div className="space-y-4">
           {journeys.map((j) => {
             const isActive = activeId === j.id;
+            const lessonsInJ = getAllLessons(j);
             const done = (progress[j.id] || []).length;
-            const pct = Math.round((done / j.modules.length) * 100);
+            const pct = lessonsInJ.length ? Math.round((done / lessonsInJ.length) * 100) : 0;
             return (
               <button
                 key={j.id}
                 onClick={() => setViewing(j)}
                 className={cn(
                   'w-full p-5 rounded-2xl border text-left transition-all',
-                  isActive ? 'border-primary/50 bg-primary/5' : 'border-border hover:border-primary/30'
+                  isActive ? 'border-primary/50 bg-primary/5' : 'border-border hover:border-primary/30',
                 )}
               >
                 <div className="flex items-start gap-4">
@@ -178,14 +252,16 @@ export default function Tracks() {
                     <div className="flex items-center gap-2 mb-1 flex-wrap">
                       <h2 className="font-display text-xl sm:text-2xl">{j.title}</h2>
                       {isActive && (
-                        <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-primary/15 text-primary font-semibold">
+                        <span className="text-xs uppercase tracking-wider px-2 py-0.5 rounded-full bg-primary/15 text-primary font-semibold">
                           Active
                         </span>
                       )}
                     </div>
                     <p className="text-base text-muted-foreground mb-3">{j.tagline}</p>
-                    <div className="flex items-center justify-between text-xs text-muted-foreground">
-                      <span>{done}/{j.modules.length} lessons</span>
+                    <div className="flex items-center justify-between text-base text-muted-foreground">
+                      <span>
+                        {j.modules.length} module{j.modules.length === 1 ? '' : 's'} · {done}/{lessonsInJ.length} lessons
+                      </span>
                       <span>{pct}%</span>
                     </div>
                     <Progress value={pct} className="h-1.5 mt-1.5" />
@@ -213,7 +289,7 @@ function Stat({ icon, label, value }: { icon: React.ReactNode; label: string; va
         {icon}
       </div>
       <p className="font-display text-xl text-foreground leading-none">{value}</p>
-      <p className="text-xs text-muted-foreground mt-1">{label}</p>
+      <p className="text-sm text-muted-foreground mt-1">{label}</p>
     </div>
   );
 }
