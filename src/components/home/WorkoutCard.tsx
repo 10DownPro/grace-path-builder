@@ -45,20 +45,20 @@ export function WorkoutCard({ steps, allCompleted }: WorkoutCardProps) {
               <Dumbbell className="h-5 w-5 text-primary" />
             </div>
             <div>
-              <h2 className="font-display text-xl text-foreground">
+              <h2 className="font-display text-2xl sm:text-3xl text-foreground leading-tight">
                 Today's Walk
               </h2>
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <Clock className="h-3 w-3" />
+              <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
+                <Clock className="h-4 w-4" />
                 <span>~{totalDuration} min · gentle pace</span>
               </div>
             </div>
           </div>
           <div className="px-3 py-1.5 bg-primary/10 border border-primary/30 rounded-lg">
-            <span className="font-display text-lg text-primary">
+            <span className="font-display text-xl text-primary font-semibold">
               {completedCount}/{steps.length}
             </span>
-            <span className="text-xs text-primary/70 ml-1">steps</span>
+            <span className="text-sm text-primary/70 ml-1">steps</span>
           </div>
         </div>
         
