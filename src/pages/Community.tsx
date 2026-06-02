@@ -1,11 +1,12 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { EnhancedFeedPost } from '@/components/community/EnhancedFeedPost';
 import { CreateCommunityPostDialog } from '@/components/community/CreateCommunityPostDialog';
 import { useCommunityPosts } from '@/hooks/useCommunityPosts';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { Loader2, Plus, HandHeart, Users, Sparkles, MessageCircle, ChevronRight } from 'lucide-react';
+import { Loader2, Plus, HandHeart, Users, Sparkles, MessageCircle, ChevronRight, Check } from 'lucide-react';
+import { toast } from 'sonner';
 
 type Section = 'walking' | 'prayer' | 'circles' | 'partners';
 
@@ -40,11 +41,38 @@ export default function Community() {
 
   const [section, setSection] = useState<Section>('walking');
   const [showCreatePost, setShowCreatePost] = useState(false);
+  const [joinedCircles, setJoinedCircles] = useState<string[]>(() => {
+    try { return JSON.parse(localStorage.getItem('faithfit:joinedCircles') || '[]'); }
+    catch { return []; }
+  });
+  const [optedInPartners, setOptedInPartners] = useState<boolean>(() => localStorage.getItem('faithfit:partnersOptIn') === '1');
+
+  useEffect(() => {
+    localStorage.setItem('faithfit:joinedCircles', JSON.stringify(joinedCircles));
+  }, [joinedCircles]);
 
   const handleComment = async (_id: string, _t: string) => ({ error: null });
 
   const openPrayerComposer = () => setShowCreatePost(true);
   const openGeneralComposer = () => setShowCreatePost(true);
+
+  const toggleCircle = (id: string, title: string) => {
+    setJoinedCircles((prev) => {
+      if (prev.includes(id)) {
+        toast(`Left ${title}`);
+        return prev.filter((x) => x !== id);
+      }
+      toast.success(`Joined ${title}`, { description: 'We\'ll surface posts and prayer prompts from this circle.' });
+      return [...prev, id];
+    });
+  };
+
+  const handleOptInPartners = () => {
+    if (optedInPartners) return;
+    localStorage.setItem('faithfit:partnersOptIn', '1');
+    setOptedInPartners(true);
+    toast.success('You\'re on the list.', { description: 'We\'ll notify you as soon as a prayer partner is ready.' });
+  };
 
   // Switch feed filter when prayer tab is selected
   const visiblePosts = useMemo(() => posts, [posts]);
@@ -74,11 +102,11 @@ export default function Community() {
 
         {/* Section Tabs */}
         <Tabs value={section} onValueChange={(v) => setSection(v as Section)} className="mb-6">
-          <TabsList className="grid grid-cols-4 w-full h-auto">
-            <TabsTrigger value="walking" className="py-2.5 text-sm">Walking Together</TabsTrigger>
-            <TabsTrigger value="prayer" className="py-2.5 text-sm">Prayer Requests</TabsTrigger>
-            <TabsTrigger value="circles" className="py-2.5 text-sm">Faith Circles</TabsTrigger>
-            <TabsTrigger value="partners" className="py-2.5 text-sm">Prayer Partners</TabsTrigger>
+          <TabsList className="grid grid-cols-4 w-full h-auto gap-1 p-1">
+            <TabsTrigger value="walking" className="py-2 px-1 text-xs sm:text-sm whitespace-normal leading-tight">Walking<br className="sm:hidden" /> Together</TabsTrigger>
+            <TabsTrigger value="prayer" className="py-2 px-1 text-xs sm:text-sm whitespace-normal leading-tight">Prayer<br className="sm:hidden" /> Requests</TabsTrigger>
+            <TabsTrigger value="circles" className="py-2 px-1 text-xs sm:text-sm whitespace-normal leading-tight">Faith<br className="sm:hidden" /> Circles</TabsTrigger>
+            <TabsTrigger value="partners" className="py-2 px-1 text-xs sm:text-sm whitespace-normal leading-tight">Prayer<br className="sm:hidden" /> Partners</TabsTrigger>
           </TabsList>
 
           {/* Walking Together */}
@@ -162,22 +190,31 @@ export default function Community() {
               subtitle="Small, themed groups where you can walk with others on the same path."
             />
             <div className="grid gap-3">
-              {CIRCLES.map((c) => (
-                <button
-                  key={c.id}
-                  onClick={openGeneralComposer}
-                  className="w-full p-5 rounded-2xl border border-border bg-card text-left flex items-center gap-4 hover:border-primary/40 transition-all"
-                >
-                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-2xl shrink-0">
-                    {c.emoji}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-display text-xl text-foreground leading-tight">{c.title}</h3>
-                    <p className="text-base text-muted-foreground mt-0.5">{c.description}</p>
-                  </div>
-                  <ChevronRight className="h-5 w-5 text-muted-foreground shrink-0" />
-                </button>
-              ))}
+              {CIRCLES.map((c) => {
+                const joined = joinedCircles.includes(c.id);
+                return (
+                  <button
+                    key={c.id}
+                    onClick={() => toggleCircle(c.id, c.title)}
+                    className="w-full p-5 rounded-2xl border border-border bg-card text-left flex items-center gap-4 hover:border-primary/40 transition-all"
+                  >
+                    <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-2xl shrink-0">
+                      {c.emoji}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-display text-xl text-foreground leading-tight">{c.title}</h3>
+                      <p className="text-base text-muted-foreground mt-0.5">{c.description}</p>
+                    </div>
+                    {joined ? (
+                      <span className="inline-flex items-center gap-1 text-sm font-medium text-primary shrink-0">
+                        <Check className="h-4 w-4" /> Joined
+                      </span>
+                    ) : (
+                      <ChevronRight className="h-5 w-5 text-muted-foreground shrink-0" />
+                    )}
+                  </button>
+                );
+              })}
             </div>
           </TabsContent>
 
@@ -194,11 +231,18 @@ export default function Community() {
                 Get paired with one other person who's also walking with God. Check in weekly. Pray for each other.
                 No pressure, no performance — just a quiet partnership.
               </p>
-              <Button size="lg" className="w-full sm:w-auto">
-                Opt in to Prayer Partners
+              <Button
+                size="lg"
+                className="w-full sm:w-auto"
+                onClick={handleOptInPartners}
+                disabled={optedInPartners}
+              >
+                {optedInPartners ? (<><Check className="h-5 w-5 mr-2" /> You're on the list</>) : 'Opt in to Prayer Partners'}
               </Button>
-              <p className="text-sm text-muted-foreground mt-3">
-                Pairing will open soon. We'll let you know when your partner is ready.
+              <p className="text-base text-muted-foreground mt-3">
+                {optedInPartners
+                  ? "We'll email you the moment a partner is ready."
+                  : "Pairing will open soon. We'll let you know when your partner is ready."}
               </p>
             </div>
           </TabsContent>
