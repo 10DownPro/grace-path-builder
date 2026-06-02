@@ -317,6 +317,41 @@ function Stat({ icon, label, value }: { icon: React.ReactNode; label: string; va
   );
 }
 
+function estimateWeeks(lessonCount: number): number {
+  // ~5 lessons per week of guided pace; minimum 1 week.
+  return Math.max(1, Math.round(lessonCount / 5));
+}
+
+function TrackMeta({
+  modules,
+  lessons,
+  weeks,
+  className,
+}: { modules: number; lessons: number; weeks: number; className?: string }) {
+  return (
+    <div className={cn('flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm', className)}>
+      <MetaItem value={modules} label={modules === 1 ? 'Module' : 'Modules'} />
+      <Dot />
+      <MetaItem value={lessons} label={lessons === 1 ? 'Lesson' : 'Lessons'} />
+      <Dot />
+      <MetaItem value={`~${weeks}`} label={weeks === 1 ? 'Week' : 'Weeks'} />
+    </div>
+  );
+}
+
+function MetaItem({ value, label }: { value: number | string; label: string }) {
+  return (
+    <span className="inline-flex items-baseline gap-1.5">
+      <span className="font-display text-lg text-foreground leading-none">{value}</span>
+      <span className="text-sm text-muted-foreground uppercase tracking-wide">{label}</span>
+    </span>
+  );
+}
+
+function Dot() {
+  return <span className="text-muted-foreground/40">·</span>;
+}
+
 function countReflections(journeyId: string): number {
   try {
     const map = JSON.parse(localStorage.getItem('faithfit-lesson-reflections-v1') || '{}');
