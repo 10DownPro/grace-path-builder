@@ -46,7 +46,7 @@ const needsOptions: { id: NeedArea; label: string; icon: typeof Heart }[] = [
 ];
 
 const timeOptions: { id: DailyTime; label: string; description: string }[] = [
-  { id: 5, label: '5 minutes', description: 'A gentle start' },
+  { id: 5, label: '5 minutes', description: 'A simple start' },
   { id: 10, label: '10 minutes', description: 'A steady rhythm' },
   { id: 15, label: '15 minutes', description: 'Going a little deeper' },
   { id: 20, label: '20+ minutes', description: 'Time to truly settle in' },
