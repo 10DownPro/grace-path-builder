@@ -263,10 +263,10 @@ export default function Index() {
           {/* 9. Milestones */}
           <MilestoneShelf stats={milestoneStats} />
 
-          {/* Gentle footer */}
+          {/* Footer */}
           <div className="text-center py-6">
             <p className="text-sm text-muted-foreground italic">
-              One step. One day. He meets you here.
+              One step. One day. Keep walking with Jesus.
             </p>
           </div>
         </div>
