@@ -10,7 +10,7 @@ precacheAndRoute(self.__WB_MANIFEST);
 self.addEventListener('push', (event) => {
   const data = event.data?.json() ?? {
     title: 'FaithFit',
-    body: 'A gentle invitation to spend a few moments with God today',
+    body: 'Spend time with God today. Take your next step.',
     icon: '/favicon.png',
     badge: '/favicon.png',
     tag: 'faithfit-walk-reminder',
