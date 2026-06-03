@@ -58,7 +58,7 @@ export function Day1LaunchScreen({ userName, journey = 'new', onComplete }: Day1
               </div>
               <h2 className="font-display text-4xl text-foreground pt-2">{trackName}</h2>
               <p className="text-muted-foreground max-w-sm mx-auto leading-relaxed pt-2">
-                A gentle path designed for where you are. Today, we'll start with Worship, Scripture, Prayer, and Reflection.
+                A clear path for where you are today. We'll start with Worship, Scripture, Prayer, and Reflection.
               </p>
             </div>
 
