@@ -50,7 +50,7 @@ export function WorkoutCard({ steps, allCompleted }: WorkoutCardProps) {
               </h2>
               <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
                 <Clock className="h-4 w-4" />
-                <span>~{totalDuration} min · gentle pace</span>
+                <span>~{totalDuration} min · your pace</span>
               </div>
             </div>
           </div>

@@ -213,8 +213,7 @@ export default function Index() {
                 <div className="space-y-2">
                   <h3 className="font-display text-xl text-foreground">Welcome home.</h3>
                   <p className="text-base text-muted-foreground leading-relaxed">
-                    No pressure, no streaks to defend. Just a quiet companion for your walk with God.
-                    Start with how you're feeling today, and we'll meet you there.
+                    God has something for you today. Start with how you're feeling, and let's see what Scripture says.
                   </p>
                 </div>
               </div>
@@ -264,10 +263,10 @@ export default function Index() {
           {/* 9. Milestones */}
           <MilestoneShelf stats={milestoneStats} />
 
-          {/* Gentle footer */}
+          {/* Footer */}
           <div className="text-center py-6">
             <p className="text-sm text-muted-foreground italic">
-              One step. One day. He meets you here.
+              One step. One day. Keep walking with Jesus.
             </p>
           </div>
         </div>

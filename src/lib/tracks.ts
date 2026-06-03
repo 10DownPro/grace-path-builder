@@ -104,7 +104,7 @@ export const tracks: GuidedTrack[] = [
       {
         id: 'hearing-god',
         title: "Hearing God's voice",
-        intro: "God speaks more often in quiet than in noise — through Scripture, through peace, through gentle nudges. Listening is a practice you grow into.",
+        intro: "God still speaks — through Scripture, through His Spirit, through His people. Learning to listen is part of following Jesus.",
         scripture: { reference: '1 Kings 19:12', text: 'After the fire came a gentle whisper.' },
         reflection: 'When was a time you sensed God speaking, even faintly? What might He be whispering now?',
       },

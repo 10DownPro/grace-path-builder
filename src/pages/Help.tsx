@@ -91,7 +91,7 @@ export default function Help() {
         },
         {
           question: 'Do my streaks reset if I miss a day?',
-          answer: 'Streaks are gentle here. Missing a day pauses your streak, but Streak Freezes from the Rewards shop can protect a day off.'
+          answer: 'Streaks here aren\'t about shame. Missing a day pauses your streak, but Streak Freezes from the Rewards shop can protect a day off.'
         }
       ]
     },

@@ -144,7 +144,7 @@ const Waitlist = () => {
 
               <p className="text-lg md:text-xl text-muted-foreground font-body max-w-2xl mx-auto lg:mx-0 mb-10 leading-relaxed">
                 FaithFit helps you build — or rebuild — your walk with God. Scripture, prayer, reflection,
-                and community, one gentle step at a time.
+                and community, one step at a time.
               </p>
 
             {/* Waitlist Count */}
@@ -253,7 +253,7 @@ const Waitlist = () => {
               A simple rhythm for <span className="text-primary">walking with God</span>
             </h2>
             <p className="text-muted-foreground font-body max-w-xl mx-auto">
-              This isn't another devotional app. It's a gentle, guided companion for the long walk of faith.
+              This isn't another devotional app. It's a guided companion for the long walk of following Jesus.
             </p>
           </div>
 
