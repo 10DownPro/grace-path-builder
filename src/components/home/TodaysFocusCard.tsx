@@ -12,13 +12,13 @@ export function TodaysFocusCard() {
     ? nextModule.title
     : mood
     ? moodContent[mood].reflection
-    : 'Spend five quiet minutes with God.';
+    : 'Spend time with God today.';
 
   const subText = nextModule
     ? nextModule.summary
     : mood
     ? moodContent[mood].prayerPrompt
-    : 'No pressure. He meets you here.';
+    : 'Take your next step. He is at work in you.';
 
   return (
     <Link to={nextModule ? '/journey' : '/session'} className="block">
