@@ -16,35 +16,35 @@ export const TOUR_STEPS: TourStep[] = [
     id: 'welcome',
     target: '[data-tour="streak-badge"]',
     title: 'Your Walk With God',
-    content: 'A gentle marker of the days you spend with God. No pressure, no shame — just an invitation to keep walking.',
+    content: 'A simple marker of the days you spend with God. Keep walking — He is at work in you.',
     placement: 'bottom'
   },
   {
     id: 'workout',
     target: '[data-tour="workout-card"]',
     title: "Today's Walk",
-    content: 'A simple rhythm: Worship, Scripture, Prayer, and Reflection. Take one step or take all four — He meets you wherever you start.',
+    content: 'A clear rhythm: Worship, Scripture, Prayer, and Reflection. Take your next step — He meets you here.',
     placement: 'bottom'
   },
   {
     id: 'start-training',
     target: '[data-tour="start-training"]',
     title: 'Begin Today',
-    content: 'Tap here to start your time with God. Most days take 15–30 minutes, but even a few quiet moments count.',
+    content: 'Tap here to spend time with God. Most days take 15–30 minutes — start where you are.',
     placement: 'top'
   },
   {
     id: 'quick-actions',
     target: '[data-tour="quick-actions"]',
     title: 'Small Steps',
-    content: 'Quick ways to turn toward God throughout the day — a verse, a breath prayer, a moment of gratitude.',
+    content: 'Quick ways to turn toward God during the day — a verse, a prayer, a word of thanks.',
     placement: 'top'
   },
   {
     id: 'weekly-grind',
     target: '[data-tour="weekly-grind"]',
     title: "This Week's Walk",
-    content: 'A gentle look at your week — sessions, prayers, and Scripture read. Growth, not perfection.',
+    content: 'See your week — sessions, prayers, and Scripture read. Growth, not perfection.',
     placement: 'top'
   },
   {
