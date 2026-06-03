@@ -278,13 +278,13 @@ export default function Session() {
             </div>
           </div>
 
-          {/* Gentle intro banner */}
+          {/* Intro banner */}
           <div className="mb-4 p-3 rounded-xl bg-primary/5 border border-primary/20">
             <h2 className="font-display text-base text-primary mb-1">
               Today's Walk
             </h2>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              Four quiet steps — <strong className="text-foreground">Worship</strong>, <strong className="text-foreground">Scripture</strong>, <strong className="text-foreground">Prayer</strong>, and <strong className="text-foreground">Reflection</strong>. Take them at your own pace.
+              Four steps with God — <strong className="text-foreground">Worship</strong>, <strong className="text-foreground">Scripture</strong>, <strong className="text-foreground">Prayer</strong>, and <strong className="text-foreground">Reflection</strong>. Take them at your pace.
             </p>
           </div>
 
