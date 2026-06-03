@@ -177,7 +177,7 @@ export default function Install() {
               Push Notifications
             </CardTitle>
             <CardDescription>
-              Gentle daily reminders to walk with God
+              Daily reminders to walk with God
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
