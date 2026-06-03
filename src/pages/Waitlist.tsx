@@ -253,7 +253,7 @@ const Waitlist = () => {
               A simple rhythm for <span className="text-primary">walking with God</span>
             </h2>
             <p className="text-muted-foreground font-body max-w-xl mx-auto">
-              This isn't another devotional app. It's a gentle, guided companion for the long walk of faith.
+              This isn't another devotional app. It's a guided companion for the long walk of following Jesus.
             </p>
           </div>
 
