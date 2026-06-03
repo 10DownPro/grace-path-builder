@@ -496,11 +496,11 @@ export const dailyBreadLibrary: DailyBreadReading[] = [
   }),
 ];
 
-// Append the expansion library (90+ additional readings) so the rotation
-// covers months without repeating. Imported lazily-at-bottom to avoid
-// circular import with ensurePrayerEnding.
+// Append the expansion libraries so the rotation covers months without
+// repeating. Imported at the bottom to avoid circular imports.
 import { dailyBreadExpansion } from './dailyBreadExpansion';
-dailyBreadLibrary.push(...dailyBreadExpansion);
+import { dailyBreadExpansion2 } from './dailyBreadExpansion2';
+dailyBreadLibrary.push(...dailyBreadExpansion, ...dailyBreadExpansion2);
 
 /** Returns today's reading, rotating daily through the library. */
 export function getTodaysBread(now: Date = new Date()): DailyBreadReading {
