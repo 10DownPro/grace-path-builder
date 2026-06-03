@@ -155,7 +155,7 @@ export function useNotifications() {
     }
 
     new Notification('FaithFit', {
-      body: 'A gentle nudge to spend a few moments with God today.',
+      body: 'Spend time with God today. Take your next step.',
       icon: '/favicon.png',
       badge: '/favicon.png',
       tag: 'faithfit-walk-reminder',
