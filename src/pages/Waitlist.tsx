@@ -144,7 +144,7 @@ const Waitlist = () => {
 
               <p className="text-lg md:text-xl text-muted-foreground font-body max-w-2xl mx-auto lg:mx-0 mb-10 leading-relaxed">
                 FaithFit helps you build — or rebuild — your walk with God. Scripture, prayer, reflection,
-                and community, one gentle step at a time.
+                and community, one step at a time.
               </p>
 
             {/* Waitlist Count */}
